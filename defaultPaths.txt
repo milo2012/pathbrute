@@ -652,7 +652,7 @@
 /log/.gitkeep
 /log/development.log
 /log/production.log
-/log/server.log
+/log/Server.log
 /log/test.log
 /login.html
 /login.jsp
@@ -2023,4 +2023,5 @@
 /~ftp
 /~nobody
 /~root
+
 
