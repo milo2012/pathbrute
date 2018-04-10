@@ -218,7 +218,7 @@ func getUrlWorker(urlChan chan string) {
 												}
 												//fmt.Println("add ",newUrl)
 												var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-												fmt.Println("here6 ",a)
+												//fmt.Println("here6 ",a)
 												tmpResultList = append(tmpResultList,a...)
 											}
 										}
@@ -413,7 +413,7 @@ type argT struct {
 	cli.Helper
 	Filename string `cli:"f,filename" usage:"File containing list of websites"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
-	Pathsource string `cli:"s,source" usage:"Path source (msf | RobotsDisallowed | SecLists)"`
+	Pathsource string `cli:"s,source" usage:"Path source (default | msf | RobotsDisallowed | SecLists)"`
 	Path string `cli:"p,path" usage:"URI path"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads"`
 	Statuscode int  `cli:"c" usage:"Status code"`
@@ -466,6 +466,24 @@ func main() {
 		if argv.Threads>0 {
 			workersCount = argv.Threads
 		}
+		if Pathsource=="default" {
+			_, err1 := os.Stat("defaultPaths.txt")
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/defaultPaths.txt"
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile("defaultPaths.txt", fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines("defaultPaths.txt")
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}		
 		if Pathsource=="msf" {
 			_, err1 := os.Stat("pathList.txt")
 			if os.IsNotExist(err1) {
@@ -477,7 +495,10 @@ func main() {
 			_ = err1
 			lines, err2 := readLines("pathList.txt")
 			for _, v := range lines {
-				pathList = append(pathList, v)
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
 			}		
 			_ = err2
 		}
@@ -492,7 +513,10 @@ func main() {
 			_ = err1
 			lines, err2 := readLines("SecLists-common.txt")
 			for _, v := range lines {
-				pathList = append(pathList, v)
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
 			}		
 			_ = err2
 
@@ -508,7 +532,10 @@ func main() {
 			_ = err1
 			lines, err2 := readLines("RobotsDisallowed.txt")
 			for _, v := range lines {
-				pathList = append(pathList, v)
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
 			}		
 			_ = err2
 		}
@@ -536,11 +563,17 @@ func main() {
 
 			if strings.HasSuffix(v,":443") {
 				v=v[0:len(v)-4]
-				if !stringInSlice(v,contentList1) {
-					contentList1 = append(contentList1, v)
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					if !stringInSlice(v,contentList1) {
+						contentList1 = append(contentList1, v)
+					}
 				}
 			} else {
-				contentList1 = append(contentList1, v)
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					contentList1 = append(contentList1, v)
+				}
 			}			
   	    }
 		contentList=contentList1
@@ -565,7 +598,10 @@ func main() {
 				_ = err1
 				lines, err2 := readLines(pFilename)
 				for _, v := range lines {
-					pathList = append(pathList, v)
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
 				}		
 				_ = err2
 			} else {
@@ -581,6 +617,9 @@ func main() {
 			  for _, v := range pathList {
 				url := x      		
 				path := v
+				if strings.HasSuffix(url,"/") {
+					url=url[0:len(url)-1]
+				}			
 				if strings.HasPrefix(path,"/") {
 					newUrl := url+path
 					finalList = append(finalList, newUrl)
@@ -595,6 +634,10 @@ func main() {
 			  for _, x := range contentList {
 				url := x      		
 				path := v
+				if strings.HasSuffix(url,"/") {
+					fmt.Printf("xxx")
+					url=url[0:len(url)-1]
+				}			
 				if strings.HasPrefix(path,"/") {
 					newUrl := url+path
 					finalList = append(finalList, newUrl)
