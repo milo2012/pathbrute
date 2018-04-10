@@ -652,7 +652,7 @@
 /log/.gitkeep
 /log/development.log
 /log/production.log
-/log/Server.log
+/log/server.log
 /log/test.log
 /login.html
 /login.jsp
