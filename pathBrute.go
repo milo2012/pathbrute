@@ -414,8 +414,8 @@ type argT struct {
 	Filename string `cli:"U,filename" usage:"File containing list of websites"`
 	URLpath string `cli:"u,url" usage:"Url of website"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
-	Pathsource string `cli:"s,source" usage:"Path source (default | msf | RobotsDisallowed | SecLists)"`
 	Path string `cli:"p,path" usage:"URI path"`
+	Pathsource string `cli:"s,source" usage:"Path source (default | msf | RobotsDisallowed | SecLists)"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads"`
 	Statuscode int  `cli:"c" usage:"Status code"`
 	Intellimode bool `cli:"i" usage:"Intelligent mode"`
