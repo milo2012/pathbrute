@@ -227,7 +227,7 @@ func getUrlWorker(urlChan chan string) {
 									//fmt.Printf("%s [%s] [%d] [%s] \n",newUrl, color.GreenString(tmpStatusCode), lenBody, tmpTitle)					
 									if each[3]!=tmpStatusCode{
 										var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-										fmt.Println("here5 ",a)
+										//fmt.Println("here5 ",a)
 										tmpResultList = append(tmpResultList,a...)
 										//fmt.Println("add1 ",newUrl)
 									}
@@ -411,7 +411,8 @@ func DownloadFile(filepath string, url string) error {
 
 type argT struct {
 	cli.Helper
-	Filename string `cli:"f,filename" usage:"File containing list of websites"`
+	Filename string `cli:"U,filename" usage:"File containing list of websites"`
+	URLpath string `cli:"u,url" usage:"Url of website"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
 	Pathsource string `cli:"s,source" usage:"Path source (default | msf | RobotsDisallowed | SecLists)"`
 	Path string `cli:"p,path" usage:"URI path"`
@@ -467,6 +468,7 @@ func main() {
 			workersCount = argv.Threads
 		}
 		if Pathsource=="default" {
+			pFilename = "defaultPaths.txt"
 			_, err1 := os.Stat("defaultPaths.txt")
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/defaultPaths.txt"
@@ -485,6 +487,7 @@ func main() {
 			_ = err2
 		}		
 		if Pathsource=="msf" {
+			pFilename = "pathList.txt"
 			_, err1 := os.Stat("pathList.txt")
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/metasploitHelper/master/pathList.txt"
@@ -503,6 +506,7 @@ func main() {
 			_ = err2
 		}
 		if Pathsource=="SecLists" {
+			pFilename = "SecLists-common.txt"
 			_, err1 := os.Stat("SecLists-common.txt")
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt"
@@ -522,6 +526,7 @@ func main() {
 
 		}
 		if Pathsource=="RobotsDisallowed" {
+			pFilename = "RobotsDisallowed.txt"
 			_, err1 := os.Stat("RobotsDisallowed.txt")
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/danielmiessler/RobotsDisallowed/master/Top100000-RobotsDisallowed.txt"
@@ -539,24 +544,42 @@ func main() {
 			}		
 			_ = err2
 		}
-		_, err := os.Stat(filename1)
-		if os.IsNotExist(err) {
-			log.Printf("File %s not exists", filename1)
+		if len(argv.URLpath)<1 && len(argv.Filename)<1 {
+			fmt.Println("[!] Please set the -U or the -u argument")
 			os.Exit(3)
-		}
-		lines, err := readLines(filename1)
-	    for _, v := range lines {
-	    	if strings.Contains(v,"http") {
-				contentList = append(contentList, v)
+		} else {
+			if len(argv.Filename)>0 {
+				_, err := os.Stat(filename1)
+				if os.IsNotExist(err) {
+					log.Printf("File %s not exists", filename1)
+					os.Exit(3)
+				}
+				pFilename = filename1
+				lines, err := readLines(filename1)
+				for _, v := range lines {
+					if strings.Contains(v,"http") {
+						contentList = append(contentList, v)
+					} else {
+						if len(v)>0 {
+							contentList = append(contentList, "https://"+v)
+							contentList = append(contentList, "http://"+v)
+						}
+					}
+					//fmt.Println("https://"+v)
+				}		
+				_ = err
 			} else {
-				if len(v)>0 {
-					contentList = append(contentList, "https://"+v)
-					contentList = append(contentList, "http://"+v)
+				if strings.Contains(argv.URLpath,"http") {
+					contentList = append(contentList, argv.URLpath)
+				} else {
+					if len(argv.URLpath)>0 {
+						contentList = append(contentList, "https://"+argv.URLpath)
+						contentList = append(contentList, "http://"+argv.URLpath)
+					}
 				}
 			}
-			//fmt.Println("https://"+v)
-		}		
-		_ = err
+		}
+
 
 		var contentList1 []string
   	    for _, v := range contentList {
@@ -577,7 +600,7 @@ func main() {
 			}			
   	    }
 		contentList=contentList1
-		_ = contentList1
+		//_ = contentList1
 
 		if argv.CMSmode {
 			CMSmode = true
@@ -589,9 +612,9 @@ func main() {
 		    	pathList = append(pathList,v)
 		    }
 		} else {
-			if len(uriPath)<1 {
+			if len(uriPath)<1 {			
 				_, err1 := os.Stat(pFilename)
-				if os.IsNotExist(err) {
+				if os.IsNotExist(err1) {
 					log.Printf("File %s not exists", pFilename)
 					os.Exit(3)
 				}
@@ -635,7 +658,6 @@ func main() {
 				url := x      		
 				path := v
 				if strings.HasSuffix(url,"/") {
-					fmt.Printf("xxx")
 					url=url[0:len(url)-1]
 				}			
 				if strings.HasPrefix(path,"/") {
@@ -648,6 +670,7 @@ func main() {
 			  }
 			}
 		}
+
 		urlChan := make(chan string)
 		if intelligentMode==true {
 			var wg1 sync.WaitGroup
@@ -800,9 +823,11 @@ func main() {
 			}
 		} else {
 			for _, v := range tmpResultList {
-				//fmt.Println("xxx ",v[0])
-				tmpResultList1 = append(tmpResultList1, v[0])
-				//tmpResultList1 = append(tmpResultList1, v[0])
+				if !stringInSlice(v[0],tmpResultList1) {
+					//fmt.Println("xxx ",v[0])
+					tmpResultList1 = append(tmpResultList1, v[0])
+					//tmpResultList1 = append(tmpResultList1, v[0])
+				}
 			}
 			fmt.Println("[+] Results")
 			sort.Strings(tmpResultList1)
