@@ -5,7 +5,8 @@ $ ./pathBrute -h
 Options:
 
   -h, --help       display help information
-  -f, --filename   File containing list of websites
+  -U, --filename   File containing list of websites
+  -u, --url        Url of website
   -P, --Paths      File containing list of URI paths
   -s, --source     Path source (default | msf | RobotsDisallowed | SecLists)
   -p, --path       URI path
