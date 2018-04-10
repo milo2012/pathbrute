@@ -16,6 +16,8 @@ Options:
       --cms        Fingerprint CMS
   -x               Test a URI path across all target hosts instead of testing all URI paths against a host before moving onto next host
 ```
+  
+```
 ./pathBrute -s default -f urls.txt -v -i -n 25 
 [*] Getting Default Page Title for Invalid URI Paths
 http://xxxx.com/xxx [404] [404 Not Found]
@@ -31,4 +33,5 @@ http://xxxx.com/AddressBookJ2WB [404] [168] [404 Not Found]
 http://xxxx.com/AE/index.jsp [404] [168] [404 Not Found]
 http://xxxx.com/.web [404] [168] [404 Not Found]
 http://xxxx.com/ADS-EJB [200] [482] []
+```
 
