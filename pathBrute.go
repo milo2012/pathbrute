@@ -554,7 +554,6 @@ func main() {
 					log.Printf("File %s not exists", filename1)
 					os.Exit(3)
 				}
-				pFilename = filename1
 				lines, err := readLines(filename1)
 				for _, v := range lines {
 					if strings.Contains(v,"http") {
@@ -583,7 +582,6 @@ func main() {
 
 		var contentList1 []string
   	    for _, v := range contentList {
-
 			if strings.HasSuffix(v,":443") {
 				v=v[0:len(v)-4]
 				v=strings.TrimSpace(v)
@@ -611,27 +609,26 @@ func main() {
 		    for _, v := range drupalFileList {
 		    	pathList = append(pathList,v)
 		    }
-		} else {
-			if len(uriPath)<1 {			
-				_, err1 := os.Stat(pFilename)
-				if os.IsNotExist(err1) {
-					log.Printf("File %s not exists", pFilename)
-					os.Exit(3)
-				}
-				_ = err1
-				lines, err2 := readLines(pFilename)
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
+		} 
+		if len(pFilename)>0 {		
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				log.Printf("File %s not exists", pFilename)
+				os.Exit(3)
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
 					if len(v)>0 {
 						pathList = append(pathList, v)
 					}
 				}		
 				_ = err2
-			} else {
-				pathList = append(pathList, uriPath)
-			}
+		} 
+		if len(uriPath)>0 {
+			pathList = append(pathList, uriPath)
 		}
-		//start
 
 		var finalList []string
 
@@ -666,6 +663,7 @@ func main() {
 				} else {		
 					newUrl := url+"/"+path
 					finalList = append(finalList, newUrl)
+					//fmt.Println(newUrl)
 				}
 			  }
 			}
