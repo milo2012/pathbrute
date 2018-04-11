@@ -570,8 +570,6 @@
 /iiop/ClientRecv
 /iiop/ClientSend
 /images/rails.png
-/index.html
-/index.jsp
 /inspection.wsil
 /install
 /internal
