@@ -19,6 +19,9 @@ import (
 	"io"
 	"sync/atomic"
 	"net/url"
+	"github.com/hashicorp/go-version"
+	"os/signal"
+	"syscall"
 )
 
 
@@ -42,6 +45,36 @@ func f(from string) {
         fmt.Println(from, ":", i)
     }
 }
+
+func cleanup() {
+    fmt.Println("\nCTRL-C (interrupt signal)")
+	for _, v := range tmpResultList {
+		if !stringInSlice(v[0],tmpResultList1) {
+			//fmt.Println("xxx ",v[0])
+			tmpResultList1 = append(tmpResultList1, v[0])
+			//tmpResultList1 = append(tmpResultList1, v[0])
+		}
+	}
+	var tmpResultList2 []string
+	sort.Strings(tmpResultList1)
+	for _, v := range tmpResultList1 {
+		u, err := url.Parse(v)
+		if err==nil {
+			if len(u.Path)>0 {
+				tmpResultList2 = append(tmpResultList2,v)
+			}
+		}
+	}    
+	if len(tmpResultList2)<1 {
+		fmt.Println("No results found")
+	} else {
+		fmt.Println("[+] Results")
+		for _, v := range tmpResultList2 {
+			fmt.Printf("%s\n",v)
+		}
+	}
+}
+
 func removeCharacters(input string, characters string) string {
 	 filter := func(r rune) rune {
 		 if strings.IndexRune(characters, r) < 0 {
@@ -467,6 +500,14 @@ func main() {
 		if argv.Threads>0 {
 			workersCount = argv.Threads
 		}
+		c := make(chan os.Signal, 2)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		go func() {
+			<-c
+			cleanup()
+			os.Exit(1)
+		}()		
+	
 		if Pathsource=="default" {
 			pFilename = "defaultPaths.txt"
 			_, err1 := os.Stat("defaultPaths.txt")
@@ -840,10 +881,189 @@ func main() {
 		}
 
 		if CMSmode==true {
+			var joomlaKBList [][]string	
+			var wpKBList [][]string	
+			var drupalKBList [][]string	
+
+			var a = [][]string{{"joomla","3.7.0","Joomla Component Fields SQLi Remote Code Execution","exploit/unix/webapp/joomla_comfields_sqli_rce"}}
+			joomlaKBList = append(joomlaKBList,a...)
+			var b = [][]string{{"joomla","3.4.4-3.6.3","Joomla Account Creation and Privilege Escalation","auxiliary/admin/http/joomla_registration_privesc"}}
+			joomlaKBList = append(joomlaKBList,b...)
+			var c = [][]string{{"joomla","1.5.0-3.4.5","Joomla HTTP Header Unauthenticated Remote Code Execution","exploit/multi/http/joomla_http_header_rce"}}
+			joomlaKBList = append(joomlaKBList,c...)
+			var d = [][]string{{"joomla","3.2-3.4.4","Joomla Content History SQLi Remote Code Execution","exploit/unix/webapp/joomla_contenthistory_sqli_rce"}}
+			joomlaKBList = append(joomlaKBList,d...)
+			var e = [][]string{{"joomla","2.5.0-2.5.13,3.0.0-3.1.4","Joomla Media Manager File Upload Vulnerability","exploit/unix/webapp/joomla_media_upload_exec"}}
+			joomlaKBList = append(joomlaKBList,e...)
+
+			a = [][]string{{"wordpress","4.6","WordPress PHPMailer Host Header Command Injection","exploit/unix/webapp/wp_phpmailer_host_header"}}
+			wpKBList = append(wpKBList,a...)
+			b = [][]string{{"wordpress","4.7-4.7.1","WordPress REST API Content Injection","auxiliary/dos/http/wordpress_long_password_dos"}}
+			wpKBList = append(wpKBList,b...)
+			c = [][]string{{"wordpress","3.7.5,3.9-3.9.3,4.0-4.0.1","WordPress Long Password DoS",""}}
+			wpKBList = append(wpKBList,c...)
+			d = [][]string{{"wordpress","3.5-3.9.2","Wordpress XMLRPC DoS","auxiliary/dos/http/wordpress_xmlrpc_dos"}}
+			wpKBList = append(wpKBList,d...)
+			e = [][]string{{"wordpress","0-1.5.1.3","WordPress cache_lastpostdate Arbitrary Code Execution","exploit/unix/webapp/wp_lastpost_exec"}}
+			wpKBList = append(wpKBList,e...)
+			var f = [][]string{{"wordpress","0-4.4.1","Wordpress XML-RPC system.multicall Credential Collector","auxiliary/scanner/http/wordpress_multicall_creds"}}
+			wpKBList = append(wpKBList,f...)
+			var g = [][]string{{"wordpress","0-4.6","WordPress Traversal Directory DoS",""}}
+			wpKBList = append(wpKBList,g...)
+			
+			a = [][]string{{"drupal","7.0,7.31","Drupal HTTP Parameter Key/Value SQL Injection","exploit/multi/http/drupal_drupageddon"}}
+			drupalKBList = append(drupalKBList,a...)
+			b = [][]string{{"drupal","7.15,7.2","PHP XML-RPC Arbitrary Code Execution","exploit/unix/webapp/php_xmlrpc_eval"}}
+			drupalKBList = append(drupalKBList,b...)
+			
 			RemoveDuplicates(&tmpResultList1)
 			sort.Strings(tmpResultList1)
 			for _, v := range tmpResultList1 {
 				fmt.Printf("%s\n",v)
+				if strings.Contains(v,"Joomla") {
+					tmpSplit1 :=strings.Split(v,"[Joomla ")
+					tmpSplit2 :=strings.Split(tmpSplit1[1],"]")
+					selectedVer := tmpSplit2[0]	
+					for _, v := range joomlaKBList {
+						if strings.Contains(v[1],",") {
+							s := strings.Split(string(v[1]),",")
+							for _, s1 := range s {
+								if strings.Contains(s1,"-") {
+									s2 := strings.Split(s1,"-")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								} else { 
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s1)
+									if va0.Equal(va1) {
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								}
+							}	
+						} else {
+							if strings.Contains(v[1],"-") {
+								s2 := strings.Split(v[1],"-")
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(s2[0])
+								va2, err := version.NewVersion(s2[1])
+								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							} else { 
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(v[1])
+								if va0.Equal(va1) {
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							}
+
+						}			
+					}
+				}					
+				if strings.Contains(v,"Wordpress") {
+					tmpSplit1 :=strings.Split(v,"[Wordpress ")
+					tmpSplit2 :=strings.Split(tmpSplit1[1],"]")
+					selectedVer := tmpSplit2[0]	
+					for _, v := range joomlaKBList {
+						if strings.Contains(v[1],",") {
+							s := strings.Split(string(v[1]),",")
+							for _, s1 := range s {
+								if strings.Contains(s1,"-") {
+									s2 := strings.Split(s1,"-")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								} else { 
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s1)
+									if va0.Equal(va1) {
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								}
+							}	
+						} else {
+							if strings.Contains(v[1],"-") {
+								s2 := strings.Split(v[1],"-")
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(s2[0])
+								va2, err := version.NewVersion(s2[1])
+								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							} else { 
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(v[1])
+								if va0.Equal(va1) {
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							}
+
+						}			
+					}
+				}		
+				if strings.Contains(v,"Drupal") {
+					tmpSplit1 :=strings.Split(v,"[Drupal ")
+					tmpSplit2 :=strings.Split(tmpSplit1[1],"]")
+					selectedVer := tmpSplit2[0]	
+					for _, v := range joomlaKBList {
+						if strings.Contains(v[1],",") {
+							s := strings.Split(string(v[1]),",")
+							for _, s1 := range s {
+								if strings.Contains(s1,"-") {
+									s2 := strings.Split(s1,"-")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								} else { 
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s1)
+									if va0.Equal(va1) {
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err
+								}
+							}	
+						} else {
+							if strings.Contains(v[1],"-") {
+								s2 := strings.Split(v[1],"-")
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(s2[0])
+								va2, err := version.NewVersion(s2[1])
+								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							} else { 
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(v[1])
+								if va0.Equal(va1) {
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err
+							}
+
+						}			
+					}
+				}				
 			}
 		}		
 		//end
