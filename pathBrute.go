@@ -31,7 +31,13 @@ var CMSmode = false
 var SpreadMode = false
 var Statuscode = 0
 var currentCount int32 = 0 
+
+var totalListCount int = 0
+var currentListCount int = 1
+
 var currentFakeCount int32 = 0 
+var currentProgressCount int32 = 0 
+
 var Pathsource = ""
 var tmpTitleList [][]string	
 var tmpResultList [][]string	
@@ -226,53 +232,38 @@ func getUrlWorker(urlChan chan string) {
 							if newUrl==finalURL { 				
 							//if each[0]==finalURL {   		
 								if each[1]!=strings.TrimSpace(tmpTitle) {
-									//here
 									if tmpTitle!="Error" && tmpTitle!="Request Rejected"{
-										//fmt.Println("xxx ",finalURL,each[2],strconv.Itoa(lenBody),each[3],strconv.Itoa(resp.StatusCode))
 										if (each[2]!=strconv.Itoa(lenBody) || each[3]!=strconv.Itoa(resp.StatusCode)){
 											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500  {
-												//fmt.Println("yyy ",finalURL, each[2], strconv.Itoa(lenBody),each[3], resp.StatusCode)
-												//fmt.Println("yyy0 ",newUrl,finalURL)
-												//fmt.Println("yyy1 ",each[1])
-												//fmt.Println("yyy2 ",strings.TrimSpace(tmpTitle))
 												if CMSmode==false {
-													//fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle)					
-
 													if tmpStatusCode=="200"{
-														fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle)
-														//fmt.Println(each[1])
-														//fmt.Println(tmpTitle)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
 													} else if tmpStatusCode=="401"{
-														fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
 													} else {
-														fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
 													}
 
 												}
-												//fmt.Println("add ",newUrl)
 												var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-												//fmt.Println("here6 ",a)
 												tmpResultList = append(tmpResultList,a...)
+												currentListCount+=1
 											}
 										}
 									}
 								} else {
-									//fmt.Printf("%s [%s] [%d] [%s] \n",newUrl, color.GreenString(tmpStatusCode), lenBody, tmpTitle)					
 									if each[3]!=tmpStatusCode{
 										var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-										//fmt.Println("here5 ",a)
 										tmpResultList = append(tmpResultList,a...)
-										//fmt.Println("add1 ",newUrl)
 									}
 									if tmpStatusCode=="200"{
-										fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
 									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle)										
-										//fmt.Println(each)
-										//fmt.Println(strings.TrimSpace(tmpTitle))
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)										
 									} else {
-										fmt.Printf("%s [%s] [%d] [%s]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
 									}
+									currentListCount+=1
 
 								}
 							}
@@ -709,6 +700,8 @@ func main() {
 			  }
 			}
 		}
+	
+		totalListCount=len(finalList)
 
 		urlChan := make(chan string)
 		if intelligentMode==true {
@@ -759,7 +752,6 @@ func main() {
 		close(urlChan)  
 		for {
 			time.Sleep(10 * time.Millisecond)
-			//fmt.Println(len(finalList),currentCount )
 			if len(finalList)==int(currentCount) {
 				fmt.Println("\n[*] Processing results. Please wait...")
 				break
@@ -786,10 +778,8 @@ func main() {
 							} else {
 								s := strings.Split(bodyStr,"\n")
 								for _, v1 := range s {
-									//fmt.Println(v1)
 
 									if strings.Contains(v1,"<version>") {
-										//fmt.Println(v1)
 										v1=strings.Replace(v1,"</version>","",1)
 										v1=strings.Replace(v1,"<version>","",1)
 										v1=strings.TrimSpace(v1)
