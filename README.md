@@ -27,6 +27,7 @@ go github.com/hashicorp/go-version
 go build pathBrute.go
 ```
   
+#Example 
 ```
 ./pathBrute -s default -f urls.txt -v -i -n 25 
 [*] Getting Default Page Title for Invalid URI Paths
