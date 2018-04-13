@@ -17,6 +17,15 @@ Options:
       --cms        Fingerprint CMS
   -x               Test a URI path across all target hosts instead of testing all URI paths against a host before moving onto next host
 ```
+
+#Compilation
+```
+go get github.com/mkideal/cli
+go get github.com/badoux/goscraper
+go get github.com/fatih/color
+go github.com/hashicorp/go-version
+go build pathBrute.go
+```
   
 ```
 ./pathBrute -s default -f urls.txt -v -i -n 25 
