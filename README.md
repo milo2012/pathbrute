@@ -51,7 +51,7 @@ http://zzzz.com/administrator/language/en-GB/en-GB.xml [200] [6139] [] [67 of 68
 -- redacted for brevity --- 
 
 [*] Processing results. Please wait...
-http://fero-ffff.com [Joomla 3.8.6]
+http://ffff.com [Joomla 3.8.6]
 http://eeee.com/web [Wordpress 4.9.2]
 http://xxxx.com [Joomla 2.5.28]
 http://yyyy.com [Joomla 1.7.1]
@@ -60,5 +60,5 @@ http://hhhh.com [Wordpress 4.6.11]
 http://iiii.com [Wordpress 4.9.5]
 https://jjjj.com [Wordpress 4.9.3]
 https://kkkk.com [Wordpress 4.9.5]
-https://www.theridgeproject.com [Wordpress 4.9.5]
+https://llll.com [Wordpress 4.9.5]
 ```
