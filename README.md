@@ -35,4 +35,30 @@ http://xxxx.com/AE/index.jsp [404] [168] [404 Not Found]
 http://xxxx.com/.web [404] [168] [404 Not Found]
 http://xxxx.com/ADS-EJB [200] [482] []
 ```
+  
+#Example using the --cms option
+```
+$ /git/pathbrute/pathBrute -U urls.txt --cms -i -v
 
+[*] Testing URI Paths
+http://xxxx.com/CHANGELOG.txt [404] [1118] [404 Not Found] [59 of 68]
+http://yyyy.com/wp-links-opml.php [404] [2139] [404 - Error: 404] [61 of 68]
+http://zzzz.com/wp-links-opml.php [200] [5930] [] [64 of 68]
+http://zzzz.com/administrator/manifests/files/joomla.xml [200] [6154] [] [65 of 68]
+http://zzzz.com/CHANGELOG.txt [200] [5898] [] [66 of 68]
+http://zzzz.com/administrator/language/en-GB/en-GB.xml [200] [6139] [] [67 of 68]
+
+-- redacted for brevity --- 
+
+[*] Processing results. Please wait...
+http://fero-ffff.com [Joomla 3.8.6]
+http://eeee.com/web [Wordpress 4.9.2]
+http://xxxx.com [Joomla 2.5.28]
+http://yyyy.com [Joomla 1.7.1]
+http://gggg.com [Drupal 7.21]
+http://hhhh.com [Wordpress 4.6.11]
+http://iiii.com [Wordpress 4.9.5]
+https://jjjj.com [Wordpress 4.9.3]
+https://kkkk.com [Wordpress 4.9.5]
+https://www.theridgeproject.com [Wordpress 4.9.5]
+```
