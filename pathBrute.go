@@ -30,7 +30,7 @@ var intelligentMode = false
 var CMSmode = false
 var SpreadMode = false
 var Statuscode = 0
-var currentCount int32 = 0 
+var currentCount int = 0 
 
 var totalListCount int = 0
 var currentListCount int = 1
@@ -180,7 +180,9 @@ func getUrlWorker(urlChan chan string) {
 			} else {
 				fmt.Printf("%s [%s]\n",newUrl, color.RedString(err.Error()))
 			}
-			atomic.AddInt32(&currentCount, 1)
+			currentCount+=1
+			currentListCount+=1
+			//atomic.AddInt(&currentCount, 1)
 		} else {
 			if verboseMode==true {
 				/*if moreData==false {
@@ -237,17 +239,17 @@ func getUrlWorker(urlChan chan string) {
 											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500  {
 												if CMSmode==false {
 													if tmpStatusCode=="200"{
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 													} else if tmpStatusCode=="401"{
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 													} else {
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
+														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 													}
 
 												}
 												var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 												tmpResultList = append(tmpResultList,a...)
-												currentListCount+=1
+												//currentListCount+=1
 											}
 										}
 									}
@@ -257,13 +259,13 @@ func getUrlWorker(urlChan chan string) {
 										tmpResultList = append(tmpResultList,a...)
 									}
 									if tmpStatusCode=="200"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)										
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 									} else {
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentCount,totalListCount)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 									}
-									currentListCount+=1
+									//currentListCount+=1
 
 								}
 							}
@@ -334,7 +336,9 @@ func getUrlWorker(urlChan chan string) {
 				}
 			}
 			resp.Body.Close()
-			atomic.AddInt32(&currentCount, 1)
+			currentCount+=1
+			currentListCount+=1
+			//atomic.AddInt(&currentCount, 1)
 		} 
 		_ = err
 		_ = resp
@@ -701,8 +705,6 @@ func main() {
 			}
 		}
 	
-		totalListCount=len(finalList)
-
 		urlChan := make(chan string)
 		if intelligentMode==true {
 			var wg1 sync.WaitGroup
@@ -742,6 +744,8 @@ func main() {
 		}
 
 
+		totalListCount=len(finalList)
+
 		fmt.Println("\n[*] Testing URI Paths")
 		//real uripaths
 		completed1 := 0
@@ -750,9 +754,11 @@ func main() {
 			completed1++
 		}
 		close(urlChan)  
+		
 		for {
 			time.Sleep(10 * time.Millisecond)
 			if len(finalList)==int(currentCount) {
+				//if len(finalList)==int(currentListCount) {
 				fmt.Println("\n[*] Processing results. Please wait...")
 				break
 			}
