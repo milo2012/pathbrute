@@ -1,6 +1,6 @@
 # pathbrute
 Pathbrute  
-**Please check RELEASE section for copmiled executables**  
+**Please check RELEASE section for compiled executables**  
   
 ```
 $ ./pathBrute -h
