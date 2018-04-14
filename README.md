@@ -1,5 +1,8 @@
 # pathbrute
 Pathbrute  
+  
+Pathbrute has a number of wordlists from metasploit/exploit-database and other sources that it uses to discover interesting content on servers.  
+  
 **Please check RELEASE section for compiled executables**  
   
 ```
