@@ -443,7 +443,7 @@ type argT struct {
 	URLpath string `cli:"u,url" usage:"Url of website"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
 	Path string `cli:"p,path" usage:"URI path"`
-	Pathsource string `cli:"s,source" usage:"Path source (default | msf | RobotsDisallowed | SecLists)"`
+	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | RobotsDisallowed | SecLists)"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads"`
 	Statuscode int  `cli:"c" usage:"Status code"`
 	Intellimode bool `cli:"i" usage:"Intelligent mode"`
@@ -503,6 +503,26 @@ func main() {
 			os.Exit(1)
 		}()		
 	
+		if len(pFilename)>0 {		
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				log.Printf("File %s not exists", pFilename)
+				os.Exit(3)
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+				_ = err2
+			}		
+		} 
+		if len(uriPath)>0 {
+			pathList = append(pathList, uriPath)
+		}
+
 		if Pathsource=="default" {
 			pFilename = "defaultPaths.txt"
 			_, err1 := os.Stat("defaultPaths.txt")
@@ -541,6 +561,25 @@ func main() {
 			}		
 			_ = err2
 		}
+		if Pathsource=="exploitdb" {
+			pFilename = "exploit_db.txt"
+			_, err1 := os.Stat("exploit_db.txt")
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploit_db.txt"
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile("exploit_db.txt", fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines("exploit_db.txt")
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}		
 		if Pathsource=="SecLists" {
 			pFilename = "SecLists-common.txt"
 			_, err1 := os.Stat("SecLists-common.txt")
@@ -646,26 +685,7 @@ func main() {
 		    	pathList = append(pathList,v)
 		    }
 		} 
-		if len(pFilename)>0 {		
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				log.Printf("File %s not exists", pFilename)
-				os.Exit(3)
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
-					}
-				}		
-				_ = err2
-		} 
-		if len(uriPath)>0 {
-			pathList = append(pathList, uriPath)
-		}
-
+		
 		var finalList []string
 
 		if SpreadMode==false {
@@ -673,16 +693,16 @@ func main() {
 			  for _, v := range pathList {
 				url := x      		
 				path := v
+				newUrl := ""
 				if strings.HasSuffix(url,"/") {
 					url=url[0:len(url)-1]
 				}			
 				if strings.HasPrefix(path,"/") {
-					newUrl := url+path
-					finalList = append(finalList, newUrl)
+					newUrl = url+path
 				} else {		
-					newUrl := url+"/"+path
-					finalList = append(finalList, newUrl)
+					newUrl = url+"/"+path
 				}
+				finalList = append(finalList, newUrl)
 			  }
 			}
 		} else {
@@ -690,21 +710,21 @@ func main() {
 			  for _, x := range contentList {
 				url := x      		
 				path := v
+				newUrl := ""
 				if strings.HasSuffix(url,"/") {
 					url=url[0:len(url)-1]
 				}			
 				if strings.HasPrefix(path,"/") {
-					newUrl := url+path
-					finalList = append(finalList, newUrl)
+					newUrl = url+path
 				} else {		
-					newUrl := url+"/"+path
-					finalList = append(finalList, newUrl)
+					newUrl = url+"/"+path
 					//fmt.Println(newUrl)
 				}
+				finalList = append(finalList, newUrl)
 			  }
 			}
 		}
-	
+
 		urlChan := make(chan string)
 		if intelligentMode==true {
 			var wg1 sync.WaitGroup
