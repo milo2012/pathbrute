@@ -11,7 +11,7 @@ Options:
   -u, --url        Url of website
   -P, --Paths      File containing list of URI paths
   -p, --path       URI path
-  -s, --source     Path source (default | msf | RobotsDisallowed | SecLists)
+  -s, --source     Path source (default | msf | exploitdb | RobotsDisallowed | SecLists)
   -n, --threads    No of concurrent threads
   -c               Status code
   -i               Intelligent mode
