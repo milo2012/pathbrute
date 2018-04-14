@@ -911,6 +911,8 @@ func main() {
 			drupalKBList = append(drupalKBList,a...)
 			b = [][]string{{"drupal","7.15,7.2","PHP XML-RPC Arbitrary Code Execution","exploit/unix/webapp/php_xmlrpc_eval"}}
 			drupalKBList = append(drupalKBList,b...)
+			c = [][]string{{"drupal","7.0-7.56,8.0<8.3.9,8.4.0<8.4.6,8.5.0-8.5.1","CVE-2018-7600 / SA-CORE-2018-002","https://github.com/a2u/CVE-2018-7600"}}
+			drupalKBList = append(drupalKBList,c...)
 			
 			RemoveDuplicates(&tmpResultList1)
 			sort.Strings(tmpResultList1)
@@ -933,6 +935,15 @@ func main() {
 										fmt.Printf("%s [%s]\n\n",v[2],v[3])
 									}
 									_ = err
+								} else if strings.Contains(s1,"<") {
+									s2 := strings.Split(s1,"<")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
@@ -952,6 +963,15 @@ func main() {
 									fmt.Printf("%s [%s]\n\n",v[2],v[3])
 								}
 								_ = err
+							} else if strings.Contains(v[1],"<") {
+								s2 := strings.Split(v[1],"<")
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(s2[0])
+								va2, err := version.NewVersion(s2[1])
+								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err		
 							} else { 
 								va0, err := version.NewVersion(selectedVer)
 								va1, err := version.NewVersion(v[1])
@@ -968,7 +988,7 @@ func main() {
 					tmpSplit1 :=strings.Split(v,"[Wordpress ")
 					tmpSplit2 :=strings.Split(tmpSplit1[1],"]")
 					selectedVer := tmpSplit2[0]	
-					for _, v := range joomlaKBList {
+					for _, v := range wpKBList {
 						if strings.Contains(v[1],",") {
 							s := strings.Split(string(v[1]),",")
 							for _, s1 := range s {
@@ -981,6 +1001,15 @@ func main() {
 										fmt.Printf("%s [%s]\n\n",v[2],v[3])
 									}
 									_ = err
+								} else if strings.Contains(s1,"<") {
+									s2 := strings.Split(s1,"<")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
@@ -1000,6 +1029,15 @@ func main() {
 									fmt.Printf("%s [%s]\n\n",v[2],v[3])
 								}
 								_ = err
+							} else if strings.Contains(v[1],"<") {
+								s2 := strings.Split(v[1],"<")
+								va0, err := version.NewVersion(selectedVer)
+								va1, err := version.NewVersion(s2[0])
+								va2, err := version.NewVersion(s2[1])
+								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+									fmt.Printf("%s [%s]\n\n",v[2],v[3])
+								}
+								_ = err		
 							} else { 
 								va0, err := version.NewVersion(selectedVer)
 								va1, err := version.NewVersion(v[1])
@@ -1016,7 +1054,7 @@ func main() {
 					tmpSplit1 :=strings.Split(v,"[Drupal ")
 					tmpSplit2 :=strings.Split(tmpSplit1[1],"]")
 					selectedVer := tmpSplit2[0]	
-					for _, v := range joomlaKBList {
+					for _, v := range drupalKBList {
 						if strings.Contains(v[1],",") {
 							s := strings.Split(string(v[1]),",")
 							for _, s1 := range s {
@@ -1029,6 +1067,15 @@ func main() {
 										fmt.Printf("%s [%s]\n\n",v[2],v[3])
 									}
 									_ = err
+								} else if strings.Contains(s1,"<") {
+									s2 := strings.Split(s1,"<")
+									va0, err := version.NewVersion(selectedVer)
+									va1, err := version.NewVersion(s2[0])
+									va2, err := version.NewVersion(s2[1])
+									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+									}
+									_ = err									
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
