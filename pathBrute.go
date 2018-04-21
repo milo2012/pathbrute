@@ -118,17 +118,17 @@ func testFakePath(urlChan chan string) {
 					//fmt.Println(newUrl,s.Preview.Title)
 					if verboseMode==true {
 						var tmpTitle=strings.TrimSpace(s.Preview.Title)
-						//fmt.Printf("%s [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode), tmpTitle)
+						//fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 						if tmpStatusCode=="200"{
-							fmt.Printf("%s [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode), tmpTitle)
+							fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 							var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 							tmpResultList = append(tmpResultList,a...)
 						} else if tmpStatusCode=="401"{
-							fmt.Printf("%s [%s] [%s]\n",newUrl+"/xxx", color.GreenString(tmpStatusCode), tmpTitle)
+							fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 							var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 							tmpResultList = append(tmpResultList,a...)
 						} else {
-							fmt.Printf("%s [%s] [%s]\n",newUrl+"/xxx", color.RedString(tmpStatusCode), tmpTitle)
+							fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 						}
 
 						var a = [][]string{{newUrl, s.Preview.Title, strconv.Itoa(lenBody), tmpStatusCode}}
@@ -162,6 +162,7 @@ func getUrlWorker(urlChan chan string) {
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		resp, err := client.Get(newUrl)
+		initialStatusCode := strconv.Itoa(resp.StatusCode)
 		//currentCount+=1
 		var tmpTitle = ""
 		if err!=nil{			
@@ -236,34 +237,29 @@ func getUrlWorker(urlChan chan string) {
 								if each[1]!=strings.TrimSpace(tmpTitle) {
 									if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 										if (each[2]!=strconv.Itoa(lenBody) || each[3]!=strconv.Itoa(resp.StatusCode)){
-											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500  {
+											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 												if CMSmode==false {
-													if tmpStatusCode=="200"{
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-													} else if tmpStatusCode=="401"{
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-													} else {
-														fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+													if each[3]!=initialStatusCode {
+														var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+														tmpResultList = append(tmpResultList,a...)
 													}
-
 												}
-												var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-												tmpResultList = append(tmpResultList,a...)
-												//currentListCount+=1
 											}
 										}
 									}
 								} else {
-									if each[3]!=tmpStatusCode{
+									if each[3]!=initialStatusCode {
+										//&& tmpStatusCode!="204" {
+										fmt.Printf("xxx")
 										var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 										tmpResultList = append(tmpResultList,a...)
 									}
 									if tmpStatusCode=="200"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 									} else {
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 									}
 									//currentListCount+=1
 
@@ -927,14 +923,29 @@ func main() {
 		}
 		close(urlChan)  
 		
+		var tmpLastCount = 0
+		var lastTime = time.Now()
+
 		for {
 			time.Sleep(10 * time.Millisecond)
 			if len(finalList)==int(currentCount) {
 				//if len(finalList)==int(currentListCount) {
 				fmt.Println("\n[*] Processing results. Please wait...")
 				break
-			}
-		}    
+			} else {
+				if int(currentCount)!=int(tmpLastCount) {
+					tmpLastCount = int(currentCount)
+					lastTime=time.Now()
+				} else {
+					t := time.Now()
+					elapsed := t.Sub(lastTime)
+					if elapsed.Seconds()>60 && currentCount>0 {
+						fmt.Println("here\n")
+						break 
+					}
+				}									
+			} 
+		}   
 	
 		fmt.Println("\n")
 		if CMSmode==true {
