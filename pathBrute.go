@@ -162,10 +162,11 @@ func getUrlWorker(urlChan chan string) {
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		resp, err := client.Get(newUrl)
-		initialStatusCode := strconv.Itoa(resp.StatusCode)
+		initialStatusCode := ""
 		//currentCount+=1
 		var tmpTitle = ""
 		if err!=nil{			
+			initialStatusCode = strconv.Itoa(resp.StatusCode)
 			if strings.Contains(err.Error(),"Client.Timeout exceeded") {
 				fmt.Printf("%s [%s]\n",newUrl, color.RedString("Timeout"))						
 			} else if strings.Contains(err.Error(),"connection refused") {
