@@ -14,7 +14,7 @@ Options:
   -u, --url        Url of website
   -P, --Paths      File containing list of URI paths
   -p, --path       URI path
-  -s, --source     Path source (default | msf | exploitdb | RobotsDisallowed | SecLists)
+  -s, --source     Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php  | RobotsDisallowed | SecLists)
   -n, --threads    No of concurrent threads
   -c               Status code
   -i               Intelligent mode
