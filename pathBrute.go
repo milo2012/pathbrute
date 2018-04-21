@@ -93,7 +93,7 @@ func removeCharacters(input string, characters string) string {
 
 func testFakePath(urlChan chan string) {
     for newUrl := range urlChan {
-		timeout := time.Duration(15 * time.Second)
+		timeout := time.Duration(8 * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
@@ -156,7 +156,7 @@ func getUrlWorker(urlChan chan string) {
     	//if verboseMode == true {
 		//	fmt.Printf("Checking: %s \n\r",newUrl)
 		//}
-		timeout := time.Duration(15 * time.Second)
+		timeout := time.Duration(8 * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
@@ -234,7 +234,7 @@ func getUrlWorker(urlChan chan string) {
 							if newUrl==finalURL { 				
 							//if each[0]==finalURL {   		
 								if each[1]!=strings.TrimSpace(tmpTitle) {
-									if tmpTitle!="Error" && tmpTitle!="Request Rejected"{
+									if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 										if (each[2]!=strconv.Itoa(lenBody) || each[3]!=strconv.Itoa(resp.StatusCode)){
 											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500  {
 												if CMSmode==false {
@@ -364,7 +364,7 @@ func readLines(path string) ([]string, error) {
 }
 
 func testURL(newUrl string) {   
-	timeout := time.Duration(15 * time.Second)
+	timeout := time.Duration(8 * time.Second)
 	client := http.Client{
 	    Timeout: timeout,
 	}
@@ -443,7 +443,7 @@ type argT struct {
 	URLpath string `cli:"u,url" usage:"Url of website"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
 	Path string `cli:"p,path" usage:"URI path"`
-	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | RobotsDisallowed | SecLists)"`
+	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php  | RobotsDisallowed | SecLists)"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads"`
 	Statuscode int  `cli:"c" usage:"Status code"`
 	Intellimode bool `cli:"i" usage:"Intelligent mode"`
@@ -567,11 +567,11 @@ func main() {
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploit_db.txt"
 				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile("exploit_db.txt", fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
 				_ = err
 			}
 			_ = err1
-			lines, err2 := readLines("exploit_db.txt")
+			lines, err2 := readLines(pFilename)
 			for _, v := range lines {
 				v=strings.TrimSpace(v)
 				if len(v)>0 {
@@ -580,6 +580,158 @@ func main() {
 			}		
 			_ = err2
 		}		
+		if Pathsource=="exploitdb-asp" {
+			pFilename = "exploitdb_asp.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}		
+		if Pathsource=="exploitdb-aspx" {
+			pFilename = "exploitdb_aspx.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}		
+		if Pathsource=="exploitdb-cfm" {
+			pFilename = "exploitdb_cfm.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-cgi" {
+			pFilename = "exploitdb_cgi.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-jsp" {
+			pFilename = "exploitdb_jsp.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-jsp" {
+			pFilename = "exploitdb_jsp.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-perl" {
+			pFilename = "exploitdb_perl.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-php" {
+			pFilename = "exploitdb_php.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			for _, v := range lines {
+				v=strings.TrimSpace(v)
+				if len(v)>0 {
+					pathList = append(pathList, v)
+				}
+			}		
+			_ = err2
+		}	
 		if Pathsource=="SecLists" {
 			pFilename = "SecLists-common.txt"
 			_, err1 := os.Stat("SecLists-common.txt")
@@ -788,7 +940,7 @@ func main() {
 		if CMSmode==true {
 			for _, v := range tmpResultList {
 				var wpVer = ""
-				timeout := time.Duration(15 * time.Second)
+				timeout := time.Duration(8 * time.Second)
 				client := http.Client{
 					Timeout: timeout,
 				}
