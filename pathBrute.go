@@ -235,11 +235,20 @@ func getUrlWorker(urlChan chan string) {
 							if newUrl==finalURL { 				
 							//if each[0]==finalURL {   		
 								if each[1]!=strings.TrimSpace(tmpTitle) {
+									//fmt.Println(each[2])
+									if tmpStatusCode=="200"{
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+									} else if tmpStatusCode=="401"{
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+									} else {
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+
 									if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 										if (each[2]!=strconv.Itoa(lenBody) || each[3]!=strconv.Itoa(resp.StatusCode)){
 											if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 												if CMSmode==false {
-													if each[3]!=initialStatusCode {
+													if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
 														var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 														tmpResultList = append(tmpResultList,a...)
 													}
@@ -249,8 +258,6 @@ func getUrlWorker(urlChan chan string) {
 									}
 								} else {
 									if each[3]!=initialStatusCode {
-										//&& tmpStatusCode!="204" {
-										fmt.Printf("xxx")
 										var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 										tmpResultList = append(tmpResultList,a...)
 									}
@@ -275,7 +282,10 @@ func getUrlWorker(urlChan chan string) {
 							fmt.Printf("*** %s [%s] [%d] [%s] \n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle)					
 							var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 							tmpResultList = append(tmpResultList,a...)
-						}
+						} else {
+								//fmt.Printf("yyy")
+								// %s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+						}						
 					} else {				
 						if tmpStatusCode=="200"{
 							fmt.Printf("%s [%s] [%d] [%s] \n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle)					
