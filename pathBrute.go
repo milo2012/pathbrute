@@ -166,7 +166,6 @@ func getUrlWorker(urlChan chan string) {
 		//currentCount+=1
 		var tmpTitle = ""
 		if err!=nil{			
-			initialStatusCode = strconv.Itoa(resp.StatusCode)
 			if strings.Contains(err.Error(),"Client.Timeout exceeded") {
 				fmt.Printf("%s [%s]\n",newUrl, color.RedString("Timeout"))						
 			} else if strings.Contains(err.Error(),"connection refused") {
@@ -186,6 +185,7 @@ func getUrlWorker(urlChan chan string) {
 			currentListCount+=1
 			//atomic.AddInt(&currentCount, 1)
 		} else {
+			initialStatusCode = strconv.Itoa(resp.StatusCode)
 			if verboseMode==true {
 				/*if moreData==false {
 					tmpStatusCode := strconv.Itoa(resp.StatusCode)
