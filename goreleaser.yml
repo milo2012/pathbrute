@@ -1,3 +1,4 @@
+repo: milo2012/pathbrute
 binary_name: release
 brew:
   repo: goreleaser/homebrew-formulae
