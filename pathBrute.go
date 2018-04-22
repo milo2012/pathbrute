@@ -623,10 +623,10 @@ func main() {
 			_ = err2
 		}
 		if Pathsource=="exploitdb" {
-			pFilename = "exploit_db.txt"
-			_, err1 := os.Stat("exploit_db.txt")
+			pFilename = "exploitdb_all.txt"
+			_, err1 := os.Stat(pFilename)
 			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploit_db.txt"
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
 				_ = err
