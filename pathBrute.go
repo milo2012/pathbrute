@@ -92,8 +92,8 @@ func cleanup() {
 			if err==nil {
 				lenBody = len(body)
 			}
-			fmt.Printf("%s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-			log.Printf("%s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+			fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+			log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
 		}
 	}
 }
@@ -1145,8 +1145,8 @@ func main() {
 					if err==nil {
 						lenBody = len(body)
 					}
-					fmt.Printf("%s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					log.Printf("%s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+					fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
 					//fmt.Printf("%s\n",v)
 				}
 			}
