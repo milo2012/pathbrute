@@ -1,0 +1,9 @@
+binary_name: release
+brew:
+  repo: goreleaser/homebrew-formulae
+build:
+  main: pathBrute.go
+  oses:
+    - windows
+    - darwin
+    - linux
