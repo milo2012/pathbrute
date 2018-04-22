@@ -115,10 +115,8 @@ func testFakePath(urlChan chan string) {
 					//if finalURL==newUrl {
 					tmpStatusCode := strconv.Itoa(initialStatusCode)
 					newUrl = strings.Replace(newUrl, "/xxx", "", -1)
-					//fmt.Println(newUrl,s.Preview.Title)
 					if verboseMode==true {
 						var tmpTitle=strings.TrimSpace(s.Preview.Title)
-						//fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 						if tmpStatusCode=="200"{
 							fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), tmpTitle)
 							var a = [][]string{{newUrl, tmpStatusCode, "",""}}
@@ -138,7 +136,6 @@ func testFakePath(urlChan chan string) {
 					//}
 					_ = err
 				}
-			//}
 			resp.Body.Close()
 			}
 		} 
@@ -259,8 +256,10 @@ func getUrlWorker(urlChan chan string) {
 									}
 								} else {
 									if each[3]!=initialStatusCode {
-										var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-										tmpResultList = append(tmpResultList,a...)
+										if tmpStatusCode!="404" && tmpStatusCode!="500" && tmpStatusCode!="204" {
+											var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+											tmpResultList = append(tmpResultList,a...)
+										}
 									}
 									if tmpStatusCode=="200"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
