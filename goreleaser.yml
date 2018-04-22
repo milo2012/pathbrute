@@ -1,10 +1,9 @@
-repo: milo2012/pathbrute
-binary_name: release
-brew:
-  repo: goreleaser/homebrew-formulae
 build:
-  main: pathBrute.go
-  oses:
-    - windows
-    - darwin
-    - linux
+  main: ./pathBrute.go
+  goarch:
+    - amd64
+brew:
+  github:
+    owner: milo2012
+    name: homebrew-tap
+  folder: Formula
