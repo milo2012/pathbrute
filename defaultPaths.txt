@@ -250,7 +250,7 @@
 /WebSphereSamples.Configuration.config
 /WebSphereSamples/
 /WebSphereSamples/SingleSamples/AccountAndTransfer/create.html
-/WebSphereSamples/SingleSamples/Increment/increment.html
+v/WebSphereSamples/SingleSamples/Increment/increment.html
 /WebSphereSamples/YourCo/main.html
 /_DynaCacheEsi
 /_DynaCacheEsi/esiInvalidator
@@ -1780,6 +1780,7 @@
 /uddisoap/
 /undeploy
 /user
+/user/register
 /useradmin
 /useradmin/index.jsp
 /userhome/
