@@ -35,12 +35,17 @@ Options:
 ```
 
 #Compilation
-```
+``
+#Manual Compilation  `
 go get github.com/mkideal/cli
 go get github.com/badoux/goscraper
 go get github.com/fatih/color
 go github.com/hashicorp/go-version
-go build pathBrute.go
+go build pathBrute.go  
+
+or 
+#The easier way...
+go get github.com/milo2012/pathbrute
 ```
   
 #Example 
