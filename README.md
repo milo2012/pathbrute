@@ -3,7 +3,16 @@ Pathbrute
   
 Pathbrute has a number of wordlists from metasploit/exploit-database and other sources that it uses to discover interesting content on servers.  
   
-**Please check RELEASE section for compiled executables**  
+pathBrute contains/uses a number of self compiled wordlists for identifying “interesting” content and potentially vulnerable websites.
+1) More than 13924 URI paths from Exploit-Database 
+2) URI paths from Metasploit Framework
+
+pathBrute can also use wordlists from other sources if you prefer.  
+pathBrute can also be used for identifying if any type of CMS (Joomla, WordPress and Drupal) is running on the target websites and fingerprint the versions of the CMS using the –cms option.  
+  
+Binaries for different platforms and architectures are available in the the release section.  
+ 
+**Please check RELEASE section for compiled executables**    
   
 ```
 $ ./pathBrute -h
@@ -21,6 +30,8 @@ Options:
   -v, --verbose    Verbose mode
       --cms        Fingerprint CMS
   -x               Test a URI path across all target hosts instead of testing all URI paths against a host before moving onto next host
+  -l, --log        Output to log file
+  -r               Resume from x as in [x of 9999]
 ```
 
 #Compilation
