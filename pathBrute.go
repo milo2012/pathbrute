@@ -125,7 +125,9 @@ func cleanup() {
 		for _, v := range tmpResultList3 {
 			fmt.Println(v)
 		}
-	}	
+	} else {
+		fmt.Println("\nNo results found")
+	}
 	os.Exit(3)
 }
 
@@ -220,10 +222,11 @@ func getUrlWorker(urlChan chan string) {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		if ContinueNum>0 && ContinueNum>currentListCount {
-			currentCount+=1
-			currentListCount+=1
-		} 
+		//if ContinueNum>0 && ContinueNum>currentListCount {
+		//	currentCount+=1
+		//	currentListCount+=1
+		//	fmt.Println(currentListCount)
+		//} 
 		if ContinueNum==0 || ContinueNum<=currentListCount {					
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
@@ -414,7 +417,11 @@ func getUrlWorker(urlChan chan string) {
 			_ = err
 			_ = resp
 			_ = tmpTitle 
+		} else {
+			currentCount+=1
+			currentListCount+=1
 		}
+		//if ContinueNum==0 || ContinueNum<=currentListCount {					
     }
 }
 
@@ -597,7 +604,7 @@ func main() {
 		go func() {
 			<-c
 			cleanup()
-			os.Exit(1)
+			os.Exit(3)
 		}()		
 	
 		if len(pFilename)>0 {		
@@ -1060,7 +1067,6 @@ func main() {
 		for {
 			time.Sleep(10 * time.Millisecond)
 			if len(finalList)==int(currentCount) {
-				//if len(finalList)==int(currentListCount) {
 				fmt.Println("\n[*] Processing results. Please wait...")
 				log.Printf("\n[*] Processing results. Please wait...")
 				break
