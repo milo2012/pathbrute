@@ -89,17 +89,21 @@ func cleanup() {
 			}
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 			resp, err := client.Get(v)
-			s, err := goscraper.Scrape(v, 5)
-			var tmpTitle=strings.TrimSpace(s.Preview.Title)
-			var lenBody = 0
-			body, err := ioutil.ReadAll(resp.Body)
-			if err==nil {
-				lenBody = len(body)
+			if err == nil {
+				s, err := goscraper.Scrape(v, 5)
+				if err == nil {
+					var tmpTitle=strings.TrimSpace(s.Preview.Title)
+					var lenBody = 0
+					body, err := ioutil.ReadAll(resp.Body)
+					if err==nil {
+						lenBody = len(body)
+					}
+					var a = v+" "+(strconv.Itoa(resp.StatusCode))+" ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
+					tmpResultList3 = append(tmpResultList3,a)
+					//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					//log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+				}
 			}
-			var a = v+" "+(strconv.Itoa(resp.StatusCode))+" ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
-			tmpResultList3 = append(tmpResultList3,a)
-			//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-			//log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
 		}
 	}
 	if len(tmpResultList3)>0 {
@@ -413,18 +417,8 @@ func testURL(newUrl string) {
 	resp, err := client.Get(newUrl)
 	if err == nil{
 		fmt.Println("ooo %s [%s]",newUrl, resp.StatusCode)
-		//if resp.StatusCode==200{
-	    //    fmt.Println("Working "+newUrl)
-	    //    s, err := goscraper.Scrape(newUrl, 5)
-	    //    if err == nil {
-		//        fmt.Printf("%s : %s\n", newUrl, s.Preview.Title)
-	    //    }
-		//}
 		resp.Body.Close()
 	} 
-	//else {
-	//	fmt.Println("%s\n",err)		
-	//}
 	_ = err
 	_ = resp
 }
@@ -569,13 +563,15 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
 				}
-				_ = err2
 			}		
+			_ = err2
 		} 
 		if len(uriPath)>0 {
 			pathList = append(pathList, uriPath)
@@ -592,12 +588,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines("defaultPaths.txt")
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+			}
 			_ = err2
 		}		
 		if Pathsource=="msf" {
@@ -611,12 +609,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines("pathList.txt")
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}
 		if Pathsource=="exploitdb" {
@@ -630,12 +630,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}		
 		if Pathsource=="exploitdb-asp" {
@@ -649,12 +651,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}		
 		if Pathsource=="exploitdb-aspx" {
@@ -668,12 +672,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}		
 		if Pathsource=="exploitdb-cfm" {
@@ -687,12 +693,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="exploitdb-cgi" {
@@ -706,12 +714,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="exploitdb-jsp" {
@@ -725,12 +735,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="exploitdb-jsp" {
@@ -744,12 +756,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
+			if err2==nil {
 			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="exploitdb-perl" {
@@ -763,12 +777,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="exploitdb-php" {
@@ -782,12 +798,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines(pFilename)
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}	
 		if Pathsource=="SecLists" {
@@ -801,12 +819,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines("SecLists-common.txt")
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 
 		}
@@ -821,12 +841,14 @@ func main() {
 			}
 			_ = err1
 			lines, err2 := readLines("RobotsDisallowed.txt")
-			for _, v := range lines {
-				v=strings.TrimSpace(v)
-				if len(v)>0 {
-					pathList = append(pathList, v)
-				}
-			}		
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
 			_ = err2
 		}
 		if len(argv.URLpath)<1 && len(argv.Filename)<1 {
@@ -1136,11 +1158,14 @@ func main() {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 					resp, err := client.Get(v)
 					s, err := goscraper.Scrape(v, 5)
-					var tmpTitle=strings.TrimSpace(s.Preview.Title)
 					var lenBody = 0
-					body, err := ioutil.ReadAll(resp.Body)
+					var tmpTitle = ""
 					if err==nil {
-						lenBody = len(body)
+						tmpTitle=strings.TrimSpace(s.Preview.Title)						
+						body, err := ioutil.ReadAll(resp.Body)
+						if err==nil {
+							lenBody = len(body)
+						}
 					}
 					fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
 					log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
@@ -1387,9 +1412,11 @@ func main() {
 							} else { 
 								va0, err := version.NewVersion(selectedVer)
 								va1, err := version.NewVersion(v[1])
-								if va0.Equal(va1) {
-									fmt.Printf("%s [%s]\n\n",v[2],v[3])
-									log.Printf("%s [%s]\n\n",v[2],v[3])
+								if err==nil {
+									if va0.Equal(va1) {
+										fmt.Printf("%s [%s]\n\n",v[2],v[3])
+										log.Printf("%s [%s]\n\n",v[2],v[3])
+									}
 								}
 								_ = err
 							}
