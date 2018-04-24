@@ -32,6 +32,7 @@ var SpreadMode = false
 var Statuscode = 0
 var currentCount int = 0 
 var ContinueNum int = 0 
+var proxyMode = false
 
 var totalListCount int = 0
 var currentListCount int = 1
@@ -46,6 +47,9 @@ var tmpResultList1 []string
 
 var joomlaFileList []string	
 var drupalFileList []string
+var proxy_addr=""
+
+var userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36"
         
 func f(from string) {
     for i := 0; i < 3; i++ {
@@ -87,8 +91,17 @@ func cleanup() {
 			client := http.Client{
 				Timeout: timeout,
 			}
+			if proxyMode==true {
+				url_i := url.URL{}
+				url_proxy, _ := url_i.Parse(proxy_addr)
+				http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+			}
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			resp, err := client.Get(v)
+
+			req, err := http.NewRequest("GET", v, nil)
+			req.Header.Add("User-Agent", userAgent)
+			resp, err := client.Do(req)		
+			//resp, err := client.Get(v)
 			if err == nil {
 				s, err := goscraper.Scrape(v, 5)
 				if err == nil {
@@ -132,13 +145,17 @@ func testFakePath(urlChan chan string) {
 		client := http.Client{
 			Timeout: timeout,
 		}
+		if proxyMode==true {
+			url_i := url.URL{}
+			url_proxy, _ := url_i.Parse(proxy_addr)
+			http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 		req, err := http.NewRequest("GET", newUrl, nil)
-		req.Header.Add("User-Agent", `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36`)
+		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)
 		if err==nil{
-
 			//resp, err := client.Get(newUrl)
 			//if err==nil{
 			var initialStatusCode = resp.StatusCode
@@ -207,9 +224,13 @@ func getUrlWorker(urlChan chan string) {
 			currentCount+=1
 			currentListCount+=1
 		} 
-		if ContinueNum==0 || ContinueNum<=currentListCount {		
+		if ContinueNum==0 || ContinueNum<=currentListCount {					
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			resp, err := client.Get(newUrl)
+
+			req, err := http.NewRequest("GET", newUrl, nil)
+			req.Header.Add("User-Agent", userAgent)
+			resp, err := client.Do(req)
+			//resp, err := client.Get(newUrl)
 			initialStatusCode := ""
 			var tmpTitle = ""
 			if err!=nil{			
@@ -420,8 +441,11 @@ func testURL(newUrl string) {
 
 	fmt.Printf("Checking: %s \n\r",newUrl)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	
-	resp, err := client.Get(newUrl)
+
+	req, err := http.NewRequest("GET", newUrl, nil)
+	req.Header.Add("User-Agent", userAgent)
+	resp, err := client.Do(req)		
+	//resp, err := client.Get(newUrl)
 	if err == nil{
 		fmt.Println("%s [%s]",newUrl, resp.StatusCode)
 		resp.Body.Close()
@@ -492,6 +516,8 @@ type argT struct {
 	SpreadMode bool `cli:"x" usage:"Test a URI path across all target hosts instead of testing all URI paths against a host before moving onto next host"`
 	Logfilename string `cli:"l,log" usage:"Output to log file"`
 	ContinueNum int  `cli:"r" usage:"Resume from x as in [x of 9999]"`	
+	Proxyhost string `cli:"pHost" usage:"IP of HTTP proxy"`
+	Proxyport string `cli:"pPort" usage:"Port of HTTP proxy (default 8080)"`
 }
 
 func main() {
@@ -514,10 +540,18 @@ func main() {
 	
 	cli.Run(new(argT), func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*argT)
+
+		if len(argv.Proxyhost)>0 {
+			if len(argv.Proxyport)>0 {
+				proxy_addr="http://"+argv.Proxyhost+":"+argv.Proxyport
+			} else {
+				proxy_addr="http://"+argv.Proxyhost+":8080"
+			}
+			proxyMode=true
+		}
 		if argv.ContinueNum>0 {
 			ContinueNum = argv.ContinueNum
 		}
-
 		if len(argv.Logfilename)>0 {
 			logfileF, err := os.OpenFile(argv.Logfilename, os.O_WRONLY|os.O_CREATE|os.O_APPEND,0644)
 			if err != nil {
@@ -1050,7 +1084,11 @@ func main() {
 				}
 				if strings.HasSuffix(v[0],"/administrator/language/en-GB/en-GB.xml") || strings.HasSuffix(v[0],"/administrator/manifests/files/joomla.xml") {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-					resp, err := client.Get(v[0])
+
+					req, err := http.NewRequest("GET", v[0], nil)
+					req.Header.Add("User-Agent", userAgent)
+					resp, err := client.Do(req)		
+					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
 						if err==nil {
@@ -1080,7 +1118,11 @@ func main() {
 				}
 				if strings.Contains(v[0],"/CHANGELOG.txt") {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-					resp, err := client.Get(v[0])
+					req, err := http.NewRequest("GET", v[0], nil)
+					req.Header.Add("User-Agent", userAgent)
+					resp, err := client.Do(req)		
+
+					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
 						if err==nil {
@@ -1108,7 +1150,11 @@ func main() {
 				//if strings.HasPrefix(v[3],"Links for ") {			
 				if strings.Contains(v[0],"/wp-links-opml.php") {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-					resp, err := client.Get(v[0])
+
+					req, err := http.NewRequest("GET", v[0], nil)
+					req.Header.Add("User-Agent", userAgent)
+					resp, err := client.Do(req)		
+					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
 						if err==nil {
@@ -1163,7 +1209,11 @@ func main() {
 						Timeout: timeout,
 					}
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-					resp, err := client.Get(v)
+					req, err := http.NewRequest("GET", v, nil)
+					req.Header.Add("User-Agent", userAgent)
+					resp, err := client.Do(req)		
+
+					//resp, err := client.Get(v)
 					s, err := goscraper.Scrape(v, 5)
 					var lenBody = 0
 					var tmpTitle = ""
