@@ -36,9 +36,9 @@ Options:
       --pPort      Port of HTTP proxy (default 8080)
       --ua         Set User-Agent
 ```
-
-#Compilation
-``
+  
+#Compilation  
+```
 #Manual Compilation  `
 go get github.com/mkideal/cli
 go get github.com/badoux/goscraper
