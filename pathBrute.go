@@ -133,8 +133,14 @@ func testFakePath(urlChan chan string) {
 			Timeout: timeout,
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		resp, err := client.Get(newUrl)
+
+		req, err := http.NewRequest("GET", newUrl, nil)
+		req.Header.Add("User-Agent", `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36`)
+		resp, err := client.Do(req)
 		if err==nil{
+
+			//resp, err := client.Get(newUrl)
+			//if err==nil{
 			var initialStatusCode = resp.StatusCode
 			var initialTmpTitle = ""
 			//if resp.StatusCode==200 {
@@ -414,9 +420,10 @@ func testURL(newUrl string) {
 
 	fmt.Printf("Checking: %s \n\r",newUrl)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	
 	resp, err := client.Get(newUrl)
 	if err == nil{
-		fmt.Println("ooo %s [%s]",newUrl, resp.StatusCode)
+		fmt.Println("%s [%s]",newUrl, resp.StatusCode)
 		resp.Body.Close()
 	} 
 	_ = err
