@@ -83,9 +83,7 @@ func cleanup() {
 		}
 	}    
 	var tmpResultList3 []string
-	if len(tmpResultList2)<1 {
-		fmt.Println("No results found")
-	} else {
+	if len(tmpResultList2)>0 {
 		for _, v := range tmpResultList2 {
 			timeout := time.Duration(8 * time.Second)
 			client := http.Client{
@@ -214,22 +212,13 @@ func testFakePath(urlChan chan string) {
 }
 
 func getUrlWorker(urlChan chan string) {
-	//red := color.New(color.FgRed).SprintFunc()
-	//currentCount+=1
-
     for newUrl := range urlChan {
 		timeout := time.Duration(8 * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		//if ContinueNum>0 && ContinueNum>currentListCount {
-		//	currentCount+=1
-		//	currentListCount+=1
-		//	fmt.Println(currentListCount)
-		//} 
-		if ContinueNum==0 || ContinueNum<=currentListCount {					
+		if ContinueNum==0 || ContinueNum<=currentListCount {
 			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
 			req, err := http.NewRequest("GET", newUrl, nil)
 			req.Header.Add("User-Agent", userAgent)
 			resp, err := client.Do(req)
@@ -261,7 +250,6 @@ func getUrlWorker(urlChan chan string) {
 				}
 				currentCount+=1
 				currentListCount+=1
-				//atomic.AddInt(&currentCount, 1)
 			} else {
 				initialStatusCode = strconv.Itoa(resp.StatusCode)
 				initialTmpTitle := ""
@@ -285,7 +273,6 @@ func getUrlWorker(urlChan chan string) {
 							tmpTitle = strings.TrimSpace(tmpTitle)
 						}
 					}					
-				
 					if intelligentMode==true {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)
 						for _, each := range tmpTitleList { 
@@ -310,32 +297,19 @@ func getUrlWorker(urlChan chan string) {
 									if tmpStatusCode=="200"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										currentCount+=1
+										currentListCount+=1
 									} else if tmpStatusCode=="401"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										currentCount+=1
+										currentListCount+=1
 									} else {
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										currentCount+=1
+										currentListCount+=1
 									}
-									//else {
-									//	if each[3]!=initialStatusCode {
-									//		if tmpStatusCode!="404" && tmpStatusCode!="500" && tmpStatusCode!="204" {
-									//			var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-									//			tmpResultList = append(tmpResultList,a...)
-									//		}
-									//	}
-									//	if tmpStatusCode=="200"{
-									//		fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-									//		log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-									//	} else if tmpStatusCode=="401"{
-									//		fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-									//		log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									//	} else {
-									//		fmt.Printf("xxx %s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									//		log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									//	}
-									//	//currentListCount+=1
-									//}
 								}
 							}
 						}
@@ -346,6 +320,8 @@ func getUrlWorker(urlChan chan string) {
 							if resp.StatusCode==Statuscode {
 								fmt.Printf("*** %s [%s] [%d] [%s] \n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle)					
 								log.Printf("*** %s [%s] [%d] [%s] \n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle)
+								currentCount+=1
+								currentListCount+=1
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
@@ -356,16 +332,22 @@ func getUrlWorker(urlChan chan string) {
 							if tmpStatusCode=="200"{
 								fmt.Printf("%s [%s] [%d] [%s] \n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle)					
 								log.Printf("%s [%s] [%d] [%s] \n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle)
+								currentCount+=1
+								currentListCount+=1
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else if tmpStatusCode=="401"{
 								fmt.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
 								log.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								currentCount+=1
+								currentListCount+=1
 								var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
 								fmt.Printf("%s [%s] [%d] [%s] \n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle)	
 								log.Printf("%s [%s] [%d] [%s] \n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle)				
+								currentCount+=1
+								currentListCount+=1
 							}
 						}
 						//}
@@ -376,6 +358,8 @@ func getUrlWorker(urlChan chan string) {
 						if resp.StatusCode==Statuscode {	
 							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
 							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							currentCount+=1
+							currentListCount+=1
 							finalURL := resp.Request.URL.String()
 							if strings.HasSuffix(finalURL,"/") {
 								finalURL=finalURL[0:len(finalURL)-1]
@@ -392,6 +376,8 @@ func getUrlWorker(urlChan chan string) {
 						if resp.StatusCode==200 {		
 							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
 							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							currentCount+=1
+							currentListCount+=1
 							finalURL := resp.Request.URL.String()
 							if strings.HasSuffix(finalURL,"/") {
 								finalURL=finalURL[0:len(finalURL)-1]
@@ -405,12 +391,14 @@ func getUrlWorker(urlChan chan string) {
 						} else {
 							fmt.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
 							log.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
+							currentCount+=1
+							currentListCount+=1
 						}				
 					}
 				}
 				resp.Body.Close()
-				currentCount+=1
-				currentListCount+=1
+				//currentCount+=1
+				//currentListCount+=1
 
 				//atomic.AddInt(&currentCount, 1)
 			} 
@@ -420,6 +408,7 @@ func getUrlWorker(urlChan chan string) {
 		} else {
 			currentCount+=1
 			currentListCount+=1
+			//fmt.Println(" "+strconv.Itoa(ContinueNum)+" | "+strconv.Itoa(currentListCount))
 		}
 		//if ContinueNum==0 || ContinueNum<=currentListCount {					
     }
@@ -1051,7 +1040,7 @@ func main() {
 
 		totalListCount=len(finalList)
 
-		fmt.Println("\n[*] Testing URI Paths")
+		fmt.Println("\n[*] Testing URI Paths: (Total: "+strconv.Itoa(totalListCount)+")")
 		log.Printf("\n[*] Testing URI Paths")
 		//real uripaths
 		completed1 := 0
@@ -1061,27 +1050,32 @@ func main() {
 		}
 		close(urlChan)  
 		
-		var tmpLastCount = 0
-		var lastTime = time.Now()
+		//var tmpLastCount = 0
+		//var lastTime = time.Now()
 
-		for {
+		for {			
 			time.Sleep(10 * time.Millisecond)
+			if ContinueNum>len(finalList) {
+				break
+			}
 			if len(finalList)==int(currentCount) {
 				fmt.Println("\n[*] Processing results. Please wait...")
 				log.Printf("\n[*] Processing results. Please wait...")
 				break
-			} else {
-				if int(currentCount)!=int(tmpLastCount) {
-					tmpLastCount = int(currentCount)
-					lastTime=time.Now()
-				} else {
-					t := time.Now()
-					elapsed := t.Sub(lastTime)
-					if elapsed.Seconds()>60 && currentCount>0 {
-						break 
-					}
-				}									
 			} 
+			//else {
+			//	if int(currentCount)!=int(tmpLastCount) {
+			//		tmpLastCount = int(currentCount)
+			//		lastTime=time.Now()
+			//	} else {
+			//		t := time.Now()
+			//		elapsed := t.Sub(lastTime)
+			//		if elapsed.Seconds()>60 && currentCount>0 {
+			//			fmt.Println("xxX")
+			//			break 
+			//		}
+			//	}									
+			//} 
 		}   
 	
 		//fmt.Println("\n")
