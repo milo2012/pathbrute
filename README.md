@@ -32,6 +32,8 @@ Options:
   -x               Test a URI path across all target hosts instead of testing all URI paths against a host before moving onto next host
   -l, --log        Output to log file
   -r               Resume from x as in [x of 9999]
+      --pHost      IP of HTTP proxy
+      --pPort      Port of HTTP proxy (default 8080)
 ```
 
 #Compilation
