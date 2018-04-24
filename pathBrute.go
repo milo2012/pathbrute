@@ -518,6 +518,7 @@ type argT struct {
 	ContinueNum int  `cli:"r" usage:"Resume from x as in [x of 9999]"`	
 	Proxyhost string `cli:"pHost" usage:"IP of HTTP proxy"`
 	Proxyport string `cli:"pPort" usage:"Port of HTTP proxy (default 8080)"`
+	Uagent string `cli:"ua" usage:"Set User-Agent"`
 }
 
 func main() {
@@ -540,6 +541,9 @@ func main() {
 	
 	cli.Run(new(argT), func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*argT)
+		if len(argv.Uagent)>0 {
+			userAgent=argv.Uagent
+		}
 
 		if len(argv.Proxyhost)>0 {
 			if len(argv.Proxyport)>0 {
