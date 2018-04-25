@@ -24,6 +24,7 @@ import (
 	"syscall"
 )
 
+var timeoutSec = 15
 var verboseMode = false
 var intelligentMode = false
 var CMSmode = false
@@ -85,7 +86,7 @@ func cleanup() {
 	var tmpResultList3 []string
 	if len(tmpResultList2)>0 {
 		for _, v := range tmpResultList2 {
-			timeout := time.Duration(8 * time.Second)
+			timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 			client := http.Client{
 				Timeout: timeout,
 			}
@@ -109,7 +110,7 @@ func cleanup() {
 					if err==nil {
 						lenBody = len(body)
 					}
-					var a = v+" "+(strconv.Itoa(resp.StatusCode))+" ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
+					var a = v+" ["+(strconv.Itoa(resp.StatusCode))+"] ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
 					tmpResultList3 = append(tmpResultList3,a)
 					//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
 					//log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
@@ -141,7 +142,7 @@ func removeCharacters(input string, characters string) string {
 
 func testFakePath(urlChan chan string) {
     for newUrl := range urlChan {
-		timeout := time.Duration(8 * time.Second)
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
@@ -222,7 +223,7 @@ func getUrlWorker(urlChan chan string) {
     	newUrl = newUrl1[0]
     	//fmt.Println(newUrl1[1])
     	var currentListCount, _ = strconv.Atoi(newUrl1[1])
-		timeout := time.Duration(8 * time.Second)
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		if ContinueNum==0 || ContinueNum<=currentListCount {			
 			client := http.Client{
 				Timeout: timeout,
@@ -489,6 +490,7 @@ type argT struct {
 	Proxyhost string `cli:"pHost" usage:"IP of HTTP proxy"`
 	Proxyport string `cli:"pPort" usage:"Port of HTTP proxy (default 8080)"`
 	Uagent string `cli:"ua" usage:"Set User-Agent"`
+	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
 }
 
 func main() {
@@ -511,6 +513,9 @@ func main() {
 	
 	cli.Run(new(argT), func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*argT)
+		if argv.Timeoutsec>0 {
+			timeoutSec = argv.Timeoutsec
+		}
 		if len(argv.Uagent)>0 {
 			userAgent=argv.Uagent
 		}
@@ -1059,7 +1064,7 @@ func main() {
 		if CMSmode==true {
 			for _, v := range tmpResultList {
 				var wpVer = ""
-				timeout := time.Duration(8 * time.Second)
+				timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 				client := http.Client{
 					Timeout: timeout,
 				}
@@ -1185,7 +1190,7 @@ func main() {
 				fmt.Println("[+] Results")
 				log.Printf("[+] Results")
 				for _, v := range tmpResultList2 {
-					timeout := time.Duration(8 * time.Second)
+					timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 					client := http.Client{
 						Timeout: timeout,
 					}
