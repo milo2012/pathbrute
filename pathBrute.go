@@ -156,11 +156,8 @@ func testFakePath(urlChan chan string) {
 		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)
 		if err==nil{
-			//resp, err := client.Get(newUrl)
-			//if err==nil{
 			var initialStatusCode = resp.StatusCode
 			var initialTmpTitle = ""
-			//if resp.StatusCode==200 {
 			s, err := goscraper.Scrape(newUrl, 5)
 			if err==nil {
 				initialTmpTitle=strings.TrimSpace(s.Preview.Title)
@@ -176,29 +173,29 @@ func testFakePath(urlChan chan string) {
 					if strings.HasSuffix(finalURL,"/") {
 						finalURL=finalURL[0:len(finalURL)-1]
 					}			
-					//if finalURL==newUrl {
 					tmpStatusCode := strconv.Itoa(initialStatusCode)
-					newUrl = strings.Replace(newUrl, "/xxx/", "", -1)
+					//newUrl = strings.Replace(newUrl, "/xxx/", "", -1)
+					newUrl = strings.Replace(newUrl, "/NonExistence/", "", -1)
 					if verboseMode==true {
 						//var tmpTitle=strings.TrimSpace(s.Preview.Title)
 						if tmpStatusCode=="200"{
 							if verboseMode==true {
-								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 							}
 							var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 							tmpResultList = append(tmpResultList,a...)
 						} else if tmpStatusCode=="401"{
 							if verboseMode==true {
-								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 							}
 							var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 							tmpResultList = append(tmpResultList,a...)
 						} else {
 							if verboseMode==true {
-								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/xxx/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+								log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 							}
 						}
 						var a = [][]string{{newUrl, s.Preview.Title, strconv.Itoa(lenBody), tmpStatusCode}}
@@ -991,8 +988,7 @@ func main() {
 			log.Printf("[*] Getting Page Titles for Invalid URI Paths [Intelligent Mode]")
 			completed := 0
 			for _, each := range contentList {
-				//here
-				urlChan <- each+"/xxx/"
+				urlChan <- each+"/NonExistence/"
 				completed++
 			}
 			close(urlChan)    
