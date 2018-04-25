@@ -35,6 +35,7 @@ Options:
       --pHost      IP of HTTP proxy
       --pPort      Port of HTTP proxy (default 8080)
       --ua         Set User-Agent
+      --timeout    Set timeout to x seconds
 ```
   
 #Compilation  
