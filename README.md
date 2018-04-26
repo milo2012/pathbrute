@@ -40,8 +40,14 @@ Options:
  
 #Docker
 ```
+- Building from Dockerfile
 docker build -t example-scratch -f Dockerfile
 docker run -it 2af3eecdb017 /pathBrute_linux -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+
+- Pull latest Docker image
+docker pull milo2012/pathbrute
+docker run -it 589606bdc12a /pathBrute_linux -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+
 ```
     
 #Compilation  
