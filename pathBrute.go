@@ -235,8 +235,8 @@ func getUrlWorker(urlChan chan string) {
 			//resp, err := client.Get(newUrl)
 			initialStatusCode := ""
 			var tmpTitle = ""
-			if err!=nil{			
-				if (strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
+			if err!=nil{					
+				if (strings.Contains(err.Error(),"i/o timeout") || strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)						
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)
 				} else if strings.Contains(err.Error(),"connection refused") {
@@ -573,7 +573,7 @@ func main() {
 		if len(pFilename)>0 {		
 			_, err1 := os.Stat(pFilename)
 			if os.IsNotExist(err1) {
-				log.Printf("File %s not exists", pFilename)
+				fmt.Printf("[*] File %s not exists\n", pFilename)
 				os.Exit(3)
 			}
 			_ = err1
@@ -918,11 +918,10 @@ func main() {
 			if len(argv.Filename)>0 {
 				_, err := os.Stat(filename1)
 				if os.IsNotExist(err) {
-					log.Printf("File %s not exists", filename1)
+					fmt.Printf("[*] File %s not exists\n", filename1)
 					os.Exit(3)
 				}
 				lines, err := readLines(filename1)
-				fmt.Println(lines)
 				if err!=nil {
 					fmt.Println("Error: ",err)
 				} else {
