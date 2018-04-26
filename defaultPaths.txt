@@ -2013,6 +2013,7 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /wps/wprs
 /wps/wsdl/
 /wps_semanticTag
+/wls-wsat/CoordinatorPortType
 /wsd2wsdl
 /wsee
 /wsnavigator
