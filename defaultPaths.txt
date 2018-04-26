@@ -3,6 +3,7 @@
 /.htpasswd
 /.meta
 /.web
+/awstats/awstats.pl
 /ADS-EJB
 /ADS-License
 /AE/index.jsp
