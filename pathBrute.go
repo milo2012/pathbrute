@@ -236,7 +236,7 @@ func getUrlWorker(urlChan chan string) {
 			initialStatusCode := ""
 			var tmpTitle = ""
 			if err!=nil{			
-				if strings.Contains(err.Error(),"Client.Timeout exceeded") {
+				if (strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)						
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)
 				} else if strings.Contains(err.Error(),"connection refused") {
@@ -251,9 +251,6 @@ func getUrlWorker(urlChan chan string) {
 				} else if strings.Contains(err.Error(),"tls: no renegotiation") {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
-				} else if strings.Contains(err.Error(),"TLS handshake timeout") {
-					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)													
-					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)	
 				} else {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
@@ -269,9 +266,11 @@ func getUrlWorker(urlChan chan string) {
 				}
 				_ = s
 				if verboseMode==true {
+					var errorFound=false
 					var lenBody = 0
 					body, err := ioutil.ReadAll(resp.Body)
 					if err==nil {
+						errorFound=true
 						lenBody = len(body)
 					}
 					finalURL := resp.Request.URL.String()
@@ -282,22 +281,22 @@ func getUrlWorker(urlChan chan string) {
 							tmpTitle = s.Preview.Title
 							tmpTitle = strings.TrimSpace(tmpTitle)
 						}
-					}					
+					}										
 					if intelligentMode==true {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)
 						for _, each := range tmpTitleList { 
 							if strings.Contains(finalURL,each[0]) {
 								if newUrl==finalURL { 										
-									// || each[3]!=initialStatusCode 			
 									if strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle){
 										if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 											if (each[2]!=strconv.Itoa(lenBody)) {
-												// || each[3]!=strconv.Itoa(resp.StatusCode)){
 												if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 													if CMSmode==false {
 														if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
-															var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
-															tmpResultList = append(tmpResultList,a...)
+															if errorFound==false {
+																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+																tmpResultList = append(tmpResultList,a...)
+															}
 														}
 													}
 												}
@@ -389,24 +388,18 @@ func getUrlWorker(urlChan chan string) {
 				resp.Body.Close()
 				//currentCount+=1
 				//currentListCount+=1
-
-				//atomic.AddInt(&currentCount, 1)
 			} 
 			if currentListCount==totalListCount {
 				reachedTheEnd=true
 			}
-			//currentCount+=1
 			currentListCount+=1
 			
 			_ = err
 			_ = resp
 			_ = tmpTitle 
 		} else {
-			//currentCount+=1
 			currentListCount+=1
-			//fmt.Println(" "+strconv.Itoa(ContinueNum)+" | "+strconv.Itoa(currentListCount))
 		}
-		//if ContinueNum==0 || ContinueNum<=currentListCount {					
     }
 }
 
@@ -461,12 +454,14 @@ func DownloadFile(filepath string, url string) error {
     // Get the data
     resp, err := http.Get(url)
     if err != nil {
+    	fmt.Println(err)
         return err
     }
     defer resp.Body.Close()
     // Write the body to file
     _, err = io.Copy(out, resp.Body)
     if err != nil {
+    	fmt.Println(err)
         return err
     }
     return nil
@@ -604,6 +599,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/defaultPaths.txt"
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile("defaultPaths.txt", fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -625,6 +623,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/metasploitHelper/master/pathList.txt"
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile("pathList.txt", fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -646,6 +647,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -667,6 +671,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -688,6 +695,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -709,6 +719,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -730,6 +743,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -751,6 +767,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -772,6 +791,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -793,6 +815,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -814,6 +839,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -835,6 +863,9 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt"
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile("SecLists-common.txt", fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
@@ -857,10 +888,14 @@ func main() {
 				fileUrl := "https://raw.githubusercontent.com/danielmiessler/RobotsDisallowed/master/Top100000-RobotsDisallowed.txt"
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile("RobotsDisallowed.txt", fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
 				_ = err
 			}
 			_ = err1
 			lines, err2 := readLines("RobotsDisallowed.txt")
+
 			if err2==nil {
 				for _, v := range lines {
 					v=strings.TrimSpace(v)
@@ -882,17 +917,22 @@ func main() {
 					os.Exit(3)
 				}
 				lines, err := readLines(filename1)
-				for _, v := range lines {
-					if strings.Contains(v,"http") {
-						contentList = append(contentList, v)
-					} else {
-						if len(v)>0 {
-							contentList = append(contentList, "https://"+v)
-							contentList = append(contentList, "http://"+v)
+				fmt.Println(lines)
+				if err!=nil {
+					fmt.Println("Error: ",err)
+				} else {
+					for _, v := range lines {
+						if strings.Contains(v,"http") {
+							contentList = append(contentList, v)
+						} else {
+							if len(v)>0 {
+								contentList = append(contentList, "https://"+v)
+								contentList = append(contentList, "http://"+v)
+							}
 						}
-					}
-					//fmt.Println("https://"+v)
-				}		
+						//fmt.Println("https://"+v)
+					}	
+				}	
 				_ = err
 			} else {
 				if strings.Contains(argv.URLpath,"http") {
@@ -905,7 +945,6 @@ func main() {
 				}
 			}
 		}
-
 
 		var contentList1 []string
   	    for _, v := range contentList {
