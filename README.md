@@ -37,7 +37,13 @@ Options:
       --ua         Set User-Agent
       --timeout    Set timeout to x seconds
 ```
-  
+ 
+#Docker
+```
+docker build -t example-scratch -f Dockerfile
+docker run -it 2af3eecdb017 /pathBrute_linux -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+```
+    
 #Compilation  
 ```
 #Manual Compilation  `
