@@ -266,11 +266,11 @@ func getUrlWorker(urlChan chan string) {
 				}
 				_ = s
 				if verboseMode==true {
-					var errorFound=false
+					//var errorFound=false
 					var lenBody = 0
 					body, err := ioutil.ReadAll(resp.Body)
 					if err==nil {
-						errorFound=true
+						//errorFound=true
 						lenBody = len(body)
 					}
 					finalURL := resp.Request.URL.String()
@@ -293,10 +293,10 @@ func getUrlWorker(urlChan chan string) {
 												if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 													if CMSmode==false {
 														if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
-															if errorFound==false {
-																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
-																tmpResultList = append(tmpResultList,a...)
-															}
+															//if errorFound==false {
+															var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+															tmpResultList = append(tmpResultList,a...)
+															//}
 														}
 													}
 												}
@@ -591,7 +591,12 @@ func main() {
 		if len(uriPath)>0 {
 			pathList = append(pathList, uriPath)
 		}
-
+		if len(Pathsource)>0 { 
+			if Pathsource!="default" && Pathsource!="msf" && Pathsource!="exploitdb" && Pathsource!="exploitdb-asp" && Pathsource!="exploitdb-aspx" && Pathsource!="exploitdb-cfm" && Pathsource!="exploitdb-cgi" && Pathsource!="exploitdb-cfm" && Pathsource!="exploitdb-jsp" && Pathsource!="exploitdb-perl" && Pathsource!="exploitdb-php" && Pathsource!="RobotsDisallowed" && Pathsource!="SecLists" {
+				fmt.Println("[*] Please select a valid Path source")
+				os.Exit(3)
+			}
+		}
 		if Pathsource=="default" {
 			pFilename = "defaultPaths.txt"
 			_, err1 := os.Stat("defaultPaths.txt")
@@ -1226,8 +1231,8 @@ func main() {
 				fmt.Println("\n[*] No results found")
 				log.Printf("\n[*] No results found")
 			} else {
-				fmt.Println("[+] Results")
-				log.Printf("[+] Results")
+				fmt.Println("\n[+] Results")
+				log.Printf("\n[+] Results")
 				for _, v := range tmpResultList2 {
 					timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 					client := http.Client{
