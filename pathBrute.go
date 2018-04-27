@@ -110,10 +110,12 @@ func cleanup() {
 					if err==nil {
 						lenBody = len(body)
 					}
-					var a = v+" ["+(strconv.Itoa(resp.StatusCode))+"] ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
-					tmpResultList3 = append(tmpResultList3,a)
-					//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					//log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+					if (resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
+						var a = v+" ["+(strconv.Itoa(resp.StatusCode))+"] ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
+						tmpResultList3 = append(tmpResultList3,a)
+						//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						//log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+					}
 				}
 			}
 		}
@@ -1230,6 +1232,7 @@ func main() {
 				fmt.Println("\n[*] No results found")
 				log.Printf("\n[*] No results found")
 			} else {
+				time.Sleep(5 * time.Second)
 				fmt.Println("\n[+] Results")
 				log.Printf("\n[+] Results")
 				for _, v := range tmpResultList2 {
@@ -1253,8 +1256,10 @@ func main() {
 							lenBody = len(body)
 						}
 					}
-					fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					log.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)	
+					if (resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
+						fmt.Printf(color.BlueString("[+]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[+]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					}	
 					//fmt.Printf("%s\n",v)
 				}
 			}
