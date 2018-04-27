@@ -152,6 +152,7 @@
 /OrderProcessorEJB/services/FrontGate
 /OrderProcessorEJB/services/FrontGate/wsdl/
 /PerformacetraceTraceApplication
+/phpinfo.php
 /phpMyAdmin
 /PlantsByWebSphere
 /PlantsByWebSphere/docs
