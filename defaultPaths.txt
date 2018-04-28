@@ -216,6 +216,7 @@
 /TestJDBC_Web
 /UniversityServlet
 /VC
+/web/database/manager
 /WEB-INF
 /WEB-INF./web.xml
 /WEB-INF/web.xml
