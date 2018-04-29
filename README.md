@@ -3,7 +3,7 @@ Pathbrute
   
 Pathbrute is a DirB/Dirbuster type of tool designed to brute force directories and files names on web/application servers.  However, it has some new tricks.  
 Some of it includes:    
-1) wordlists from Exploit databases and Metasploit  
+1) Wordlists from Exploit databases and Metasploit  
 2) Identify interesting URLs eventhough websites return HTTP status code 200 for all URI paths.  
 3) Identify valid  paths that require authentication (HTTP status code 401)  
 4) Reduce the number of results for wordlists with URI paths with nested directories (See https://github.com/milo2012/pathbrute/issues/1 for more information)  
