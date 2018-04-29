@@ -24,7 +24,7 @@ Options:
   -P, --Paths      File containing list of URI paths
   -p, --path       URI path
   -s, --source     Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php  | RobotsDisallowed | SecLists)
-  -n, --threads    No of concurrent threads
+  -n, --threads    No of concurrent threads (default: 2)
   -c               Status code
   -i               Intelligent mode
   -v, --verbose    Verbose mode
@@ -77,6 +77,11 @@ http://xxxx.com/AddressBookJ2WB [404] [168] [404 Not Found]
 http://xxxx.com/AE/index.jsp [404] [168] [404 Not Found]
 http://xxxx.com/.web [404] [168] [404 Not Found]
 http://xxxx.com/ADS-EJB [200] [482] []
+
+[Found] https://127.0.0.1/.gitignore [200] [28] []
+[Found] https://127.0.0.1/.htaccess [200] [1164] []
+[Found] https://127.0.0.1/PMA/ [200] [8575] [phpMyAdmin]
+[Found] https://127.0.0.1/.htaccess [200] [1164] []
 ```
   
 #Example using the --cms option
