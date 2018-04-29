@@ -250,7 +250,6 @@ func checkURL(urlChan chan string) {
 			Timeout: timeout,
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		//fmt.Println("here: "+v)
 		req, err := http.NewRequest("GET", v, nil)
 		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)		
@@ -283,8 +282,16 @@ func checkURL(urlChan chan string) {
 				numberOfa := strings.Count(u.Path, "/")
 				tmpSplit2 :=strings.Split(u.Path,"/")
 				var counter1=numberOfa
-				if numberOfa<2 {
-					tmpResultList3 = append(tmpResultList3, v)
+				if numberOfa<2 {				
+					var newURL3=u.Scheme+"://"+u.Host		
+					req3, err := http.NewRequest("GET", newURL3, nil)
+					req3.Header.Add("User-Agent", userAgent)
+					resp3, err := client.Do(req3)		
+					if err==nil {
+						if resp.StatusCode!=401 && resp3.StatusCode!=401 {
+							tmpResultList3 = append(tmpResultList3, v)
+						}
+					}
 				} else {
 					for counter1>numberOfa-1 {							
 						var uriPath1=""				
@@ -331,7 +338,7 @@ func checkURL(urlChan chan string) {
 												_=err2
 											}
 											_ = resp2
-										} else {												
+										} else {			
 											var newURL1 = newURL[0:len(newURL)-1]
 											req2, err := http.NewRequest("GET", newURL1, nil)
 											_=err
@@ -340,7 +347,7 @@ func checkURL(urlChan chan string) {
 											if resp2.StatusCode==resp1.StatusCode {
 												newURL=newURL1
 											}
-											
+											//here1											
 											if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
 												if !stringInSlice(newURL,tmpResultList3) {
 													tmpResultList3 = append(tmpResultList3, newURL)
@@ -348,6 +355,7 @@ func checkURL(urlChan chan string) {
 											}
 										}
 									} else {
+										//here1
 										u1, err := url.Parse(v)
 										if err != nil {
 											panic(err)
