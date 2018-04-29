@@ -286,7 +286,6 @@ func checkURL(urlChan chan string) {
 				if numberOfa<2 {
 					tmpResultList3 = append(tmpResultList3, v)
 				} else {
-					//fmt.Println(v+" "+strconv.Itoa(resp.StatusCode))
 					for counter1>numberOfa-1 {							
 						var uriPath1=""				
 						if counter1==numberOfa {
@@ -349,7 +348,19 @@ func checkURL(urlChan chan string) {
 											}
 										}
 									} else {
-										tmpResultList3 = append(tmpResultList3, v)
+										u1, err := url.Parse(v)
+										if err != nil {
+											panic(err)
+										}
+										var newURL2=u1.Scheme+"://"+u1.Host
+										req2, err := http.NewRequest("GET", newURL2, nil)
+										req2.Header.Add("User-Agent", userAgent)
+										resp2, err := client.Do(req2)														
+										if resp2.StatusCode==resp1.StatusCode {
+											tmpResultList3 = append(tmpResultList3, newURL2)
+										} else {
+											tmpResultList3 = append(tmpResultList3, v)
+										}
 									}
 								}
 							} else {
@@ -480,9 +491,11 @@ func getUrlWorker(urlChan chan string) {
 						}										
 						if intelligentMode==true {
 							tmpStatusCode := strconv.Itoa(resp.StatusCode)
+							var tmpFound=false
 							for _, each := range tmpTitleList { 
 								if strings.Contains(finalURL,each[0]) {
-									if newUrl==finalURL { 										
+									if newUrl==finalURL { 		
+										tmpFound=true																		
 										if strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle){
 											if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 												if (each[2]!=strconv.Itoa(lenBody)) {
@@ -510,6 +523,20 @@ func getUrlWorker(urlChan chan string) {
 											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 										}
 									}
+								}
+							}
+							if tmpFound==false {
+								u, err := url.Parse(newUrl)
+								if err != nil {
+									panic(err)
+								}				
+								//tmpStatusCode := strconv.Itoa(resp.StatusCode)
+								var newURL2=u.Scheme+"://"+u.Host				
+								if resp.StatusCode==401 && initialStatusCode=="401" {
+									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+									var a = [][]string{{newURL2, initialStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
 								}
 							}
 						} else {
