@@ -479,9 +479,6 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /examples
 /examples.html
 /examples/
-/examples/%252e%252e/manager/html
-/examples/%2e%2e/manager/html
-/examples/../manager/html
 /examples/jsp/index.html
 /examples/jsp/snp/snoop.jsp
 /examples/jsp/source.jsp
