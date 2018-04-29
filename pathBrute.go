@@ -295,6 +295,7 @@ func checkURL(urlChan chan string) {
 							uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
 						}
 						var newURL=u.Scheme+"://"+u.Host+uriPath1
+
 						req1, err := http.NewRequest("GET", newURL, nil)
 						if err==nil {
 							req1.Header.Add("User-Agent", userAgent)
@@ -347,6 +348,8 @@ func checkURL(urlChan chan string) {
 												}
 											}
 										}
+									} else {
+										tmpResultList3 = append(tmpResultList3, v)
 									}
 								}
 							} else {
