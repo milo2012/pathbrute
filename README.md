@@ -1,6 +1,7 @@
 # pathbrute
 Pathbrute  
   
+Pathbrute is a DirB/Dirbuster type of tool designed to brute force directories and files names on web/application servers.  However, it has some new tricks.  
 Pathbrute has a number of wordlists from metasploit/exploit-database and other sources that it uses to discover interesting content on servers.  
   
 pathBrute contains/uses a number of self compiled wordlists for identifying “interesting” content and potentially vulnerable websites.
