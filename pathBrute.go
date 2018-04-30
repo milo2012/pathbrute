@@ -706,7 +706,7 @@ type argT struct {
 	URLpath string `cli:"u,url" usage:"Url of website"`
 	PFilename string `cli:"P,Paths" usage:"File containing list of URI paths"`
 	Path string `cli:"p,path" usage:"URI path"`
-	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php  | RobotsDisallowed | SecLists)"`
+	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php | exploitdb-others | RobotsDisallowed | SecLists)"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads (default: 2)"`
 	Statuscode int  `cli:"c" usage:"Status code"`
 	Intellimode bool `cli:"i" usage:"Intelligent mode"`
@@ -1077,6 +1077,30 @@ func main() {
 		}	
 		if Pathsource=="exploitdb-php" {
 			pFilename = "exploitdb_php.txt"
+			_, err1 := os.Stat(pFilename)
+			if os.IsNotExist(err1) {
+				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
+				fmt.Println("[+] Downloading: "+fileUrl)
+				err := DownloadFile(pFilename, fileUrl)
+				if err!=nil {
+					fmt.Println("[*] Error: ",err)
+				}
+				_ = err
+			}
+			_ = err1
+			lines, err2 := readLines(pFilename)
+			if err2==nil {
+				for _, v := range lines {
+					v=strings.TrimSpace(v)
+					if len(v)>0 {
+						pathList = append(pathList, v)
+					}
+				}		
+			}
+			_ = err2
+		}	
+		if Pathsource=="exploitdb-others" {
+			pFilename = "exploitdb_others.txt"
 			_, err1 := os.Stat(pFilename)
 			if os.IsNotExist(err1) {
 				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
