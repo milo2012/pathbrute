@@ -1,3 +1,4 @@
+/_search
 /.gitignore
 /.htaccess
 /.htpasswd
