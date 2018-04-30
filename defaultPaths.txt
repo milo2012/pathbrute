@@ -729,6 +729,7 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /php.ini
 /physican/login.do
 /ping
+/plugins/servlet/oauth/users/icon-uri?consumerUri=https://www.google.com
 /pmi
 /portal
 /portalAppAdmin/login.jsp
