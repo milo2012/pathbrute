@@ -86,7 +86,6 @@
 /havalite/upload.php
 /httpmon.php
 /images
-/images/..
 /images/../jsp/ProcessFileUpload.jsp
 /img/favicon.png?v=6.0.1-1213
 /includes/inline_image_upload.php
@@ -112,7 +111,6 @@
 /jsp
 /jsp/Login.do
 /jsp/tabs.jsp
-/jsp_name
 /library/openflashchart/php-ofc-library/ofc_upload_image.php
 /library/openflashchart/tmp-upload-images
 /login
@@ -120,7 +118,6 @@
 /login.imss
 /login.jsf
 /login.php
-/m
 /mTheme-Unus/css/css.php
 /main.php
 /miq_policy/explorer
@@ -134,7 +131,6 @@
 /nagiosxi/admin/components.php
 /nagiosxi/includes/components/graphexplorer/visApi.php
 /nagiosxi/index.php
-/new
 /ofc_upload_image.php
 /ohw/help/state
 /olt/Login.do/../../olt/UploadFileUpload.do
