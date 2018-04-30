@@ -179,6 +179,7 @@
 /SimpleClientJws
 /SimpleClientProviderImpl
 /SimpleServlet
+/Sitefinity/Authenticate/SWT
 /SnoopServlet
 /SourceCodeViewer
 /Sourceservlet-classViewer
