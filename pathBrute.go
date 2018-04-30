@@ -148,7 +148,6 @@ func cleanup() {
 		}
 		close(urlChan)  
 		wg.Wait()		
-		fmt.Println("xxx")
 					
 	} else {
 		fmt.Println("\n[*] No results found")
