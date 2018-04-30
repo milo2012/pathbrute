@@ -41,6 +41,7 @@
 /ApplicationProfileSample
 /ApplicationProfileSample/docs/
 /ApplicationProfileSampleservlet
+/axis/happyaxis.jsp
 /BBApp
 /BI_UDC
 /Bank/
