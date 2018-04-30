@@ -2014,6 +2014,13 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /wps/wsdl/
 /wps_semanticTag
 /wls-wsat/CoordinatorPortType
+/wls-wsat/CoordinatorPortType11
+/wls-wsat/ParticipantPortType
+/wls-wsat/ParticipantPortType11
+/wls-wsat/RegistrationPortTypeRPC
+/wls-wsat/RegistrationPortTypeRPC11
+/wls-wsat/RegistrationRequesterPortType
+/wls-wsat/RegistrationRequesterPortType11
 /wsd2wsdl
 /wsee
 /wsnavigator
