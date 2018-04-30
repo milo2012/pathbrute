@@ -13,7 +13,7 @@ Some of it includes:
 Pathbrute has a number of wordlists from metasploit/exploit-database and other sources that it uses to discover interesting content on servers.  
   
 pathBrute contains/uses a number of self compiled wordlists for identifying “interesting” content and potentially vulnerable websites.
-1) More than 13924 URI paths from Exploit-Database 
+1) More than 18603 URI paths from Exploit-Database 
 2) URI paths from Metasploit Framework
 
 pathBrute can also use wordlists from other sources if you prefer.  
@@ -32,7 +32,7 @@ Options:
   -u, --url        Url of website
   -P, --Paths      File containing list of URI paths
   -p, --path       URI path
-  -s, --source     Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php  | RobotsDisallowed | SecLists)
+  -s, --source     Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php | exploitdb-others | RobotsDisallowed | SecLists)
   -n, --threads    No of concurrent threads (default: 2)
   -c               Status code
   -i               Intelligent mode
