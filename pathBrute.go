@@ -47,6 +47,7 @@ var tmpResultList [][]string
 var tmpResultList1 []string	
 var tmpResultList4 []string
 
+var wpFileList []string
 var joomlaFileList []string	
 var drupalFileList []string
 var proxy_addr=""
@@ -496,7 +497,7 @@ func getUrlWorker(urlChan chan string) {
 								tmpTitle = strings.TrimSpace(tmpTitle)
 							}
 						}										
-						if intelligentMode==true {
+						if intelligentMode==true && CMSmode==false{
 							tmpStatusCode := strconv.Itoa(resp.StatusCode)
 							var tmpFound=false
 							for _, each := range tmpTitleList { 
@@ -724,7 +725,7 @@ type argT struct {
 func main() {
 	//log.SetOutput(ioutil.Discard)
 	//log.SetFlags(0)
-	
+	wpFileList	   = append(wpFileList,"/readme.html")
 	joomlaFileList = append(joomlaFileList,"/administrator/manifests/files/joomla.xml")
 	joomlaFileList = append(joomlaFileList,"/administrator/language/en-GB/en-GB.xml")
 	drupalFileList = append(drupalFileList,"/CHANGELOG.txt")
@@ -1235,6 +1236,9 @@ func main() {
 		if argv.CMSmode {
 			CMSmode = true
 			pathList = append(pathList, "/wp-links-opml.php")
+		    for _, v := range wpFileList {
+		    	pathList = append(pathList,v)
+		    }			
 		    for _, v := range joomlaFileList {
 		    	pathList = append(pathList,v)
 		    }
@@ -1412,7 +1416,7 @@ func main() {
 						v[0]=strings.Replace(v[0],"/administrator/language/en-GB/en-GB.xml","",1)
 						v[0]=strings.Replace(v[0],"/administrator/manifests/files/joomla.xml","",1)					
 						if len(wpVer)>0 {
-							var a = v[0]+color.BlueString(" [Joomla "+wpVer+"]")
+							var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Joomla "+wpVer+"]")
 							tmpResultList1 = append(tmpResultList1, a)
 						}
 					}
@@ -1442,12 +1446,44 @@ func main() {
 						}
 						v[0]=strings.Replace(v[0],"/CHANGELOG.txt","",1)					
 						if len(wpVer)>0 {
-							var a = v[0]+color.BlueString(" ["+wpVer+"]")
+							var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" ["+wpVer+"]")
 							tmpResultList1 = append(tmpResultList1, a)
 						}
 					}
 				}				
 
+				if strings.Contains(v[0],"/readme.html") {
+					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+					req, err := http.NewRequest("GET", v[0], nil)
+					req.Header.Add("User-Agent", userAgent)
+					resp, err := client.Do(req)		
+					//resp, err := client.Get(v[0])
+					if err==nil {
+						body, err := ioutil.ReadAll(resp.Body)
+						if err==nil {
+							bodyStr := BytesToString(body)
+							s := strings.Split(bodyStr,"\n")
+							for _, v1 := range s {
+								if strings.Contains(v1,"<br /> Versão ") {
+									v1=removeCharacters(v1,"<br /> Versão ")
+									v1=strings.TrimSpace(v1)
+									wpVer = v1
+								}
+								if strings.Contains(v1,"<br /> Version ") {
+									v1=removeCharacters(v1,"<br /> Version ")
+									v1=strings.TrimSpace(v1)
+									wpVer = v1
+								}
+							}
+						}
+					}
+					v[0]=strings.Replace(v[0],"/readme.html","",1)
+					if len(wpVer)>0 {
+						var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
+						tmpResultList1 = append(tmpResultList1, a)
+					}		
+				}
 				//if strings.HasPrefix(v[3],"Links for ") {			
 				if strings.Contains(v[0],"/wp-links-opml.php") {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
@@ -1474,7 +1510,7 @@ func main() {
 					}
 					v[0]=strings.Replace(v[0],"/wp-links-opml.php","",1)
 					if len(wpVer)>0 {
-						var a = v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
+						var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
 						tmpResultList1 = append(tmpResultList1, a)
 					}		
 				}
@@ -1568,6 +1604,9 @@ func main() {
 			
 			RemoveDuplicates(&tmpResultList1)
 			sort.Strings(tmpResultList1)
+			if len(tmpResultList1)>0 {
+				fmt.Println("\n")
+			}
 			for _, v := range tmpResultList1 {
 				fmt.Printf("%s\n",v)
 				if strings.Contains(v,"Joomla") {
