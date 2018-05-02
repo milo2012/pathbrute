@@ -606,7 +606,7 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /irj/servlet/prt/portal/prtroot
 /irj/servlet/prt/portal/prtroot/PortalAnywhere.Go
 /irj/servlet/prt/portal/prtroot/com.sap.km.cm.basicsearch
-/irj/servlet/prt/portal/prtroot/com.sap.km.cm.docs -> webdav
+/irj/servlet/prt/portal/prtroot/com.sap.km.cm.docs 
 /irj/servlet/prt/portal/prtroot/com.sap.km.cm.highlightedcontent
 /irj/servlet/prt/portal/prtroot/com.sap.km.cm.navigation
 /irj/servlet/prt/portal/prtroot/com.sap.km.cm.uidetails
