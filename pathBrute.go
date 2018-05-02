@@ -166,10 +166,84 @@ func removeCharacters(input string, characters string) string {
 	 return strings.Map(filter, input)
 }
 
+func getPage(newUrl string) (string, string, int, int) {
+	u, err := url.Parse(newUrl)
+	if err != nil {
+		panic(err)
+	}
+	var newURL1=u.Scheme+"://"+u.Host+"/NonExistence"		
+
+	var tmpStatusCode = 0
+	var tmpTitle = ""
+	var lenBody=0
+	var tmpFinalURL =""
+	timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest("GET", newURL1, nil)
+	if err==nil {
+		req.Header.Add("User-Agent", userAgent)
+		resp, err := client.Do(req)			
+		if err==nil{					
+			tmpStatusCode = resp.StatusCode
+			s, err := goscraper.Scrape(newURL1, 5)			
+			if err==nil {
+				tmpTitle = s.Preview.Title
+				tmpTitle=strings.TrimSpace(tmpTitle)
+			}
+			body, err := ioutil.ReadAll(resp.Body)
+			if err==nil {
+				lenBody = len(body)
+			}
+			tmpFinalURL = resp.Request.URL.String()			
+			return tmpFinalURL,tmpTitle,tmpStatusCode, lenBody
+		}
+	}
+	return tmpFinalURL,tmpTitle,tmpStatusCode, lenBody
+}
+
 func testFakePath(urlChan chan string) {
-	var retryList []string
-	
+	//var retryList []string	
     for newUrl := range urlChan {
+		var getTmpTitle=""
+		var getTmpStatusCode=0
+		var getLenBody=0
+		var getTmpFinalURL=""
+		getTmpFinalURL,getTmpTitle,getTmpStatusCode,getLenBody=getPage(newUrl)	
+		newUrl = strings.Replace(newUrl, "/NonExistence", "", -1)
+		if strings.HasSuffix(getTmpFinalURL,"/") {
+			getTmpFinalURL=getTmpFinalURL[0:len(getTmpFinalURL)-1]
+		}			
+		if verboseMode==true {
+			if getTmpStatusCode==200{
+				if verboseMode==true {
+					fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.BlueString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+					log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.BlueString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+				}
+				var a = [][]string{{newUrl, strconv.Itoa(getTmpStatusCode), "",""}}
+				tmpResultList = append(tmpResultList,a...)
+			} else if getTmpStatusCode==401{
+				if verboseMode==true {
+					fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.GreenString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+					log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.GreenString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+				}
+				var a = [][]string{{newUrl, strconv.Itoa(getTmpStatusCode), "",""}}
+				tmpResultList = append(tmpResultList,a...)
+			} else {
+				if verboseMode==true {
+					fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.RedString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+					log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.RedString(strconv.Itoa(getTmpStatusCode)),strconv.Itoa(getLenBody), getTmpTitle)
+				}
+			}
+			var a = [][]string{{newUrl, getTmpTitle, strconv.Itoa(getLenBody), strconv.Itoa(getTmpStatusCode)}}
+			tmpTitleList = append(tmpTitleList,a...)
+			_ = a
+		}
+		//_ = err
+
+		/*
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -195,40 +269,36 @@ func testFakePath(urlChan chan string) {
 					s, err := goscraper.Scrape(newUrl, 5)
 					if err==nil {
 						initialTmpTitle=strings.TrimSpace(s.Preview.Title)
-					}
-					_ = s
-					finalURL := resp.Request.URL.String()
-					s, err = goscraper.Scrape(finalURL, 5)
-					if err==nil {
 						var lenBody = 0
 						body, err := ioutil.ReadAll(resp.Body)
+						
+						finalURL := resp.Request.URL.String()
 						if err==nil {
 							lenBody = len(body)
 							if strings.HasSuffix(finalURL,"/") {
 								finalURL=finalURL[0:len(finalURL)-1]
 							}			
 							tmpStatusCode := strconv.Itoa(initialStatusCode)
-							newUrl = strings.Replace(newUrl, "/NonExistence/", "", -1)
+							newUrl = strings.Replace(newUrl, "/NonExistence", "", -1)
 							if verboseMode==true {
-								//var tmpTitle=strings.TrimSpace(s.Preview.Title)
 								if tmpStatusCode=="200"{
 									if verboseMode==true {
-										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.BlueString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 									}
 									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 									tmpResultList = append(tmpResultList,a...)
 								} else if tmpStatusCode=="401"{
 									if verboseMode==true {
-										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.GreenString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 									}
 									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 									tmpResultList = append(tmpResultList,a...)
 								} else {
 									if verboseMode==true {
-										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
-										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence/", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										fmt.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
+										log.Printf("%s [%s] [%s] [%s]\n",newUrl+"/NonExistence", color.RedString(tmpStatusCode),strconv.Itoa(lenBody), initialTmpTitle)
 									}
 								}
 								var a = [][]string{{newUrl, s.Preview.Title, strconv.Itoa(lenBody), tmpStatusCode}}
@@ -254,6 +324,7 @@ func testFakePath(urlChan chan string) {
 				}
 			}
 		}
+		*/
 		atomic.AddInt32(&currentFakeCount, 1)
     }
 }
@@ -448,9 +519,7 @@ func getUrlWorker(urlChan chan string) {
 	//lastURL
     for newUrl := range urlChan {
     	var newUrl1 = strings.Split(newUrl," | ")
-    	//fmt.Println("XxX: "+newUrl1[0])
     	newUrl = newUrl1[0]
-    	//fmt.Println(newUrl1[1])
     	var currentListCount, _ = strconv.Atoi(newUrl1[1])
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		if ContinueNum==0 || ContinueNum<=currentListCount {			
@@ -514,16 +583,15 @@ func getUrlWorker(urlChan chan string) {
 							tmpStatusCode := strconv.Itoa(resp.StatusCode)
 							var tmpFound=false
 							for _, each := range tmpTitleList { 
-								if strings.Contains(finalURL,each[0]) {
+								if strings.Contains(finalURL,each[0]+"/") {
 									if newUrl==finalURL { 		
 										tmpFound=true																		
-										if strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle){
+										if (strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle) || len(tmpTitle)<1) {
 											if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
-												if (each[2]!=strconv.Itoa(lenBody)) {
-													if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
+												if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
+													if (each[2]!=strconv.Itoa(lenBody)) {
 														if CMSmode==false {
 															if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
-																//log.Println("xxx "+newUrl+" "+finalURL+" "+each[0])
 																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
 																tmpResultList = append(tmpResultList,a...)
 															}
@@ -1320,7 +1388,8 @@ func main() {
 			log.Printf("[*] Getting Page Titles for Invalid URI Paths [Intelligent Mode]")
 			completed := 0
 			for _, each := range contentList {
-				urlChan <- each+"/NonExistence/"
+				urlChan <- each+"/NonExistence"
+				//urlChan <- each+"/NonExistence/"
 				completed++
 			}
 			close(urlChan)    
