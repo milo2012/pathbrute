@@ -114,7 +114,7 @@ func cleanup() {
 						if err==nil {
 							lenBody = len(body)
 						}
-						if (resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
+						if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
 							var a = v+" ["+(strconv.Itoa(resp.StatusCode))+"] ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
 							tmpResultList3 = append(tmpResultList3,a)
 							//fmt.Printf("%s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
@@ -266,7 +266,7 @@ func checkURL(urlChan chan string) {
 			}
 		}
 		//fmt.Println(v+" "+strconv.Itoa(resp.StatusCode))
-		if (resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
+		if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
 			//intelligentMode=false
 			if intelligentMode==false {
 				fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
@@ -507,7 +507,7 @@ func getUrlWorker(urlChan chan string) {
 										if strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle){
 											if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 												if (each[2]!=strconv.Itoa(lenBody)) {
-													if resp.StatusCode!=403 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
+													if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 														if CMSmode==false {
 															if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
 																//if errorFound==false {
@@ -1338,7 +1338,7 @@ func main() {
 		totalListCount=len(finalList)
 
 		fmt.Println("\n[*] Testing URI Paths: (Total: "+strconv.Itoa(totalListCount)+")")
-		log.Printf("\n[*] Testing URI Paths")
+		log.Printf("`\n[*] Testing URI Paths")
 		//real uripaths
 		completed1 := 0
 		for _, each := range finalList {
