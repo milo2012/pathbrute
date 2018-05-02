@@ -116,7 +116,6 @@
 /jira/secure/MailRuCalendar.jspa
 /jira/secure/artezioboard/mainPage.jspa
 /jmx2-Email-Tester/
-/joomla-form-builder-smartformer.html)
 /joomla/administrator/index.php
 /json/device/getDeviceSummary
 /lib/crud/downloadFile.php
@@ -159,15 +158,10 @@
 /tv.php
 /updating.php
 /user/save
-/usr/bin/banshee
-/usr/bin/env
-/v/category/69/comedy/
 /vdc_email_display.php
 /video
 /w2wiki/index.php
-/wavepad/
 /webui/JSON-RPC
-/wiki/Cross-site_scripting
 /wordpress/wp-content/plugins/wp-levoslideshow/html/edit_image.php
 /wp-content/plugins/contus-video-comments/save.php
 /yadis.xml
