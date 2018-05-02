@@ -82,7 +82,6 @@
 /exponent/loginmodule/editprofile/
 /fotoweb/views/login
 /geoip/webshell.php
-/goeip.db
 /goform/formSysCm
 /group-summary.jsp
 /htdocs/fileinfo.php
@@ -91,7 +90,6 @@
 /httpDisabled.shtml
 /invocationConsole
 /lbmbackoffice/
-/lib64/ld-linux-x86-64.so.2
 /logeye/common/addLogFilter.jsp
 /logeye/componentAction.jsp
 /logeye/security/management/userSettingsAction.jsp
