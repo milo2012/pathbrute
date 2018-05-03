@@ -484,31 +484,33 @@ func checkURL(urlChan chan string) {
 		req2, err := http.NewRequest("GET", v, nil)
 		req2.Header.Add("User-Agent", userAgent)
 		resp2, err := client.Do(req2)														
-		if err==nil {
-			body2, err2 := ioutil.ReadAll(resp2.Body)				
-			if err2==nil {
-				s, err3 := goscraper.Scrape(v, 5)
-				if err3==nil {
-					var tmpTitle2 = ""
-					tmpTitle2=strings.TrimSpace(s.Preview.Title)						
-					var lenBody2 = len(body2)
-					if !stringInSlice(v,tmpResultList4) {
-						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
-						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
-						tmpResultList4 = append(tmpResultList4,v)
+		if (resp2.StatusCode!=403 && resp2.StatusCode!=503 && resp2.StatusCode!=404 && resp2.StatusCode!=406 && resp2.StatusCode!=400 && resp2.StatusCode!=500 && resp2.StatusCode!=204) {
+			if err==nil {
+				body2, err2 := ioutil.ReadAll(resp2.Body)				
+				if err2==nil {
+					s, err3 := goscraper.Scrape(v, 5)
+					if err3==nil {
+						var tmpTitle2 = ""
+						tmpTitle2=strings.TrimSpace(s.Preview.Title)						
+						var lenBody2 = len(body2)
+						if !stringInSlice(v,tmpResultList4) {
+							fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+							log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+							tmpResultList4 = append(tmpResultList4,v)
+						}
+					} else { 
+						if !stringInSlice(v,tmpResultList4) {
+							fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+							log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+							tmpResultList4 = append(tmpResultList4,v)
+						}
 					}
-				} else { 
+				} else {
 					if !stringInSlice(v,tmpResultList4) {
 						fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
 						log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
 						tmpResultList4 = append(tmpResultList4,v)
 					}
-				}
-			} else {
-				if !stringInSlice(v,tmpResultList4) {
-					fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-					log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
-					tmpResultList4 = append(tmpResultList4,v)
 				}
 			}
 		}
