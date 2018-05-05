@@ -67,6 +67,7 @@
 /ControllerServlet
 /DataArchivingService
 /DefaultWebApp
+/Diagnostics.asp
 /device.rsp?opt=user&cmd=list
 /DeploymentService
 /DynaCacheESI
