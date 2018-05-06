@@ -4,6 +4,7 @@
 /.htpasswd
 /.meta
 /.web
+/apigility/ui#//db
 /awstats/awstats.pl
 /ADS-EJB
 /ADS-License
