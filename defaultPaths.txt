@@ -274,6 +274,7 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /_default
 /_tmp_war
 /_tmp_war_DefaultWebApp
+/_vti_inf.html
 /_vti_pvt/service.cnf
 /a2e2gp2r2/x.jsp
 /ab/
