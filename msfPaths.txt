@@ -125,7 +125,7 @@
 /etc/apps/phpmyadmin/index.php
 /event/agentUpload
 /event/index3.do
-/event/j_security_check;jsessionid=#{jsessionid}
+/event/j_security_check
 /event/runQuery.do
 /events/reports/view.cgi
 /examples/save.lsp
@@ -149,17 +149,14 @@
 /hybridauth
 /iControl/iControlPortal.cgi
 /images
-/images/..
 /images/../jsp/ProcessFileUpload.jsp
 /imc
 /img/favicon.png?v=6.0.1-1213
 /includes/inline_image_upload.php
 /includes/jquery.uploadify/upload.php
-/includes/jquery.uploadify/upload.php?folder=#{upload_dir}
 /includes/settings.php
 /index.php
 /index.php/component/users/
-/index.php?age=50[NoSQLi]
 /index.php?loggedout
 /infusionsoft/Infusionsoft/utilities/code_generator.php
 /initCert.imss
