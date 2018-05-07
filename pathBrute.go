@@ -166,12 +166,13 @@ func removeCharacters(input string, characters string) string {
 	 return strings.Map(filter, input)
 }
 
-func getPage(newUrl string) (string, string, int, int) {
-	u, err := url.Parse(newUrl)
-	if err != nil {
-		panic(err)
-	}
-	var newURL1=u.Scheme+"://"+u.Host+"/NonExistence"		
+func getPage(newURL1 string) (string, string, int, int) {
+	//u, err := url.Parse(newUrl)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//var newURL1=u.Scheme+"://"+u.Host+"/NonExistence"		
+	//var newURL1=u.Scheme+"://"+u.Host
 
 	var tmpStatusCode = 0
 	var tmpTitle = ""
@@ -211,7 +212,15 @@ func testFakePath(urlChan chan string) {
 		var getTmpStatusCode=0
 		var getLenBody=0
 		var getTmpFinalURL=""
-		getTmpFinalURL,getTmpTitle,getTmpStatusCode,getLenBody=getPage(newUrl)	
+		//getTmpFinalURL,getTmpTitle,getTmpStatusCode,getLenBody=getPage(newUrl)	
+
+		u, err := url.Parse(newUrl)
+		if err != nil {
+			panic(err)
+		}
+		var newURL1=u.Scheme+"://"+u.Host+"/NonExistence"
+
+		getTmpFinalURL,getTmpTitle,getTmpStatusCode,getLenBody=getPage(newURL1)	
 		newUrl = strings.Replace(newUrl, "/NonExistence", "", -1)
 		if strings.HasSuffix(getTmpFinalURL,"/") {
 			getTmpFinalURL=getTmpFinalURL[0:len(getTmpFinalURL)-1]
@@ -340,7 +349,6 @@ func checkURL(urlChan chan string) {
 		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)		
 
-		//resp, err := client.Get(v)
 		s, err := goscraper.Scrape(v, 5)
 		var lenBody = 0
 		var tmpTitle = ""
@@ -353,10 +361,17 @@ func checkURL(urlChan chan string) {
 		}
 		//fmt.Println(v+" "+strconv.Itoa(resp.StatusCode))
 		if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
-			//intelligentMode=false
 			if intelligentMode==false {
-				fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-				log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				if resp.StatusCode==401 {
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				} else if (resp.StatusCode==200) {
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				} else {
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				}				
 			} else {
 				var initialStatusCode=resp.StatusCode
 				var initialPageSize=lenBody
@@ -368,16 +383,35 @@ func checkURL(urlChan chan string) {
 				numberOfa := strings.Count(u.Path, "/")
 				tmpSplit2 :=strings.Split(u.Path,"/")
 				var counter1=numberOfa
-				if numberOfa<2 {				
-					var newURL3=u.Scheme+"://"+u.Host		
-					req3, err := http.NewRequest("GET", newURL3, nil)
-					req3.Header.Add("User-Agent", userAgent)
-					resp3, err := client.Do(req3)		
-					if err==nil {
-						if resp.StatusCode!=401 && resp3.StatusCode!=401 {
+				if numberOfa<2 {	
+					//var lenBody3=0			
+					var newURL3=u.Scheme+"://"+u.Host	
+					getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
+					if getTmpStatusCode3!=resp.StatusCode {
+						//if resp3.StatusCode!=resp.StatusCode {
+						//if status code for http://x.x.x.x/!=http://x.x.x.x/abcd
+						//fmt.Println("b1 "+v+" "+newURL3)
+						//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode)+" "+strconv.Itoa(getTmpStatusCode3))
+						tmpResultList3 = append(tmpResultList3, v)
+					} else {
+						//fmt.Println("c1 "+v+" "+newURL3)
+						//fmt.Println("c2 "+strconv.Itoa(resp.StatusCode)+" "+strconv.Itoa(getTmpStatusCode3))
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4:=getPage(newURL3+"/NonExistence")						
+						
+						
+						if lenBody!=getLenBody4 {
+							//fmt.Println(newURL3+"/NonExistence")
+							//fmt.Println(getTmpStatusCode4)
+							//fmt.Println(getLenBody4)
 							tmpResultList3 = append(tmpResultList3, v)
 						}
+						_=getLenBody3
+						_=getTmpFinalURL4
+						_=getTmpTitle4
+						_=getTmpStatusCode4
 					}
+					_=getTmpFinalURL3
+					_=getTmpTitle3
 				} else {
 					for counter1>numberOfa-1 {							
 						var uriPath1=""				
@@ -551,6 +585,9 @@ func getUrlWorker(urlChan chan string) {
 					} else if strings.Contains(err.Error(),"tls: no renegotiation") {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
+					} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
+						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)	
+						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)							
 					} else {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
@@ -593,6 +630,7 @@ func getUrlWorker(urlChan chan string) {
 												if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 													if (each[2]!=strconv.Itoa(lenBody)) {
 														if CMSmode==false {
+
 															if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
 																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
 																tmpResultList = append(tmpResultList,a...)
@@ -623,6 +661,12 @@ func getUrlWorker(urlChan chan string) {
 								//tmpStatusCode := strconv.Itoa(resp.StatusCode)
 								var newURL2=u.Scheme+"://"+u.Host				
 								if resp.StatusCode==401 && initialStatusCode=="401" {
+									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+									var a = [][]string{{newURL2, initialStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
+								}
+								if (resp.StatusCode!=401 && initialStatusCode=="401") {
 									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
 									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
 									var a = [][]string{{newURL2, initialStatusCode, "",""}}
