@@ -582,22 +582,40 @@ func checkURL(urlChan chan string) {
 							tmpTitle2=strings.TrimSpace(s.Preview.Title)						
 							var lenBody2 = len(body2)
 							if !stringInSlice(v,tmpResultList4) {
-								fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
-								log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
-								tmpResultList4 = append(tmpResultList4,v)
+								u, err := url.Parse(v)
+								if err != nil {
+									panic(err)
+								}
+								if len(u.Path)>0 {
+									fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+									log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+									tmpResultList4 = append(tmpResultList4,v)
+								}
 							}
 						} else { 
 							if !stringInSlice(v,tmpResultList4) {
-								fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-								log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
-								tmpResultList4 = append(tmpResultList4,v)
+								u, err := url.Parse(v)
+								if err != nil {
+									panic(err)
+								}
+								if len(u.Path)>0 {
+									fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+									log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+									tmpResultList4 = append(tmpResultList4,v)
+								}
 							}
 						}
 					} else {
 						if !stringInSlice(v,tmpResultList4) {
-							fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-							log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
-							tmpResultList4 = append(tmpResultList4,v)
+							u, err := url.Parse(v)
+							if err != nil {
+								panic(err)
+							}
+							if len(u.Path)>0 {
+								fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+								log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+								tmpResultList4 = append(tmpResultList4,v)
+							}
 						}
 					}
 				}
@@ -643,6 +661,9 @@ func getUrlWorker(urlChan chan string) {
 					} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)							
+					} else if strings.Contains(err.Error()," EOF]") {
+						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
+						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)													
 					} else {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
