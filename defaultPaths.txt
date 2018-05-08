@@ -225,6 +225,7 @@
 /web/database/manager
 /web.config
 /WEB-INF
+/WEB-INF./web.xml
 /WEB-INF/web.xml
 /WLDummyInitJVMIDs
 /WSConnector/Config1
