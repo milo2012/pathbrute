@@ -339,7 +339,8 @@ func testFakePath(urlChan chan string) {
 }
 func checkURL(urlChan chan string) {
 	var tmpResultList3 []string
-    for v := range urlChan {
+    for v := range urlChan {    
+    	//fmt.Println("A "+v)
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -359,7 +360,6 @@ func checkURL(urlChan chan string) {
 				lenBody = len(body)
 			}
 		}
-		//fmt.Println(v+" "+strconv.Itoa(resp.StatusCode))
 		if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
 			if intelligentMode==false {
 				if resp.StatusCode==401 {
@@ -380,38 +380,60 @@ func checkURL(urlChan chan string) {
 				if err != nil {
 					panic(err)
 				}
-				numberOfa := strings.Count(u.Path, "/")
+				numberOfa := strings.Count(u.Path, "/")				
 				tmpSplit2 :=strings.Split(u.Path,"/")
 				var counter1=numberOfa
-				if numberOfa<2 {	
-					//var lenBody3=0			
+				if numberOfa<3 {	
 					var newURL3=u.Scheme+"://"+u.Host	
 					getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
-					if getTmpStatusCode3!=resp.StatusCode {
-						//if resp3.StatusCode!=resp.StatusCode {
-						//if status code for http://x.x.x.x/!=http://x.x.x.x/abcd
-						//fmt.Println("b1 "+v+" "+newURL3)
-						//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode)+" "+strconv.Itoa(getTmpStatusCode3))
-						tmpResultList3 = append(tmpResultList3, v)
+					//if getTmpStatusCode3!=resp.StatusCode {
+					var getTmpFinalURL4=""
+					var getTmpTitle4=""
+					var getTmpStatusCode4=0
+					var getLenBody4=0
+					var newURL4=""
+					if strings.HasSuffix(v,".php") {
+						tmpSplit3 :=strings.Split(u.Path,".php")
+						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".php"
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+					} else if strings.HasSuffix(v,".aspx") {
+						tmpSplit3 :=strings.Split(u.Path,".aspx")
+						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".aspx"
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+					} else if strings.HasSuffix(v,".asp") {
+						tmpSplit3 :=strings.Split(u.Path,".asp")
+						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".asp"
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+					} else if strings.HasSuffix(v,".html") {
+						tmpSplit3 :=strings.Split(u.Path,".html")
+						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".html"
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+					} else if strings.HasSuffix(v,".htm") {
+						tmpSplit3 :=strings.Split(u.Path,".htm")
+						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".htm"
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
 					} else {
-						//fmt.Println("c1 "+v+" "+newURL3)
-						//fmt.Println("c2 "+strconv.Itoa(resp.StatusCode)+" "+strconv.Itoa(getTmpStatusCode3))
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4:=getPage(newURL3+"/NonExistence")						
-						
-						
-						if lenBody!=getLenBody4 {
-							//fmt.Println(newURL3+"/NonExistence")
-							//fmt.Println(getTmpStatusCode4)
-							//fmt.Println(getLenBody4)
-							tmpResultList3 = append(tmpResultList3, v)
+						if  strings.HasSuffix(v,"/") {
+							newURL4=newURL3+"/xxx/"
+						} else { 						
+							newURL4=newURL3+"/xxx"
 						}
-						_=getLenBody3
-						_=getTmpFinalURL4
-						_=getTmpTitle4
-						_=getTmpStatusCode4
-					}
+						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)						
+					}						
+					if (initialStatusCode!=getTmpStatusCode4) {
+						//fmt.Println("b1 "+v+" "+newURL4)
+						//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
+						//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
+						tmpResultList3 = append(tmpResultList3, v)
+					} 
+					_=getTmpFinalURL4
+					_=getTmpTitle4
+					_=getTmpStatusCode4
+					_=getLenBody4
 					_=getTmpFinalURL3
 					_=getTmpTitle3
+					_=getTmpStatusCode3
+					_=getLenBody3
 				} else {
 					for counter1>numberOfa-1 {							
 						var uriPath1=""				
@@ -423,6 +445,7 @@ func checkURL(urlChan chan string) {
 						var newURL=u.Scheme+"://"+u.Host+uriPath1
 
 						req1, err := http.NewRequest("GET", newURL, nil)
+						//fmt.Println("xx")
 						if err==nil {
 							req1.Header.Add("User-Agent", userAgent)
 							resp1, err := client.Do(req1)		
@@ -437,28 +460,38 @@ func checkURL(urlChan chan string) {
 										}
 										tmpSplit3 :=strings.Split(u1.Path,"/")
 										if len(tmpSplit3)>3 {
+											//fmt.Println("gg")
 											var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
 											var newURL1=u.Scheme+"://"+u.Host+uriPath2
 											req2, err := http.NewRequest("GET", newURL1, nil)
 											req2.Header.Add("User-Agent", userAgent)
 											resp2, err := client.Do(req2)														
-
 											if err==nil {
 												body2, err2 := ioutil.ReadAll(resp2.Body)
 										
 												var lenBody2 = len(body2)
+												//fmt.Println("gg1 "+newURL1)
+												//fmt.Println(strconv.Itoa(resp2.StatusCode)+" "+strconv.Itoa(initialStatusCode))
+												//fmt.Println(strconv.Itoa(lenBody2)+" "+strconv.Itoa(initialPageSize))
 												if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
 													if strings.HasSuffix(newURL1, "/") {
 														newURL1=newURL1[0:len(newURL1)-1]
 													}
 													if !stringInSlice(newURL1,tmpResultList3) {
+														//fmt.Println("gg2")
 														tmpResultList3 = append(tmpResultList3, newURL1)
+													} 
+												} else {
+													if !stringInSlice(v,tmpResultList3) {
+														//fmt.Println("gg3")
+														tmpResultList3 = append(tmpResultList3, v)
 													}
-												}
+												}												
 												_=err2
 											}
 											_ = resp2
 										} else {			
+											//fmt.Println("yy")
 											var newURL1 = newURL[0:len(newURL)-1]
 											req2, err := http.NewRequest("GET", newURL1, nil)
 											_=err
@@ -467,9 +500,12 @@ func checkURL(urlChan chan string) {
 											if resp2.StatusCode==resp1.StatusCode {
 												newURL=newURL1
 											}
-											//here1											
 											if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
 												if !stringInSlice(newURL,tmpResultList3) {
+													//fmt.Println("c1 "+v+" "+newURL)
+													//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
+													//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
+
 													tmpResultList3 = append(tmpResultList3, newURL)
 												}
 											}
@@ -628,15 +664,20 @@ func getUrlWorker(urlChan chan string) {
 							tmpStatusCode := strconv.Itoa(resp.StatusCode)
 							var tmpFound=false
 							for _, each := range tmpTitleList { 
-								if strings.Contains(finalURL,each[0]+"/") {
+								var originalURL=""
+								if strings.HasSuffix(each[0],"/") {
+									originalURL=each[0]
+								} else {
+									originalURL=each[0]+"/"
+								}
+								if strings.Contains(finalURL,originalURL) {
 									if newUrl==finalURL { 		
-										tmpFound=true																		
+										tmpFound=true			
 										if (strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle) || len(tmpTitle)<1) {
 											if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
 												if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
 													if (each[2]!=strconv.Itoa(lenBody)) {
 														if CMSmode==false {
-
 															if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
 																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
 																tmpResultList = append(tmpResultList,a...)
@@ -644,8 +685,15 @@ func getUrlWorker(urlChan chan string) {
 														}
 													} 												
 												}
-											} 
-										} 
+											}  
+										} else {
+											if (strings.TrimSpace(each[1])==strings.TrimSpace(tmpTitle)) {
+												if initialStatusCode!=each[3] {
+													var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+													tmpResultList = append(tmpResultList,a...)
+												}
+											}
+										}
 									}
 									if tmpStatusCode=="200"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
@@ -692,7 +740,7 @@ func getUrlWorker(urlChan chan string) {
 						} else {
 							tmpStatusCode := strconv.Itoa(resp.StatusCode)
 							//if CMSmode==false {
-							fmt.Println("aa")
+							//fmt.Println("aa")
 							if Statuscode!=0 {
 								if resp.StatusCode==Statuscode {
 									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
@@ -1422,7 +1470,6 @@ func main() {
 					newUrl = url+path
 				} else {		
 					newUrl = url+"/"+path
-					//fmt.Println(newUrl)
 				}
 				finalList = append(finalList, newUrl)
 			  }
@@ -1452,7 +1499,6 @@ func main() {
 			completed := 0
 			for _, each := range contentList {
 				urlChan <- each+"/NonExistence"
-				//urlChan <- each+"/NonExistence/"
 				completed++
 			}
 			close(urlChan)    
