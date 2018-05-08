@@ -426,12 +426,17 @@ func checkURL(urlChan chan string) {
 					}						
 					if (initialStatusCode!=getTmpStatusCode4) {
 						//fmt.Println("b1 "+v+" "+newURL4)
-						//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
+						//fmt.Println("b2 "+strconv.Itoa(initialStatusCode))
 						//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
 						tmpResultList3 = append(tmpResultList3, v)
 					} else {
-						if (initialPageSize!=getLenBody4) {
-							tmpResultList3 = append(tmpResultList3, v)
+						if (getTmpStatusCode4==200) {
+							//fmt.Println("b1 "+v+" "+strconv.Itoa(initialStatusCode))
+							//fmt.Println("b2 "+newURL3+" "+strconv.Itoa(getTmpStatusCode3))
+							//fmt.Println("b3 "+newURL4+" "+strconv.Itoa(getTmpStatusCode4))
+							if (initialPageSize!=getLenBody4) {
+								tmpResultList3 = append(tmpResultList3, v)
+							}
 						}
 					}
 					_=getTmpFinalURL4
