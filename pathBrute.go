@@ -416,16 +416,24 @@ func checkURL(urlChan chan string) {
 						if  strings.HasSuffix(v,"/") {
 							newURL4=newURL3+"/xxx/"
 						} else { 						
-							newURL4=newURL3+"/xxx"
+							//newURL4=newURL3+"/xxx"
+							newURL4=v+"xxx"
 						}
 						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)						
+						//fmt.Println("b0: "+newURL4)
+						//fmt.Println("b00: "+strconv.Itoa(initialStatusCode)+" "+strconv.Itoa(getTmpStatusCode4))
+						//fmt.Println("b01  "+strconv.Itoa(initialPageSize)+" "+strconv.Itoa(getLenBody4))
 					}						
 					if (initialStatusCode!=getTmpStatusCode4) {
 						//fmt.Println("b1 "+v+" "+newURL4)
 						//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
 						//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
 						tmpResultList3 = append(tmpResultList3, v)
-					} 
+					} else {
+						if (initialPageSize!=getLenBody4) {
+							tmpResultList3 = append(tmpResultList3, v)
+						}
+					}
 					_=getTmpFinalURL4
 					_=getTmpTitle4
 					_=getTmpStatusCode4
