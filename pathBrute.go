@@ -914,7 +914,6 @@ func getUrlWorker(urlChan chan string) {
 				completedPathList=append(completedPathList,newUrl)
 				mu.Unlock()
 				currentListCount+=1
-				fmt.Println(currentListCount)
 			}
 		}
     }
