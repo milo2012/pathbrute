@@ -372,6 +372,11 @@ func testFakePath(urlChan chan string) {
 		atomic.AddInt32(&currentFakeCount, 1)
     }
 }
+func addToCompleteList(newUrl string) {
+	completedPathList=append(completedPathList,newUrl)
+	//fmt.Println("add "+newUrl+" "+strconv.Itoa(len(completedPathList)))					
+}
+
 func checkURL(urlChan chan string) {
 	var tmpResultList3 []string
     for v := range urlChan {    
@@ -708,6 +713,9 @@ func getUrlWorker(urlChan chan string) {
 					} else if strings.Contains(err.Error(),"server gave HTTP response to HTTPS client") {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)																
+					} else if strings.Contains(err.Error(),"network is unreachablet") {
+						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
 					} else {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
@@ -731,10 +739,6 @@ func getUrlWorker(urlChan chan string) {
 						finalURL := resp.Request.URL.String()
 						var tmpTitle = ""
 						if finalURL==newUrl {
-							//tmpTitle1,tmpStatus:=GetHtmlTitle(string(body))
-							//if tmpStatus==true {
-							//	tmpTitle=tmpTitle1
-							//}										
 							tmpTitle=getPageTitle(newUrl)
 						}		
 						if intelligentMode==true && CMSmode==false{
@@ -772,19 +776,25 @@ func getUrlWorker(urlChan chan string) {
 											}
 										}
 									}
-									if tmpStatusCode=="200"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									} else {
-										if initialStatusCode=="0" {
-											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
-											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+									if tmpFound==true {
+										if tmpStatusCode=="200"{
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											//addToCompleteList(newUrl)
+										} else if tmpStatusCode=="401"{
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											//addToCompleteList(newUrl)
 										} else {
-											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											if initialStatusCode=="0" {
+												fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+												log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+												//addToCompleteList(newUrl)
+											} else {
+												fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+												log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+												//addToCompleteList(newUrl)
+											}
 										}
 									}
 								}
@@ -801,21 +811,26 @@ func getUrlWorker(urlChan chan string) {
 									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
 									var a = [][]string{{newURL2, initialStatusCode, "",""}}
 									tmpResultList = append(tmpResultList,a...)
+									//addToCompleteList(newUrl)
 								} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
 									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
 									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
 									var a = [][]string{{newURL2, initialStatusCode, "",""}}
 									tmpResultList = append(tmpResultList,a...)
+									//addToCompleteList(newUrl)
 								} else {
 									if tmpStatusCode=="200"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										//addToCompleteList(newUrl)
 									} else if tmpStatusCode=="401"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										//addToCompleteList(newUrl)
 									} else {
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										//addToCompleteList(newUrl)
 									}
 								}
 							}
@@ -889,32 +904,28 @@ func getUrlWorker(urlChan chan string) {
 					resp.Body.Close()
 					_ = resp
 					_ = tmpTitle 
-				} 
+				} 			
+
 			}
 
 			if currentListCount==totalListCount {
-				if !stringInSlice(newUrl,completedPathList) {
-					mu.Lock()
-					completedPathList=append(completedPathList,newUrl)
-					mu.Unlock()
-				}
+				//if !stringInSlice(newUrl,completedPathList) {
+				//fmt.Println("a1 "+newUrl+" "+strconv.Itoa(len(completedPathList)))					
+				addToCompleteList(newUrl)					
+				//}				
 				reachedTheEnd=true
 			} else {
-				if !stringInSlice(newUrl,completedPathList) {
-					mu.Lock()
-					completedPathList=append(completedPathList,newUrl)
-					mu.Unlock()
-					currentListCount+=1
-				}
-			}	
+				addToCompleteList(newUrl)
+			}
+
 			_ = err
 		} else {
-			if !stringInSlice(newUrl,completedPathList) {
-				mu.Lock()
-				completedPathList=append(completedPathList,newUrl)
-				mu.Unlock()
-				currentListCount+=1
-			}
+			//if !stringInSlice(newUrl,completedPathList) {
+			//fmt.Println("a3 "+newUrl+" "+strconv.Itoa(len(completedPathList)))
+			addToCompleteList(newUrl)
+			currentListCount+=1
+			//}
+			//mu.Unlock()
 		}
     }
 }
@@ -1779,9 +1790,7 @@ func main() {
 		} else {
 			for _, v := range tmpResultList {
 				if !stringInSlice(v[0],tmpResultList1) {
-					//fmt.Println("xxx ",v[0])
 					tmpResultList1 = append(tmpResultList1, v[0])
-					//tmpResultList1 = append(tmpResultList1, v[0])
 				}
 			}
 
@@ -1800,7 +1809,9 @@ func main() {
 			//Wait until all processes have been completed
 			for {
 				if len(completedPathList)!=len(finalList) {
-					time.Sleep(5 * time.Millisecond)
+					//fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
+					//time.Sleep(5 * time.Millisecond)
+					time.Sleep(5 * time.Second)
 				} else {
 					break
 				}
