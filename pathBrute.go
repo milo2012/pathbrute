@@ -792,7 +792,6 @@ func getUrlWorker(urlChan chan string) {
 										} else if tmpStatusCode=="401"{
 											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-											fmt.Println(resp.Body)
 										} else {
 											if initialStatusCode=="0" {
 												fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
