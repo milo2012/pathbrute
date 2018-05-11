@@ -40,7 +40,7 @@ var currentCount int = 0
 var currentCount1 int = 0
 var ContinueNum int = 0 
 var proxyMode = false
-var enableDebug = true
+var enableDebug = false
 
 var totalListCount int = 0
 var currentListCount int = 1
@@ -813,6 +813,9 @@ func getUrlWorker(urlChan chan string) {
 					} else if strings.Contains(err.Error(),"EOF") {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)																
+					} else if strings.Contains(err.Error(),"tls: handshake failure") {
+						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)	
+						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)																
 					} else {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
@@ -1713,7 +1716,7 @@ func main() {
 				break
 			} 
 		}
-	
+			
 		//fmt.Println("\n")
 		if CMSmode==true {
 			for _, v := range tmpResultList {
@@ -1876,16 +1879,17 @@ func main() {
 					}
 				}
 			}					
+
 			//Wait until all processes have been completed
-			for {
+			/*for {
 				if len(completedPathList)!=len(finalList) {
-					//fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
+					fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
 					//time.Sleep(5 * time.Millisecond)
 					time.Sleep(5 * time.Second)
 				} else {
 					break
 				}
-			}
+			}*/
 			
 			if len(tmpResultList2)<1 {
 				fmt.Println("\n[*] No results found")
