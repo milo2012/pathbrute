@@ -79,6 +79,7 @@
 /ErrorServlet
 /FileServlet
 /FileTransfer
+/esp/cms_changeDeviceContext.esp
 /GRMGHeartBeat
 /GRMGWSTest/service
 /GRMGWSTest/service?wsdl
