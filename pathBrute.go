@@ -906,7 +906,6 @@ func getUrlWorker(urlChan chan string) {
     	newUrl = newUrl1[0]
     	var currentListCount, _ = strconv.Atoi(newUrl1[1])
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
-		//if ContinueNum==0 || ContinueNum<currentListCount+1 {			
 		if ContinueNum==0 || ContinueNum<currentListCount {			
 			//for reachedTheEnd==false {
 			client := http.Client{
@@ -1138,7 +1137,6 @@ func getUrlWorker(urlChan chan string) {
 				} 			
 
 			}
-
 			if currentListCount==totalListCount {
 				addToCompleteList(newUrl)					
 				reachedTheEnd=true
@@ -1841,8 +1839,12 @@ func main() {
 
 		totalListCount=len(finalList)
 
-		fmt.Println("\n[*] Testing URI Paths: (Total: "+strconv.Itoa(totalListCount)+")")
+		fmt.Println("\n[*] Testing URI Paths: (Total: "+strconv.Itoa(totalListCount)+")")		
 		log.Printf("`\n[*] Testing URI Paths")
+		if ContinueNum>totalListCount {
+			fmt.Println("For the -r option, you must enter a value smaller than "+strconv.Itoa(totalListCount))
+			os.Exit(3)
+		}
 		//real uripaths
 		completed1 := 0
 		for _, each := range finalList {
