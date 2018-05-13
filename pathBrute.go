@@ -9,6 +9,7 @@ import (
     "net/http"
     "io/ioutil"
 	"github.com/mkideal/cli"
+	"github.com/masatana/go-textdistance"
 	"github.com/badoux/goscraper"
 	//"golang.org/x/net/html"
 	"github.com/fatih/color"
@@ -72,6 +73,36 @@ func f(from string) {
         fmt.Println(from, ":", i)
     }
 }
+func checkWebsite(urlChan chan string) (string,bool) {
+	var websiteUp=false
+	var currentURL=""
+	for newURL1 := range urlChan {
+		currentURL=newURL1
+		var userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36"
+		var timeoutSec=10		
+
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+		client := http.Client{
+			Timeout: timeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		        	return http.ErrUseLastResponse
+		    	},		
+		}
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		req, err := http.NewRequest("GET", newURL1, nil)
+		if err==nil {
+			req.Header.Add("User-Agent", userAgent)
+			resp, err := client.Do(req)			
+			if err==nil{	
+				fmt.Println(newURL1+" "+strconv.Itoa(resp.StatusCode))		
+				websiteUp=true		
+			} 
+			_=resp
+		} 		
+		return newURL1,websiteUp
+	}
+	return currentURL,websiteUp
+}
 func checkStatusCode(statusCode int) (bool) {
 	if (statusCode!=403 && statusCode!=301 && statusCode!=301 && statusCode!=503 && statusCode!=404 && statusCode!=406 && statusCode!=400 && statusCode!=500 && statusCode!=204 && statusCode!=302) {
 		return true
@@ -79,6 +110,36 @@ func checkStatusCode(statusCode int) (bool) {
 		return false
 	}
 }
+func getPageBody(tmpUrl string) (string) {
+	var pageBody=""
+	timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},					
+	}
+	if proxyMode==true {
+		url_i := url.URL{}
+		url_proxy, _ := url_i.Parse(proxy_addr)
+		http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+	}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, err := http.NewRequest("GET", tmpUrl, nil)
+	if err==nil {
+		req.Header.Add("User-Agent", userAgent)
+		resp, err := client.Do(req)		
+		if err == nil {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err==nil {
+				pageBody = string(body)
+			}
+		}
+	}
+	return pageBody
+}
+
 func cleanup() {
     fmt.Println("\nCTRL-C (interrupt signal)")
 	for _, v := range tmpResultList {
@@ -278,7 +339,7 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 	var lastCount=0
 	var tmpFinalPath=""
 	var finalURL=""
-	var result=""
+	var voidPath=false
 	u, err := url.Parse(newUrl)
 	if err!=nil {
 		fmt.Println(err)
@@ -291,7 +352,7 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 				newPath=strings.Replace(u.Path,result[tmpCount],result[tmpCount]+"xx",1)
 				tmpFinalURL,tmpTitle,tmpStatusCode, lenBody:=getPage(u.Scheme+"://"+u.Host+newPath)
 				//if enableDebug==true {
-				//	fmt.Println("[debug] "+newUrl+" -> "+newPath+" ["+strconv.Itoa(tmpStatusCode)+"]")					
+				//	fmt.Println("[debug1] "+newUrl+" -> "+newPath+" ["+strconv.Itoa(tmpStatusCode)+"]")					
 				//}
 				if statusCode!=tmpStatusCode {
 					tmpFinalPath=tmpFinalPath+"/"+result[tmpCount]
@@ -299,7 +360,7 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 					if newUrl1!=newUrl {
 						getTmpFinalURL1,getTmpTitle1,getTmpStatusCode1,getLenBody1:=getPage(newUrl1)					
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")					
+							fmt.Println("[debug2] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")					
 						}
 						_=getTmpFinalURL1
 						_=getTmpTitle1
@@ -310,11 +371,14 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						var newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"xxx"
 						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl4)
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
+							fmt.Println("[debug3] "+newUrl+" -> "+tmpFinalPath+"xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
 						}
 						if statusCode!=getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
+								if enableDebug==true {
+									fmt.Println("[predict1]")
+								}
 								finalURL=u.Scheme+"://"+u.Host+tmpFinalPath
 							}
 							//here
@@ -323,11 +387,14 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 							newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx"
 							getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2=getPage(newUrl4)
 							if enableDebug==true {
-								fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"/xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
+								fmt.Println("[debug4] "+newUrl+" -> "+tmpFinalPath+"/xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
 							}
 							if statusCode==getTmpStatusCode2 {
 								if checkStatusCode(getTmpStatusCode2)==true {
 									//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=301 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
+									if enableDebug==true {
+										fmt.Println("[predict2]")
+									}
 									finalURL=u.Scheme+"://"+u.Host
 								}
 							}
@@ -344,34 +411,76 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 					var newUrl1=u.Scheme+"://"+u.Host+tmpFinalPath
 					getTmpFinalURL1,getTmpTitle1,getTmpStatusCode1,getLenBody1:=getPage(newUrl1)
 					if enableDebug==true {
-						fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")
+						if newUrl!=newUrl1 {
+							fmt.Println("[debug5] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")
+							if statusCode==getTmpStatusCode1 && statusCode==200 {
+								getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl)
+								if getLenBody1!=getLenBody2 {
+										if enableDebug==true {									
+											fmt.Println("[predict3]")
+										}
+										finalURL=newUrl
+								}		
+								_=getTmpFinalURL2
+								_=getTmpTitle2
+								_=getTmpStatusCode2
+								_=getLenBody2
+							}
+						}
 					}
 					if strings.Contains( u.Path,".") {					
-						var newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx"
+						//////
+						var newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"xxx"
 						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl4)
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"/xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
+							fmt.Println("[debug6] "+newUrl+" -> "+tmpFinalPath+"xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
+						}
+						if statusCode==getTmpStatusCode2 {
+							if checkStatusCode(getTmpStatusCode2)==true {
+								var s1=getPageBody(newUrl)
+								var s2=getPageBody(newUrl4)
+								//If the body text is similar
+								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+									if enableDebug==true {
+										fmt.Println("[predict4]")
+									}
+									finalURL=""
+									voidPath=true
+								} else {
+									finalURL=u.Scheme+"://"+u.Host
+								} 
+							}					
+						}
+						//if enableDebug==true {
+						//	fmt.Println("[debug7] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")	
+						//}
+						//////
+
+						newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx"
+						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2=getPage(newUrl4)
+						if enableDebug==true {
+							fmt.Println("[debug8] "+newUrl+" -> "+tmpFinalPath+"/xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
-								finalURL=u.Scheme+"://"+u.Host
+								var s1=getPageBody(newUrl)
+								var s2=getPageBody(newUrl4)
+								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+									if enableDebug==true {
+										fmt.Println("[predict5]")
+									}
+									finalURL=""
+									voidPath=true								
+								}else {
+									finalURL=u.Scheme+"://"+u.Host
+								} 
 							}
 						}
-						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")
-						}
-						newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx"
-						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2=getPage(newUrl4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"/xxx ["+strconv.Itoa(getTmpStatusCode2)+"]")
-						}
-						if statusCode==getTmpStatusCode2 {
-							if checkStatusCode(getTmpStatusCode2)==true {							
-								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
-								finalURL=u.Scheme+"://"+u.Host
-							}
-						}
+						//if enableDebug==true {
+						//	fmt.Println("[debug9] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")
+						//}
+
 						_=getTmpFinalURL2
 						_=getTmpTitle2
 						_=getTmpStatusCode2
@@ -380,26 +489,46 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						var newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx/"
 						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl4)
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"/xxx/ ["+strconv.Itoa(getTmpStatusCode2)+"]")
+							fmt.Println("[debug10] "+newUrl+" -> "+tmpFinalPath+"/xxx/ ["+strconv.Itoa(getTmpStatusCode2)+"]")
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
-								finalURL=u.Scheme+"://"+u.Host
+								var s1=getPageBody(newUrl)
+								var s2=getPageBody(newUrl4)
+								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+									if enableDebug==true {
+										fmt.Println("[predict6]")
+									}
+									finalURL=""
+									voidPath=true
+								}else {
+									finalURL=u.Scheme+"://"+u.Host
+								} 
 							}
 						}
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")	
+							fmt.Println("[debug11] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")	
 						}
 						newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx/"
 						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2=getPage(newUrl4)
 						if enableDebug==true {
-							fmt.Println("[debug] "+newUrl+" -> "+tmpFinalPath+"/xxx/ ["+strconv.Itoa(getTmpStatusCode2)+"]")
+							fmt.Println("[debug12] "+newUrl+" -> "+tmpFinalPath+"/xxx/ ["+strconv.Itoa(getTmpStatusCode2)+"]")
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
-								finalURL=u.Scheme+"://"+u.Host
+								var s1=getPageBody(newUrl)
+								var s2=getPageBody(newUrl4)
+								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+									if enableDebug==true {
+										fmt.Println("[predict7]")									
+									}
+									finalURL=""
+									voidPath=true
+								} else {
+									finalURL=u.Scheme+"://"+u.Host
+								} 
 							}
 						}
 						_=getTmpFinalURL2
@@ -416,20 +545,26 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								var newUrl2=u.Scheme+"://"+u.Host+"/xxx.jsp"
 								getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl2)
 								if enableDebug==true {
-									fmt.Println("[debug] "+newUrl+" -> /xxx.jsp ["+strconv.Itoa(getTmpStatusCode2)+"]")
+									fmt.Println("[debug13] "+newUrl+" -> /xxx.jsp ["+strconv.Itoa(getTmpStatusCode2)+"]")
 								}
 								if getTmpStatusCode2==statusCode {
+									if enableDebug==true {
+										fmt.Println("[predict8]")
+									}
 									finalURL=u.Scheme+"://"+u.Host
 								}
 								var newUrl3=u.Scheme+"://"+u.Host+"/NonExistence/xxx.jsp"
 								getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newUrl3)
 								if enableDebug==true {
-									fmt.Println("[debug] "+newUrl+" -> /NonExistence/xxx.jsp ["+strconv.Itoa(getTmpStatusCode3)+"]")
+									fmt.Println("[debug14] "+newUrl+" -> /NonExistence/xxx.jsp ["+strconv.Itoa(getTmpStatusCode3)+"]")
 								}
 						
 								if getTmpStatusCode1==getTmpStatusCode2 && statusCode==getTmpStatusCode3{
 									if checkStatusCode(getTmpStatusCode2)==true {
 										//if (getTmpStatusCode3!=403 && getTmpStatusCode3!=503 && getTmpStatusCode3!=404 && getTmpStatusCode3!=406 && getTmpStatusCode3!=400 && getTmpStatusCode3!=500 && getTmpStatusCode3!=204 && getTmpStatusCode3!=302) {
+										if enableDebug==true {
+											fmt.Println("[predict9]")	
+										}
 										finalURL=u.Scheme+"://"+u.Host
 									}
 								}
@@ -456,10 +591,14 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								if getTmpStatusCode1==getTmpStatusCode2 {
 									if checkStatusCode(getTmpStatusCode2)==true {						
 										//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
+										fmt.Println("[predict10]")
 										finalURL=u.Scheme+"://"+u.Host
 									}
 								}
 								if getTmpStatusCode2==statusCode {
+									if enableDebug==true {
+										fmt.Println("[predict11]")
+									}
 									finalURL=u.Scheme+"://"+u.Host
 								}
 
@@ -486,10 +625,26 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 			}
 		}
 	}
-	if len(finalURL)>0 {
-		result=finalURL
-	} else {
-		result=u.Scheme+"://"+u.Host+tmpFinalPath
+	var result=""
+	if voidPath==false {
+		if len(finalURL)>0 {
+			if finalURL==u.Scheme+"://"+u.Host {
+				if enableDebug==true {
+					fmt.Println("[predict12]")
+				}
+				result=newUrl
+			} else {
+				if enableDebug==true {
+					fmt.Println("[predict13]")
+				}
+				result=finalURL
+			}
+		} else {
+			if enableDebug==true {
+				fmt.Println("[predict14]")
+			}
+			result=newUrl
+		}
 	}
 	_=lastCount
 	return result
@@ -522,78 +677,67 @@ func checkURL(urlChan chan string) {
 			if err3==nil {
 				lenBody = len(body)
 			}
-		}
-		if checkStatusCode(resp.StatusCode)==true {
-			//if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
-			if intelligentMode==false {
-				if resp.StatusCode==401 {
-					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-				} else if (resp.StatusCode==200) {
-					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-				} else {
-					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-				}				
-			} else {
-				var initialStatusCode=resp.StatusCode
-				var initialPageSize=lenBody
-
-				u, err := url.Parse(v)
-				if err != nil {
-					panic(err)
-				}
-				numberOfa := strings.Count(u.Path, "/")				
-				tmpSplit2 :=strings.Split(u.Path,"/")
-				var counter1=numberOfa
-				if numberOfa<3 {	
-					var newURL3=u.Scheme+"://"+u.Host	
-					getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
-					var getTmpFinalURL4=""
-					var getTmpTitle4=""
-					var getTmpStatusCode4=0
-					var getLenBody4=0
-					var newURL4=""
-					if strings.HasSuffix(v,".php") {
-						tmpSplit3 :=strings.Split(u.Path,".php")
-						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".php"
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
-					} else if strings.HasSuffix(v,".aspx") {
-						tmpSplit3 :=strings.Split(u.Path,".aspx")
-						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".aspx"
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
-					} else if strings.HasSuffix(v,".asp") {
-						tmpSplit3 :=strings.Split(u.Path,".asp")
-						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".asp"
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
-					} else if strings.HasSuffix(v,".html") {
-						tmpSplit3 :=strings.Split(u.Path,".html")
-						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".html"
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
-					} else if strings.HasSuffix(v,".htm") {
-						tmpSplit3 :=strings.Split(u.Path,".htm")
-						newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+".htm"
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
+			//////
+			if checkStatusCode(resp.StatusCode)==true {
+				//if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
+				if intelligentMode==false {
+					if resp.StatusCode==401 {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					} else if (resp.StatusCode==200) {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
 					} else {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					}				
+				} else {
+					var initialStatusCode=resp.StatusCode
+					var initialPageSize=lenBody
+
+					u, err := url.Parse(v)
+					if err != nil {
+						panic(err)
+					}
+					numberOfa := strings.Count(u.Path, "/")				
+					tmpSplit2 :=strings.Split(u.Path,"/")
+					var counter1=numberOfa
+					if numberOfa<3 {	
+						var newURL3=u.Scheme+"://"+u.Host	
+						getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
+						var getTmpFinalURL4=""
+						var getTmpTitle4=""
+						var getTmpStatusCode4=0
+						var getLenBody4=0
+						var newURL4=""
+					
+						if !strings.HasSuffix(v,"/") {
+							if strings.Contains( u.Path,".") {	
+								tmpSplit1 :=strings.Split(u.Path,".")
+								var fileExt = ("."+tmpSplit1[len(tmpSplit1)-1])
+
+								tmpSplit3 :=strings.Split(u.Path,fileExt)
+								newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+fileExt
+								getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+								if enableDebug==true {
+									fmt.Println("[debug15] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
+								}
+								if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
+									var returnURL=u.Scheme+"://"+u.Host
+									tmpResultList3 = append(tmpResultList3, returnURL)
+								} else {
+									if lenBody!=getLenBody4 {
+										var returnURL=v
+										tmpResultList3 = append(tmpResultList3, returnURL)
+									}
+								}
+							}
+						}
+
+						/*					
 						if  strings.HasSuffix(v,"/") {
 							newURL4=newURL3+"/xxx/"
 						} else { 						
@@ -602,145 +746,152 @@ func checkURL(urlChan chan string) {
 						}
 						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)						
 						if enableDebug==true {
-							fmt.Println("[debug] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
+							fmt.Println("[debug16] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
 						}
 						//fmt.Println("b0: "+newURL4)
 						//fmt.Println("b00: "+strconv.Itoa(initialStatusCode)+" "+strconv.Itoa(getTmpStatusCode4))
 						//fmt.Println("b01  "+strconv.Itoa(initialPageSize)+" "+strconv.Itoa(getLenBody4))
-					}						
-					if (initialStatusCode!=getTmpStatusCode4) {
-						//fmt.Println("b1 "+v+" "+newURL4)
-						//fmt.Println("b2 "+strconv.Itoa(initialStatusCode))
-						//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
-						tmpResultList3 = append(tmpResultList3, v)
-					} else {
-						if (getTmpStatusCode4==200) {
-							//fmt.Println("b1 "+v+" "+strconv.Itoa(initialStatusCode))
-							//fmt.Println("b2 "+newURL3+" "+strconv.Itoa(getTmpStatusCode3))
-							//fmt.Println("b3 "+newURL4+" "+strconv.Itoa(getTmpStatusCode4))
-							if (initialPageSize!=getLenBody4) {
-								tmpResultList3 = append(tmpResultList3, v)
+						if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
+							var returnURL=u.Scheme+"://"+u.Host
+							tmpResultList3 = append(tmpResultList3, returnURL)
+						} 
+						*/
+
+						if (initialStatusCode!=getTmpStatusCode4) {
+							//fmt.Println("b1 "+v+" "+newURL4)
+							//fmt.Println("b2 "+strconv.Itoa(initialStatusCode))
+							//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
+							tmpResultList3 = append(tmpResultList3, v)
+						} else {
+							if (getTmpStatusCode4==200) {
+								//fmt.Println("b1 "+v+" "+strconv.Itoa(initialStatusCode))
+								//fmt.Println("b2 "+newURL3+" "+strconv.Itoa(getTmpStatusCode3))
+								//fmt.Println("b3 "+newURL4+" "+strconv.Itoa(getTmpStatusCode4))
+								if (initialPageSize!=getLenBody4) {
+									tmpResultList3 = append(tmpResultList3, v)
+								}
 							}
 						}
-					}
-					_=getTmpFinalURL4
-					_=getTmpTitle4
-					_=getTmpStatusCode4
-					_=getLenBody4
-					_=getTmpFinalURL3
-					_=getTmpTitle3
-					_=getTmpStatusCode3
-					_=getLenBody3
-				} else {
-					for counter1>numberOfa-1 {							
-						var uriPath1=""				
-						if counter1==numberOfa {
-							uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/",1)
-						} else {
-							uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
-						}
-						var newURL=u.Scheme+"://"+u.Host+uriPath1
+						_=getTmpFinalURL4
+						_=getTmpTitle4
+						_=getTmpStatusCode4
+						_=getLenBody4
+						_=getTmpFinalURL3
+						_=getTmpTitle3
+						_=getTmpStatusCode3
+						_=getLenBody3
+					} else {
+						for counter1>numberOfa-1 {							
+							var uriPath1=""				
+							if counter1==numberOfa {
+								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/",1)
+							} else {
+								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
+							}
+							var newURL=u.Scheme+"://"+u.Host+uriPath1
 
-						req1, err := http.NewRequest("GET", newURL, nil)
-						if err==nil {
-							req1.Header.Add("User-Agent", userAgent)
-							resp1, err := client.Do(req1)		
-							if err==nil {								
-								body, err := ioutil.ReadAll(resp1.Body)
-								if err==nil {
-									lenBody = len(body)
+							req1, err := http.NewRequest("GET", newURL, nil)
+							if err==nil {
+								req1.Header.Add("User-Agent", userAgent)
+								resp1, err := client.Do(req1)		
+								if err==nil {								
+									body, err := ioutil.ReadAll(resp1.Body)
+									if err==nil {
+										lenBody = len(body)
 
-									if enableDebug==true {
-										fmt.Println("[debug] "+newURL+" ["+strconv.Itoa(resp1.StatusCode)+"]")
-									}
-									if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {
-										u1, err := url.Parse(newURL)
-										if err != nil {
-											panic(err)
+										if enableDebug==true {
+											fmt.Println("[debug17] "+newURL+" ["+strconv.Itoa(resp1.StatusCode)+"]")
 										}
-										tmpSplit3 :=strings.Split(u1.Path,"/")
-										if len(tmpSplit3)>3 {
-											var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
-											var newURL1=u.Scheme+"://"+u.Host+uriPath2
-											req2, err := http.NewRequest("GET", newURL1, nil)
+										if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {
+											u1, err := url.Parse(newURL)
+											if err != nil {
+												panic(err)
+											}
+											tmpSplit3 :=strings.Split(u1.Path,"/")
+											if len(tmpSplit3)>3 {
+												var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
+												var newURL1=u.Scheme+"://"+u.Host+uriPath2
+												req2, err := http.NewRequest("GET", newURL1, nil)
+												req2.Header.Add("User-Agent", userAgent)
+												resp2, err := client.Do(req2)														
+												if err==nil {
+													body2, err2 := ioutil.ReadAll(resp2.Body)
+													if enableDebug==true {
+														fmt.Println("[debug18] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+													}
+										
+													var lenBody2 = len(body2)
+													//fmt.Println(strconv.Itoa(resp2.StatusCode)+" "+strconv.Itoa(initialStatusCode))
+													//fmt.Println(strconv.Itoa(lenBody2)+" "+strconv.Itoa(initialPageSize))
+													if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
+														if strings.HasSuffix(newURL1, "/") {
+															newURL1=newURL1[0:len(newURL1)-1]
+														}
+														if !stringInSlice(newURL1,tmpResultList3) {
+															tmpResultList3 = append(tmpResultList3, newURL1)
+														} 
+													} else {
+														if !stringInSlice(v,tmpResultList3) {
+															tmpResultList3 = append(tmpResultList3, v)
+														}
+													}												
+													_=err2
+												}
+												_ = resp2
+											} else {			
+												var newURL1 = newURL[0:len(newURL)-1]
+												req2, err := http.NewRequest("GET", newURL1, nil)
+												_=err
+												req2.Header.Add("User-Agent", userAgent)
+												resp2, err := client.Do(req2)	
+												if resp2.StatusCode==resp1.StatusCode {
+													newURL=newURL1
+												}
+												if enableDebug==true {
+													fmt.Println("[debug19] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+												}
+												if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
+													if !stringInSlice(newURL,tmpResultList3) {
+														//fmt.Println("c1 "+v+" "+newURL)
+														//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
+														//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
+														tmpResultList3 = append(tmpResultList3, newURL)
+													}
+												}
+											}
+										} else {
+											u1, err := url.Parse(v)
+											if err != nil {
+												panic(err)
+											}
+											var newURL2=u1.Scheme+"://"+u1.Host
+											req2, err := http.NewRequest("GET", newURL2, nil)
 											req2.Header.Add("User-Agent", userAgent)
 											resp2, err := client.Do(req2)														
-											if err==nil {
-												body2, err2 := ioutil.ReadAll(resp2.Body)
-												if enableDebug==true {
-													fmt.Println("[debug] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
-												}
-										
-												var lenBody2 = len(body2)
-												//fmt.Println(strconv.Itoa(resp2.StatusCode)+" "+strconv.Itoa(initialStatusCode))
-												//fmt.Println(strconv.Itoa(lenBody2)+" "+strconv.Itoa(initialPageSize))
-												if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
-													if strings.HasSuffix(newURL1, "/") {
-														newURL1=newURL1[0:len(newURL1)-1]
-													}
-													if !stringInSlice(newURL1,tmpResultList3) {
-														tmpResultList3 = append(tmpResultList3, newURL1)
-													} 
-												} else {
-													if !stringInSlice(v,tmpResultList3) {
-														tmpResultList3 = append(tmpResultList3, v)
-													}
-												}												
-												_=err2
-											}
-											_ = resp2
-										} else {			
-											var newURL1 = newURL[0:len(newURL)-1]
-											req2, err := http.NewRequest("GET", newURL1, nil)
-											_=err
-											req2.Header.Add("User-Agent", userAgent)
-											resp2, err := client.Do(req2)	
-											if resp2.StatusCode==resp1.StatusCode {
-												newURL=newURL1
-											}
 											if enableDebug==true {
-												fmt.Println("[debug] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+												fmt.Println("[debug20] "+newURL2+" ["+strconv.Itoa(resp2.StatusCode)+"]")
 											}
-											if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
-												if !stringInSlice(newURL,tmpResultList3) {
-													//fmt.Println("c1 "+v+" "+newURL)
-													//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
-													//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
-													tmpResultList3 = append(tmpResultList3, newURL)
-												}
+											if resp2.StatusCode==resp1.StatusCode {
+												tmpResultList3 = append(tmpResultList3, newURL2)
+											} else {
+												tmpResultList3 = append(tmpResultList3, v)
 											}
-										}
-									} else {
-										u1, err := url.Parse(v)
-										if err != nil {
-											panic(err)
-										}
-										var newURL2=u1.Scheme+"://"+u1.Host
-										req2, err := http.NewRequest("GET", newURL2, nil)
-										req2.Header.Add("User-Agent", userAgent)
-										resp2, err := client.Do(req2)														
-										if enableDebug==true {
-											fmt.Println("[debug] "+newURL2+" ["+strconv.Itoa(resp2.StatusCode)+"]")
-										}
-										if resp2.StatusCode==resp1.StatusCode {
-											tmpResultList3 = append(tmpResultList3, newURL2)
-										} else {
-											tmpResultList3 = append(tmpResultList3, v)
 										}
 									}
+								} else {
+									fmt.Println(err)
 								}
+								_=err							
 							} else {
 								fmt.Println(err)
 							}
-							_=err							
-						} else {
-							fmt.Println(err)
+							counter1-=1
 						}
-						counter1-=1
+						_ = initialStatusCode
+						_ = initialPageSize
 					}
-					_ = initialStatusCode
-					_ = initialPageSize
 				}
+			//////
 			}
 		}	
 		currentListCount1+=1
@@ -784,35 +935,51 @@ func checkURL(urlChan chan string) {
 										var returnURL=""
 										if resp2.StatusCode==401 {
 											returnURL=pathPrediction(v,resp2.StatusCode)
-											if returnURL!=v {
-												if returnURL!=u.Scheme+"://"+u.Host {
-													//fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)								
-													//log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)
-													if !stringInSlice(returnURL,tmpFoundList) {
-														tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
-														fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
-														log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)											
-														tmpFoundList=append(tmpFoundList,returnURL)
+											if len(returnURL)>0 {
+												if returnURL!=v {
+													if returnURL!=u.Scheme+"://"+u.Host {
+														//fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)								
+														//log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)
+														if !stringInSlice(returnURL,tmpFoundList) {
+															if enableDebug==true {
+																fmt.Println("[cleanup1]")
+															}
+															tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+															fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+															log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)											
+															tmpFoundList=append(tmpFoundList,returnURL)
+														}
 													}
+												} else {
+													if enableDebug==true {
+														fmt.Println("[cleanup2]")
+													}
+													tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+													fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+													log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
 												}
-											} else {
-												tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
-												fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
-												log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
 											}
 										} else {
 											returnURL=pathPrediction(v,resp2.StatusCode)
 											if returnURL!=u.Scheme+"://"+u.Host {
-												if !stringInSlice(returnURL,tmpFoundList) {
-													tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
-													fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
-													log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
-													tmpFoundList=append(tmpFoundList,returnURL)
+												if len(returnURL)>0 {
+													if !stringInSlice(returnURL,tmpFoundList) {
+														if enableDebug==true {
+															fmt.Println("[cleanup3]")
+														}
+														tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+														fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+														log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+														tmpFoundList=append(tmpFoundList,returnURL)
+													}
 												}
 											}
 										}
 									} else {
 										tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+										if enableDebug==true {
+											fmt.Println("[cleanup4]")
+										}
 										fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
 										log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
 									}
@@ -830,19 +997,21 @@ func checkURL(urlChan chan string) {
 										var returnURL=""
 										if resp2.StatusCode==401 {
 											returnURL=pathPrediction(v,resp2.StatusCode)
-											if returnURL!=v {
-												if returnURL!=u.Scheme+"://"+u.Host {
-													//fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
-													//log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
-													if !stringInSlice(returnURL,tmpFoundList) {
-														fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-														log.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))
-														tmpFoundList=append(tmpFoundList,returnURL)
+											if len(returnURL)>0 {
+												if returnURL!=v {
+													if returnURL!=u.Scheme+"://"+u.Host {
+														//fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
+														//log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
+														if !stringInSlice(returnURL,tmpFoundList) {
+															fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+															log.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+															tmpFoundList=append(tmpFoundList,returnURL)
+														}
 													}
+												} else {
+													fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+													log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
 												}
-											} else {
-												fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-												log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
 											}
 										} else {
 											fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
@@ -865,13 +1034,15 @@ func checkURL(urlChan chan string) {
 								var returnURL=""
 								if resp2.StatusCode==401 {
 									returnURL=pathPrediction(v,resp2.StatusCode)
-									if returnURL!=v {
-										if returnURL!=u.Scheme+"://"+u.Host {
-											fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
-											log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
-										} else {
-											fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
-											log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+									if len(returnURL)>0 {
+										if returnURL!=v {
+											if returnURL!=u.Scheme+"://"+u.Host {
+												fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
+												log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
+											} else {
+												fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+												log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+											}
 										}
 									}
 								} else {
@@ -1017,6 +1188,7 @@ func getUrlWorker(urlChan chan string) {
 										}
 									}
 									if tmpFound==true {
+										tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
 										if tmpStatusCode=="200"{
 											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
@@ -1286,7 +1458,7 @@ func main() {
 		filename1 = argv.Filename
 		pFilename = argv.PFilename
 		Pathsource = argv.Pathsource
-		//if argv.debugMode {
+		//if argv.enableDebug {
 		//	enableDebug = true
 		//}
 		if argv.SpreadMode {
