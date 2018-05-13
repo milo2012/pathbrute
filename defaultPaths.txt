@@ -43,6 +43,7 @@
 /ApplicationProfileSample
 /ApplicationProfileSample/docs/
 /ApplicationProfileSampleservlet
+/apps/backend/config/
 /axis/happyaxis.jsp
 /BBApp
 /BI_UDC
