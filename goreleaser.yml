@@ -6,8 +6,6 @@ build:
     - windows
   goarch:
     - amd64
-    - arm
-    - arm64
 brew:
   github:
     owner: milo2012
