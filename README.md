@@ -68,6 +68,7 @@ go get github.com/fatih/color
 go github.com/hashicorp/go-version
 go build pathBrute.go  
 ```
+***
   
 #Example 
 ```
@@ -92,6 +93,7 @@ http://xxxx.com/ADS-EJB [200] [482] []
 [Found] https://127.0.0.1/PMA/ [200] [8575] [phpMyAdmin]
 [Found] https://127.0.0.1/.htaccess [200] [1164] []
 ```
+***
   
 #Explanation of the output from pathBrute  
 ```
@@ -103,9 +105,9 @@ Below is a description of the output from pathBrute
 **[458]** - refers to the size of the HTTP response  
 **[File or directory not found]** - refers to the title of the page  
 **[27736 of 38988]** - refers to the current position in the list   
+         
+***
     
-     
-  
 #Example using the --cms option  
 Below is a sample output when using the --cms option to fingerprint the CMS on the target hosts.  It also returns the Metasploit modules based on the version of the CMS software.  
  
