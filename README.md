@@ -93,6 +93,19 @@ http://xxxx.com/ADS-EJB [200] [482] []
 [Found] https://127.0.0.1/.htaccess [200] [1164] []
 ```
   
+#Explanation of the output from pathBrute  
+```
+https://208.88.199.241/sap/bc/webdynpro/sap/wdr_test_gantt [401] [458] [File or directory not found] [27736 of 38988]
+```
+Below is a description of the output from pathBrute  
+  
+**[401]** - refers to the HTTP status code  
+**[458]** - refers to the size of the HTTP response  
+**[File or directory not found]** - refers to the title of the page  
+**[27736 of 38988]** - refers to the current position in the list   
+    
+     
+  
 #Example using the --cms option  
 Below is a sample output when using the --cms option to fingerprint the CMS on the target hosts.  It also returns the Metasploit modules based on the version of the CMS software.  
  
