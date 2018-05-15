@@ -57,6 +57,7 @@ var tmpResultList1 []string
 var tmpResultList4 []string
 
 var completedPathList []string
+var completedCount = 0
 var tmpFoundList [] string
 
 var wpFileList []string
@@ -650,7 +651,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 	return result
 }
 func addToCompleteList(newUrl string) {
-	completedPathList=append(completedPathList,newUrl)
+	//completedPathList=append(completedPathList,newUrl)
+	completedCount+=1
 }
 
 func checkURL(urlChan chan string) {
@@ -1118,6 +1120,9 @@ func getUrlWorker(urlChan chan string) {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)																
 					} else if strings.Contains(err.Error(),"network is unreachable") {
+						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
+					} else if strings.Contains(err.Error(),"no route to hosts") {
 						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
 						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
 					} else if strings.Contains(err.Error(),"EOF") {
@@ -2072,7 +2077,7 @@ func main() {
 						v[0]=strings.Replace(v[0],"/administrator/language/en-GB/en-GB.xml","",1)
 						v[0]=strings.Replace(v[0],"/administrator/manifests/files/joomla.xml","",1)					
 						if len(wpVer)>0 {
-							var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Joomla "+wpVer+"]")
+							var a = color.BlueString("\n[Found] ")+v[0]+color.BlueString(" [Joomla "+wpVer+"]")
 							tmpResultList1 = append(tmpResultList1, a)
 						}
 					}
@@ -2102,7 +2107,7 @@ func main() {
 						}
 						v[0]=strings.Replace(v[0],"/CHANGELOG.txt","",1)					
 						if len(wpVer)>0 {
-							var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" ["+wpVer+"]")
+							var a = color.BlueString("\n[Found] ")+v[0]+color.BlueString(" ["+wpVer+"]")
 							tmpResultList1 = append(tmpResultList1, a)
 						}
 					}
@@ -2136,7 +2141,7 @@ func main() {
 					}
 					v[0]=strings.Replace(v[0],"/readme.html","",1)
 					if len(wpVer)>0 {
-						var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
+						var a = color.BlueString("\n[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
 						tmpResultList1 = append(tmpResultList1, a)
 					}		
 				}
@@ -2173,7 +2178,7 @@ func main() {
 					
 					v[0]=strings.Replace(v[0],"/wp-links-opml.php","",1)
 					if len(wpVer)>0 {
-						var a = color.BlueString("[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
+						var a = color.BlueString("\n[Found] ")+v[0]+color.BlueString(" [Wordpress "+wpVer+"]")
 						tmpResultList1 = append(tmpResultList1, a)
 					}		
 				}
@@ -2200,8 +2205,9 @@ func main() {
 
 			//Wait until all processes have been completed
 			/*for {
-				if len(completedPathList)!=len(finalList) {
-					fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
+				//if len(completedPathList)!=len(finalList) {
+				if completedCount!=len(finalList) {
+					//fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
 					//time.Sleep(5 * time.Millisecond)
 					time.Sleep(5 * time.Second)
 				} else {
@@ -2271,7 +2277,7 @@ func main() {
 			wpKBList = append(wpKBList,e...)
 			var f = [][]string{{"wordpress","0-4.4.1","Wordpress XML-RPC system.multicall Credential Collector","auxiliary/scanner/http/wordpress_multicall_creds"}}
 			wpKBList = append(wpKBList,f...)
-			var g = [][]string{{"wordpress","0-4.6","WordPress Traversal Directory DoS",""}}
+			var g = [][]string{{"wordpress","0-4.6","WordPress Traversal Directory DoS","auxiliary/dos/http/wordpress_directory_traversal_dos"}}
 			wpKBList = append(wpKBList,g...)
 			
 			a = [][]string{{"drupal","7.0,7.31","Drupal HTTP Parameter Key/Value SQL Injection","exploit/multi/http/drupal_drupageddon"}}
@@ -2302,8 +2308,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(s1,"<") {
@@ -2312,16 +2318,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2333,8 +2339,8 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n\n",v[2],v[3])
-									log.Printf("%s [%s]\n\n",v[2],v[3])
+									fmt.Printf("%s [%s]\n",v[2],v[3])
+									log.Printf("%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							} else if strings.Contains(v[1],"<") {
@@ -2343,16 +2349,16 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n\n",v[2],v[3])
-									log.Printf("%s [%s]\n\n",v[2],v[3])
+									fmt.Printf("%s [%s]\n",v[2],v[3])
+									log.Printf("%s [%s]\n",v[2],v[3])
 								}
 								_ = err		
 							} else { 
 								va0, err := version.NewVersion(selectedVer)
 								va1, err := version.NewVersion(v[1])
 								if va0.Equal(va1) {
-									fmt.Printf("%s [%s]\n\n",v[2],v[3])
-									log.Printf("%s [%s]\n\n",v[2],v[3])
+									fmt.Printf("%s [%s]\n",v[2],v[3])
+									log.Printf("%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							}
@@ -2375,8 +2381,8 @@ func main() {
 										va1, err := version.NewVersion(s2[0])
 										va2, err := version.NewVersion(s2[1])
 										if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-											fmt.Printf("%s [%s]\n\n",v[2],v[3])
-											log.Printf("%s [%s]\n\n",v[2],v[3])
+											fmt.Printf("%s [%s]\n",v[2],v[3])
+											log.Printf("%s [%s]\n",v[2],v[3])
 										}
 										_ = err
 									} else if strings.Contains(s1,"<") {
@@ -2385,16 +2391,16 @@ func main() {
 										va1, err := version.NewVersion(s2[0])
 										va2, err := version.NewVersion(s2[1])
 										if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-											fmt.Printf("%s [%s]\n\n",v[2],v[3])
-											log.Printf("%s [%s]\n\n",v[2],v[3])
+											fmt.Printf("%s [%s]\n",v[2],v[3])
+											log.Printf("%s [%s]\n",v[2],v[3])
 										}
 										_ = err		
 									} else { 
 										va0, err := version.NewVersion(selectedVer)
 										va1, err := version.NewVersion(s1)
 										if va0.Equal(va1) {
-											fmt.Printf("%s [%s]\n\n",v[2],v[3])
-											log.Printf("%s [%s]\n\n",v[2],v[3])
+											fmt.Printf("%s [%s]\n",v[2],v[3])
+											log.Printf("%s [%s]\n",v[2],v[3])
 										}
 										_ = err
 									}
@@ -2406,8 +2412,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(v[1],"<") {
@@ -2416,16 +2422,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(v[1])
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2448,8 +2454,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(s1,"<") {
@@ -2458,16 +2464,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err									
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2479,8 +2485,8 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n\n",v[2],v[3])
-									log.Printf("%s [%s]\n\n",v[2],v[3])
+									fmt.Printf("%s [%s]\n",v[2],v[3])
+									log.Printf("%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							} else { 
@@ -2488,8 +2494,8 @@ func main() {
 								va1, err := version.NewVersion(v[1])
 								if err==nil {
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n\n",v[2],v[3])
-										log.Printf("%s [%s]\n\n",v[2],v[3])
+										fmt.Printf("%s [%s]\n",v[2],v[3])
+										log.Printf("%s [%s]\n",v[2],v[3])
 									}
 								}
 								_ = err
