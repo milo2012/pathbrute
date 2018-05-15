@@ -140,6 +140,7 @@
 /IciSystemService/IciSystemConf?wsdl
 /IciUserService/IciUserConf
 /IciUserService/IciUserConf?wsdl
+/info.php
 /JTAExtensionsSamples/TransactionTracker
 /JTAExtensionsSamples/docs/
 /JspServlet
