@@ -46,6 +46,7 @@ Options:
       --ua         Set User-Agent
       --timeout    Set timeout to x seconds
 ```
+***
  
 #Docker
 ```
@@ -58,6 +59,7 @@ docker pull milo2012/pathbrute
 docker run -it 589606bdc12a /pathBrute_linux -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
 
 ```
+***
     
 #Compilation  
 ```
