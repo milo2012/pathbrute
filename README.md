@@ -4,6 +4,8 @@ Pathbrute
 Pathbrute is a DirB/Dirbuster type of tool designed to brute force directories and files names on web/application servers.  
 However, it has some new tricks. It is no longer a dumb directories/files brute force tool if you use the -v and -i option.  
   
+It runs on Windows/Linux/OSX operating systems and on ARM/ARM64/x86/x64 processors.  
+    
 Some of it includes:    
 1) Wordlists from Exploit databases and Metasploit  
 2) Identify interesting URLs eventhough websites return HTTP status code 200 for all URI paths.  
