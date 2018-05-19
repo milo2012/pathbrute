@@ -228,6 +228,7 @@
 /VC
 /web/database/manager
 /web.config
+/weblogin.htm
 /WEB-INF
 /WEB-INF./web.xml
 /WEB-INF/web.xml
