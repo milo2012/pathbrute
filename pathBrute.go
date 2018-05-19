@@ -9,7 +9,8 @@ import (
     "net/http"
     "io/ioutil"
 	"github.com/mkideal/cli"
-	"github.com/masatana/go-textdistance"
+	//"github.com/masatana/go-textdistance"
+	"github.com/xrash/smetrics"
 	"github.com/badoux/goscraper"
 	//"golang.org/x/net/html"
 	"github.com/fatih/color"
@@ -441,7 +442,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
 								//If the body text is similar
-								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {
 									if enableDebug==true {
 										fmt.Println("[predict4]")
 									}
@@ -467,7 +469,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {
 									if enableDebug==true {
 										fmt.Println("[predict5]")
 									}
@@ -497,7 +500,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {								
 									if enableDebug==true {
 										fmt.Println("[predict6]")
 									}
@@ -521,7 +525,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
+								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {								
 									if enableDebug==true {
 										fmt.Println("[predict7]")									
 									}
