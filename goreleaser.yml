@@ -5,6 +5,7 @@ build:
     - darwin
     - windows
   goarch:
+    - 386
     - amd64
 brew:
   github:
