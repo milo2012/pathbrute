@@ -1314,7 +1314,7 @@ func getUrlWorker(urlChan chan string) {
 				} 			
 
 			}
-			if currentListCount==totalListCount {
+			if currentListCount>=totalListCount {
 				addToCompleteList(newUrl)					
 				reachedTheEnd=true
 			} else {
@@ -2222,7 +2222,6 @@ func main() {
 				//time.Sleep(5 * time.Second)
 				fmt.Println("\n")
 				log.Printf("\n")
-
 				var wg sync.WaitGroup
 				urlChan = make(chan string)
 				wg.Add(workersCount)
@@ -2244,7 +2243,7 @@ func main() {
 				}
 				if int(currentListCount1)>=len(tmpResultList2) {
 					reachedTheEnd1=true
-				} 
+				}	
 			}
 		}
 		
