@@ -1598,7 +1598,12 @@ func main() {
 				fmt.Println("[+] Downloading: "+fileUrl)
 				err := DownloadFile("defaultPaths.txt", fileUrl)
 				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 				}
 				_ = err
 			}
@@ -1631,7 +1636,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1667,7 +1677,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1703,7 +1718,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1739,7 +1759,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1775,7 +1800,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1811,7 +1841,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1847,7 +1882,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1883,7 +1923,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1918,8 +1963,13 @@ func main() {
 				if os.IsNotExist(err1) {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
-					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+					if err!=nil {						
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1955,7 +2005,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -1991,7 +2046,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -2027,7 +2087,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -2063,7 +2128,12 @@ func main() {
 					fmt.Println("[+] Downloading: "+fileUrl)
 					err := DownloadFile(extractFilename, fileUrl)
 					if err!=nil {
-						fmt.Println("[*] Error: ",err)
+						if strings.Contains(err.Error(),"no such host") {
+							fmt.Println("[*] Error: ",err)
+							os.Exit(3)
+						} else {
+							fmt.Println("[*] Error: ",err)
+						}						
 					}
 					_ = err
 				}
@@ -2242,10 +2312,14 @@ func main() {
 
 		fmt.Println("\n[*] Testing URI Paths: (Total: "+strconv.Itoa(totalListCount)+")")		
 		log.Printf("`\n[*] Testing URI Paths")
+		if totalListCount==0 {
+			fmt.Println("[-] There are no URI paths to be tested.")
+			os.Exit(3)
+		} 
 		if ContinueNum>totalListCount {
 			fmt.Println("For the -r option, you must enter a value smaller than "+strconv.Itoa(totalListCount))
 			os.Exit(3)
-		}
+		} 
 		//real uripaths
 		completed1 := 0
 		for _, each := range finalList {
