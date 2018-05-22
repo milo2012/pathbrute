@@ -47,6 +47,7 @@ Options:
       --pPort      Port of HTTP proxy (default 8080)
       --ua         Set User-Agent
       --timeout    Set timeout to x seconds
+      --update     Update URI path wordlists from Github
 ```
 ***
  

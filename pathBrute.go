@@ -1482,7 +1482,7 @@ type argT struct {
 	Proxyport string `cli:"pPort" usage:"Port of HTTP proxy (default 8080)"`
 	Uagent string `cli:"ua" usage:"Set User-Agent"`
 	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
-	Updatemode bool `cli:"update" usage:"Update exploitdb-all.txt"`
+	Updatemode bool `cli:"update" usage:"Update URI path wordlists from Github"`
 }
 
 func main() {
