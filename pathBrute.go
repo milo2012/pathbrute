@@ -75,6 +75,72 @@ func f(from string) {
         fmt.Println(from, ":", i)
     }
 }
+
+ func getRemoteSize(url string) (int64) {
+	 subStringsSlice := strings.Split(url, "/")
+	 fileName := subStringsSlice[len(subStringsSlice)-1]
+
+	 resp, err := http.Head(url)
+	 if err != nil {
+			 fmt.Println("[-] Please check your Internet connection. Unable to connect to raw.githubusercontent.com.")
+			 os.Exit(1)
+	 }
+	 if resp.StatusCode != http.StatusOK {
+			 fmt.Println(resp.Status)
+			 os.Exit(1)
+	 }
+	 size, _ := strconv.Atoi(resp.Header.Get("Content-Length"))
+	 downloadSize := int64(size)
+	 _=fileName
+	 return downloadSize
+}
+ func getFileSize(filename string) (int64){
+	file, err := os.Open(filename)
+	  if err != nil {
+		  return 0
+	  }
+	  defer file.Close()
+	  stat, err := file.Stat()
+	  if err != nil {
+		 return 0
+	  }
+	  var bytes int64
+  	  bytes = stat.Size()
+	  return bytes
+ }
+ func checkAndUpdate(downloadUrl string) (bool) {
+	 tokens := strings.Split(downloadUrl,"/")
+	 fileName := tokens[len(tokens)-1]
+	 _, err1 := os.Stat(fileName)
+	 if os.IsNotExist(err1) {
+		fmt.Println("[+] Downloading: "+downloadUrl)
+		err := DownloadFile(fileName, downloadUrl)
+		if err!=nil {
+			fmt.Println("[*] Error: ",err)
+		} else {
+			return true
+		}
+		_ = err
+	 } else {
+		 var localFileSize=getFileSize(fileName)		
+		 downloadSize:=getRemoteSize(downloadUrl)
+		 if (localFileSize!=downloadSize) {
+			fmt.Println("[+] Downloading: "+downloadUrl)
+			err := DownloadFile(fileName, downloadUrl)
+			if err!=nil {
+				fmt.Println("[*] Error: ",err)
+			} else {
+				return true
+			}
+			_ = err
+		 } else {
+		 	return false
+		 }	
+	} 
+	return false
+}
+	
+ 
 func checkWebsite(urlChan chan string) (string,bool) {
 	var websiteUp=false
 	var currentURL=""
@@ -1416,6 +1482,7 @@ type argT struct {
 	Proxyport string `cli:"pPort" usage:"Port of HTTP proxy (default 8080)"`
 	Uagent string `cli:"ua" usage:"Set User-Agent"`
 	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
+	Updatemode bool `cli:"update" usage:"Update exploitdb-all.txt"`
 }
 
 func main() {
@@ -1438,7 +1505,7 @@ func main() {
 		}
 		if len(argv.Uagent)>0 {
 			userAgent=argv.Uagent
-		}
+		}		
 		if len(argv.Proxyhost)>0 {
 			if len(argv.Proxyport)>0 {
 				proxy_addr="http://"+argv.Proxyhost+":"+argv.Proxyport
@@ -1468,9 +1535,7 @@ func main() {
 		filename1 = argv.Filename
 		pFilename = argv.PFilename
 		Pathsource = argv.Pathsource
-		//if argv.enableDebug {
-		//	enableDebug = true
-		//}
+
 		if argv.SpreadMode {
 			SpreadMode = true
 		}
@@ -1550,318 +1615,472 @@ func main() {
 			_ = err2
 		}		
 		if Pathsource=="msf" {
-			pFilename = "pathList.txt"
-			_, err1 := os.Stat("pathList.txt")
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/metasploitHelper/master/pathList.txt"
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile("pathList.txt", fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/metasploitHelper/master/pathList.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines("pathList.txt")
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}
 		if Pathsource=="exploitdb" {
-			pFilename = "exploitdb_all.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_all.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}		
 		if Pathsource=="exploitdb-asp" {
-			pFilename = "exploitdb_asp.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_asp.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}		
 		if Pathsource=="exploitdb-aspx" {
-			pFilename = "exploitdb_aspx.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_aspx.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}		
 		if Pathsource=="exploitdb-cfm" {
-			pFilename = "exploitdb_cfm.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_cfm.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}	
 		if Pathsource=="exploitdb-cgi" {
-			pFilename = "exploitdb_cgi.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_cgi.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
+		}	
+		if Pathsource=="exploitdb-cfm" {
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_cfm.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
+				}
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
+					}
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
+			}
 		}	
 		if Pathsource=="exploitdb-jsp" {
-			pFilename = "exploitdb_jsp.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_jsp.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
-			}
-			_ = err2
-		}	
-		if Pathsource=="exploitdb-jsp" {
-			pFilename = "exploitdb_jsp.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+					_ = err
 				}
-				_ = err
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-			for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
-					}
-				}		
-			}
-			_ = err2
 		}	
 		if Pathsource=="exploitdb-perl" {
-			pFilename = "exploitdb_perl.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_perl.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}	
 		if Pathsource=="exploitdb-php" {
-			pFilename = "exploitdb_php.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb_php.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}	
 		if Pathsource=="exploitdb-others" {
-			pFilename = "exploitdb_others.txt"
-			_, err1 := os.Stat(pFilename)
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/"+pFilename
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile(pFilename, fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/milo2012/pathbrute/master/exploitdb-others.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines(pFilename)
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}	
 		if Pathsource=="SecLists" {
-			pFilename = "SecLists-common.txt"
-			_, err1 := os.Stat("SecLists-common.txt")
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt"
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile("SecLists-common.txt", fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines("SecLists-common.txt")
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
-			}
-			_ = err2
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 
+			}
 		}
 		if Pathsource=="RobotsDisallowed" {
-			pFilename = "RobotsDisallowed.txt"
-			_, err1 := os.Stat("RobotsDisallowed.txt")
-			if os.IsNotExist(err1) {
-				fileUrl := "https://raw.githubusercontent.com/danielmiessler/RobotsDisallowed/master/Top100000-RobotsDisallowed.txt"
-				fmt.Println("[+] Downloading: "+fileUrl)
-				err := DownloadFile("RobotsDisallowed.txt", fileUrl)
-				if err!=nil {
-					fmt.Println("[*] Error: ",err)
+			fileUrl := "https://raw.githubusercontent.com/danielmiessler/RobotsDisallowed/master/Top100000-RobotsDisallowed.txt"
+			tokens := strings.Split(fileUrl,"/")
+			var extractFilename=tokens[len(tokens)-1]
+			if argv.Updatemode {
+				statusCheck:=checkAndUpdate(fileUrl)
+				if statusCheck==false {
+					fmt.Println("[+] No update required for "+extractFilename)
+				} else {
+					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
-				_ = err
-			}
-			_ = err1
-			lines, err2 := readLines("RobotsDisallowed.txt")
-
-			if err2==nil {
-				for _, v := range lines {
-					v=strings.TrimSpace(v)
-					if len(v)>0 {
-						pathList = append(pathList, v)
+			} else {
+				_, err1 := os.Stat(extractFilename)
+				if os.IsNotExist(err1) {
+					fmt.Println("[+] Downloading: "+fileUrl)
+					err := DownloadFile(extractFilename, fileUrl)
+					if err!=nil {
+						fmt.Println("[*] Error: ",err)
 					}
-				}		
+					_ = err
+				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
+
 			}
-			_ = err2
 		}
 		if len(argv.URLpath)<1 && len(argv.Filename)<1 {
 			fmt.Println("[!] Please set the -U or the -u argument")
