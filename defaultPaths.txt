@@ -165,6 +165,7 @@
 /phpMyAdmin
 /PlantsByWebSphere
 /PlantsByWebSphere/docs
+/plc/webvisu.htm
 /RE/index.jsp
 /README
 /README.rdoc
