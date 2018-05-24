@@ -1,3 +1,4 @@
+/ayefeaturesconvert.js
 /portal
 /dolibarr
 /drupal
