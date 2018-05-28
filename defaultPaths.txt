@@ -540,6 +540,7 @@ v/WebSphereSamples/SingleSamples/Increment/increment.html
 /ext_servlet_annotations/session
 /fast_track.html
 /fault
+/ForensicsAnalysisServlet/
 /file
 /file/
 /fileRealm
