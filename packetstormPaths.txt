@@ -1233,7 +1233,6 @@
 /admin/index.html
 /admin/index.jsp
 /admin/index.php
-/admin/index.php\
 /admin/index2.php
 /admin/info.asp
 /admin/insertion_fee_settings.php
@@ -1724,7 +1723,6 @@
 /anzeiger/start.php
 /apache2-default/multiple1.php
 /apanel
-/apanel'
 /apboard/thread.php
 /apdir/content/News/add_edit_news.asp
 /apdir/content/banner_adds/banner_add_edit.asp
@@ -2214,7 +2212,6 @@
 /celeron.php
 /censura.php
 /centreon/index.php
-/centreon/index.php'
 /centreon/main.php
 /cernlib/
 /cf_image_host_v1.3.81/inc/config.php
@@ -2485,7 +2482,7 @@
 /cms/product_detail.php
 /cms/products_by_cat.php
 /cms/revert-content.php
-/cms/ru/news/7'+union+select+1,2,concat_ws
+/cms/ru/news/7
 /cms/sqlfilter/sqlsanatizer.php
 /cms/templates/banner.php
 /cms/templates/bannerlist.php
@@ -3086,7 +3083,7 @@
 /default/includes/themes/merced/templates/inc/header.cfm
 /default/includes/themes/merced/templates/inc/ie_conditional_includes.cfm
 /default/utilities/sendtofriend.cfm
-/default_orig.css\
+/default_orig.css
 /default_theme.php
 /defaults_setup.php
 /del.php
@@ -6654,7 +6651,6 @@
 /sbcms/cms/form/read.php
 /sbd/editors/logindialogue.php
 /sc/admin/backups/
-/sc/admin/resources\tutorials\import_products.html
 /sch1.asp
 /scheda.asp
 /schedaistituzionale.asp
@@ -7875,7 +7871,7 @@
 /view.picture.php
 /view.video.php
 /view/
-/view/admi'n.html
+/view/admin.html
 /view/lang/index.php
 /view/viewer_index.shtml
 /viewDetail.asp
