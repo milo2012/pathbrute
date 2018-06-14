@@ -68,6 +68,9 @@ var proxy_addr=""
 var reachedTheEnd=false
 var reachedTheEnd1=false
 
+var whitelistList []string
+var blacklistList []string
+
 var userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36"
         
 func f(from string) {
@@ -364,6 +367,11 @@ func testFakePath(urlChan chan string) {
 		var newURL1=u.Scheme+"://"+u.Host+"/NonExistence"
 
 		getTmpFinalURL,getTmpTitle,getTmpStatusCode,getLenBody=getPage(newURL1)	
+
+		if stringInSlice(getTmpTitle,whitelistList) {
+			blacklistList = append(blacklistList, u.Scheme+"://"+u.Host)
+		}
+
 		newUrl = strings.Replace(newUrl, "/NonExistence", "", -1)
 		if strings.HasSuffix(getTmpFinalURL,"/") {
 			getTmpFinalURL=getTmpFinalURL[0:len(getTmpFinalURL)-1]
@@ -1213,7 +1221,7 @@ func getUrlWorker(urlChan chan string) {
 					s, err := goscraper.Scrape(newUrl, 5)
 					if err==nil {
 						initialTmpTitle = s.Preview.Title
-					}
+					}	
 					_ = s
 					if verboseMode==true {
 						var lenBody = 0
@@ -1483,6 +1491,7 @@ type argT struct {
 	Uagent string `cli:"ua" usage:"Set User-Agent"`
 	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
 	Updatemode bool `cli:"update" usage:"Update URI path wordlists from Github"`
+	Skipmode bool `cli:"skip" usage:"Skip sites that don't give any useful results (e.g. OWA, VPN, etc)"`
 }
 
 func main() {
@@ -1495,6 +1504,8 @@ func main() {
 	pFilename := ""
 	uriPath := ""
 	
+	whitelistList = append(whitelistList, "Outlook Web App")
+
 	var contentList []string
 	var pathList []string
 	
@@ -2227,41 +2238,6 @@ func main() {
 		
 		var finalList []string
 
-		if SpreadMode==false {
-			for _, x := range contentList {
-			  for _, v := range pathList {
-				url := x      		
-				path := v
-				newUrl := ""
-				if strings.HasSuffix(url,"/") {
-					url=url[0:len(url)-1]
-				}			
-				if strings.HasPrefix(path,"/") {
-					newUrl = url+path
-				} else {		
-					newUrl = url+"/"+path
-				}
-				finalList = append(finalList, newUrl)
-			  }
-			}
-		} else {
- 	 	    for _, v := range pathList {
-			  for _, x := range contentList {
-				url := x      		
-				path := v
-				newUrl := ""
-				if strings.HasSuffix(url,"/") {
-					url=url[0:len(url)-1]
-				}			
-				if strings.HasPrefix(path,"/") {
-					newUrl = url+path
-				} else {		
-					newUrl = url+"/"+path
-				}
-				finalList = append(finalList, newUrl)
-			  }
-			}
-		}
 
 		//sigs1 := make(chan os.Signal, 1)
 		//signal.Notify(sigs1, syscall.SIGINT, syscall.SIGTERM)
@@ -2297,6 +2273,58 @@ func main() {
 			}
 		}
 
+		var contentList2 []string
+		for _, x := range contentList {
+			tmpFound:=false
+			if argv.Skipmode {
+				for _, v := range blacklistList {
+					if strings.Contains(x,v) {
+						tmpFound=true
+						fmt.Println("[Skip] "+x)
+					}
+				}	
+			}
+			if tmpFound==false {
+				contentList2 = append(contentList2,x)
+			}	
+		}		
+
+		if SpreadMode==false {
+			for _, x := range contentList2 {
+			  for _, v := range pathList {
+				url := x      		
+				path := v
+				newUrl := ""
+				if strings.HasSuffix(url,"/") {
+					url=url[0:len(url)-1]
+				}			
+				if strings.HasPrefix(path,"/") {
+					newUrl = url+path
+				} else {		
+					newUrl = url+"/"+path
+				}
+				finalList = append(finalList, newUrl)
+			  }
+			}
+		} else {
+ 	 	    for _, v := range pathList {
+			  for _, x := range contentList2 {
+				url := x      		
+				path := v
+				newUrl := ""
+				if strings.HasSuffix(url,"/") {
+					url=url[0:len(url)-1]
+				}			
+				if strings.HasPrefix(path,"/") {
+					newUrl = url+path
+				} else {		
+					newUrl = url+"/"+path
+				}
+				finalList = append(finalList, newUrl)
+			  }
+			}
+		}
+
 		var wg sync.WaitGroup
 		urlChan = make(chan string)
 		wg.Add(workersCount)
@@ -2322,6 +2350,7 @@ func main() {
 		} 
 		//real uripaths
 		completed1 := 0
+		
 		for _, each := range finalList {
 			urlChan <- each+" | "+strconv.Itoa(completed1+1)
 			completed1++
