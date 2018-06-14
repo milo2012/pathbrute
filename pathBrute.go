@@ -2593,6 +2593,8 @@ func main() {
 
 			a = [][]string{{"wordpress","4.6","WordPress PHPMailer Host Header Command Injection","exploit/unix/webapp/wp_phpmailer_host_header"}}
 			wpKBList = append(wpKBList,a...)
+			a = [][]string{{"wordpress","4.5.1","WordPress Same-Origin Method Execution (SOME)","https://gist.github.com/cure53/09a81530a44f6b8173f545accc9ed07e (http://example.com/wp-includes/js/plupload/plupload.flash.swf?target%g=alert&uid%g=hello&)"}}
+			wpKBList = append(wpKBList,a...)
 			b = [][]string{{"wordpress","4.7-4.7.1","WordPress REST API Content Injection","auxiliary/dos/http/wordpress_long_password_dos"}}
 			wpKBList = append(wpKBList,b...)
 			c = [][]string{{"wordpress","3.7.5,3.9-3.9.3,4.0-4.0.1","WordPress Long Password DoS",""}}
@@ -2634,8 +2636,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] %s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(s1,"<") {
@@ -2644,16 +2646,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] %s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] %s [%s]\n",v[2],v[3])
 									}
 									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2665,8 +2667,8 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n",v[2],v[3])
-									log.Printf("%s [%s]\n",v[2],v[3])
+									fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+									log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							} else if strings.Contains(v[1],"<") {
@@ -2675,16 +2677,16 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n",v[2],v[3])
-									log.Printf("%s [%s]\n",v[2],v[3])
+									fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+									log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 								}
 								_ = err		
 							} else { 
 								va0, err := version.NewVersion(selectedVer)
 								va1, err := version.NewVersion(v[1])
 								if va0.Equal(va1) {
-									fmt.Printf("%s [%s]\n",v[2],v[3])
-									log.Printf("%s [%s]\n",v[2],v[3])
+									fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+									log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							}
@@ -2707,8 +2709,8 @@ func main() {
 										va1, err := version.NewVersion(s2[0])
 										va2, err := version.NewVersion(s2[1])
 										if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-											fmt.Printf("%s [%s]\n",v[2],v[3])
-											log.Printf("%s [%s]\n",v[2],v[3])
+											fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+											log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 										}
 										_ = err
 									} else if strings.Contains(s1,"<") {
@@ -2717,16 +2719,16 @@ func main() {
 										va1, err := version.NewVersion(s2[0])
 										va2, err := version.NewVersion(s2[1])
 										if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-											fmt.Printf("%s [%s]\n",v[2],v[3])
-											log.Printf("%s [%s]\n",v[2],v[3])
+											fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+											log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 										}
 										_ = err		
 									} else { 
 										va0, err := version.NewVersion(selectedVer)
 										va1, err := version.NewVersion(s1)
 										if va0.Equal(va1) {
-											fmt.Printf("%s [%s]\n",v[2],v[3])
-											log.Printf("%s [%s]\n",v[2],v[3])
+											fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+											log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 										}
 										_ = err
 									}
@@ -2738,8 +2740,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(v[1],"<") {
@@ -2748,16 +2750,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err		
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(v[1])
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2780,8 +2782,8 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								} else if strings.Contains(s1,"<") {
@@ -2790,16 +2792,16 @@ func main() {
 									va1, err := version.NewVersion(s2[0])
 									va2, err := version.NewVersion(s2[1])
 									if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err									
 								} else { 
 									va0, err := version.NewVersion(selectedVer)
 									va1, err := version.NewVersion(s1)
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 									_ = err
 								}
@@ -2811,8 +2813,8 @@ func main() {
 								va1, err := version.NewVersion(s2[0])
 								va2, err := version.NewVersion(s2[1])
 								if va0.LessThan(va2) && va0.GreaterThan(va1) { 
-									fmt.Printf("%s [%s]\n",v[2],v[3])
-									log.Printf("%s [%s]\n",v[2],v[3])
+									fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+									log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 								}
 								_ = err
 							} else { 
@@ -2820,8 +2822,8 @@ func main() {
 								va1, err := version.NewVersion(v[1])
 								if err==nil {
 									if va0.Equal(va1) {
-										fmt.Printf("%s [%s]\n",v[2],v[3])
-										log.Printf("%s [%s]\n",v[2],v[3])
+										fmt.Printf("\n[Vuln] 	%s [%s]\n",v[2],v[3])
+										log.Printf("[Vuln] 	%s [%s]\n",v[2],v[3])
 									}
 								}
 								_ = err
