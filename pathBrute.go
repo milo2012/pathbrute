@@ -9,10 +9,8 @@ import (
     "net/http"
     "io/ioutil"
 	"github.com/mkideal/cli"
-	//"github.com/masatana/go-textdistance"
 	"github.com/xrash/smetrics"
 	"github.com/badoux/goscraper"
-	//"golang.org/x/net/html"
 	"github.com/fatih/color"
 	"sync"
 	"strings"
@@ -25,6 +23,7 @@ import (
 	"github.com/hashicorp/go-version"
 	"os/signal"
 	"syscall"
+	"github.com/ti/nasync"
 )
 
 
@@ -32,7 +31,7 @@ var mu sync.Mutex
 var wg2 sync.WaitGroup
 
 var workersCount = 2
-var timeoutSec = 15
+var timeoutSec = 5
 var verboseMode = false
 var intelligentMode = false
 var CMSmode = false
@@ -150,7 +149,6 @@ func checkWebsite(urlChan chan string) (string,bool) {
 	for newURL1 := range urlChan {
 		currentURL=newURL1
 		var userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.27 Safari/537.36"
-		var timeoutSec=10		
 
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
 		client := http.Client{
@@ -164,6 +162,9 @@ func checkWebsite(urlChan chan string) (string,bool) {
 		if err==nil {
 			req.Header.Add("User-Agent", userAgent)
 			resp, err := client.Do(req)			
+			if resp!=nil{					
+				defer resp.Body.Close()
+			}
 			if err==nil{	
 				fmt.Println(newURL1+" "+strconv.Itoa(resp.StatusCode))		
 				websiteUp=true		
@@ -201,6 +202,9 @@ func getPageBody(tmpUrl string) (string) {
 	if err==nil {
 		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)		
+		if resp!=nil{					
+			defer resp.Body.Close()
+		}
 		if err == nil {
 			body, err := ioutil.ReadAll(resp.Body)
 			if err==nil {
@@ -213,6 +217,7 @@ func getPageBody(tmpUrl string) (string) {
 
 func cleanup() {
     fmt.Println("\nCTRL-C (interrupt signal)")
+    /*
 	for _, v := range tmpResultList {
 		if !stringInSlice(v[0],tmpResultList1) {
 			tmpResultList1 = append(tmpResultList1, v[0])
@@ -250,6 +255,9 @@ func cleanup() {
 			if err==nil {
 				req.Header.Add("User-Agent", userAgent)
 				resp, err := client.Do(req)		
+				if resp!=nil{					
+					defer resp.Body.Close()
+				}
 				if err == nil {
 					s, err := goscraper.Scrape(v, 5)
 					if err == nil {
@@ -260,7 +268,6 @@ func cleanup() {
 							lenBody = len(body)
 						}
 						if checkStatusCode(resp.StatusCode)==true {
-							//if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 && resp.StatusCode!=302) {
 							var a = v+" ["+(strconv.Itoa(resp.StatusCode))+"] ["+strconv.Itoa(lenBody)+"] ["+tmpTitle+"]"
 							tmpResultList3 = append(tmpResultList3,a)
 						}
@@ -283,6 +290,7 @@ func cleanup() {
 			}()
 		}
 		for _, each := range tmpResultList3 {
+			fmt.Println("b "+each)
 			urlChan <- each
 		}
 		close(urlChan)  
@@ -299,7 +307,60 @@ func cleanup() {
 			reachedTheEnd1=true
 		} 
 	}
+	fmt.Println("cleanup end")
 	os.Exit(3)
+	*/
+	for _, v := range tmpResultList {
+		if !stringInSlice(v[0],tmpResultList1) {
+			tmpResultList1 = append(tmpResultList1, v[0])
+		}
+	}
+
+	var tmpResultList2 []string	
+
+	sort.Strings(tmpResultList1)
+	for _, v := range tmpResultList1 {
+		u, err := url.Parse(v)
+		if err==nil {
+			if len(u.Path)>0 {
+				tmpResultList2 = append(tmpResultList2,v)
+			}
+		}
+	}					
+	
+	if len(tmpResultList2)<1 {
+		fmt.Println("\n[*] No results found")
+		log.Printf("\n[*] No results found")
+	} else {
+		//time.Sleep(5 * time.Second)
+		fmt.Println("\n")
+		log.Printf("\n")
+
+		var wg sync.WaitGroup
+		urlChan := make(chan string)
+		wg.Add(workersCount)
+		for i := 0; i < workersCount; i++ {
+			go func() {	
+				checkURL(urlChan)
+				wg.Done()
+			}()
+		}		
+		for _, each := range tmpResultList2 {
+			//async.Do(checkURL1,each)
+			urlChan <- each
+		}
+		close(urlChan)  
+		wg.Wait()				
+	}
+	for {	
+		if reachedTheEnd1==true {
+			break
+		}
+		if int(currentListCount1)>=len(tmpResultList2) {
+			reachedTheEnd1=true
+		} 
+	}
+
 }
 
 func removeCharacters(input string, characters string) string {
@@ -329,6 +390,9 @@ func getPage(newURL1 string) (string, string, int, int) {
 	if err==nil {
 		req.Header.Add("User-Agent", userAgent)
 		resp, err := client.Do(req)		
+		if resp!=nil{					
+			defer resp.Body.Close()
+		}
 		if err==nil{					
 			tmpStatusCode = resp.StatusCode
 			s, err := goscraper.Scrape(newURL1, 5)			
@@ -404,7 +468,7 @@ func testFakePath(urlChan chan string) {
 			}
 			var a = [][]string{{newUrl, getTmpTitle, strconv.Itoa(getLenBody), strconv.Itoa(getTmpStatusCode)}}
 			tmpTitleList = append(tmpTitleList,a...)
-			_ = a
+			//_ = a
 		}
 
 		atomic.AddInt32(&currentFakeCount, 1)
@@ -467,7 +531,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 							}
 							if statusCode==getTmpStatusCode2 {
 								if checkStatusCode(getTmpStatusCode2)==true {
-									//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=301 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 									if enableDebug==true {
 										fmt.Println("[predict2]")
 									}
@@ -480,9 +543,7 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 							_=getLenBody2	
 						}						
 					} 
-					//break
 				} else {
-					//here
 					tmpFinalPath=tmpFinalPath+"/"+result[tmpCount]
 					var newUrl1=u.Scheme+"://"+u.Host+tmpFinalPath
 					getTmpFinalURL1,getTmpTitle1,getTmpStatusCode1,getLenBody1:=getPage(newUrl1)
@@ -515,8 +576,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 							if checkStatusCode(getTmpStatusCode2)==true {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								//If the body text is similar
-								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
 								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {
 									if enableDebug==true {
 										fmt.Println("[predict4]")
@@ -528,11 +587,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								} 
 							}					
 						}
-						//if enableDebug==true {
-						//	fmt.Println("[debug7] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")	
-						//}
-						//////
-
 						newUrl4=u.Scheme+"://"+u.Host+tmpFinalPath+"/xxx"
 						getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2=getPage(newUrl4)
 						if enableDebug==true {
@@ -540,10 +594,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
-								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
 								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {
 									if enableDebug==true {
 										fmt.Println("[predict5]")
@@ -555,10 +607,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								} 
 							}
 						}
-						//if enableDebug==true {
-						//	fmt.Println("[debug9] "+newUrl+" -> "+tmpFinalPath+" ["+strconv.Itoa(getTmpStatusCode1)+"]")
-						//}
-
 						_=getTmpFinalURL2
 						_=getTmpTitle2
 						_=getTmpStatusCode2
@@ -571,10 +619,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
-								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
 								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {								
 									if enableDebug==true {
 										fmt.Println("[predict6]")
@@ -596,10 +642,8 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						}
 						if statusCode==getTmpStatusCode2 {
 							if checkStatusCode(getTmpStatusCode2)==true {
-								//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 								var s1=getPageBody(newUrl)
 								var s2=getPageBody(newUrl4)
-								//if (textdistance.JaroWinklerDistance(s1, s2))>0.7 {
 								if (smetrics.JaroWinkler(s1, s2, 0.7, 4))>0.7 {								
 									if enableDebug==true {
 										fmt.Println("[predict7]")									
@@ -617,7 +661,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						_=getLenBody2
 					}	
 					if getTmpStatusCode1!=statusCode{
-						//if path ends with a filename
 						lenCount1 := strings.Count(tmpFinalPath, "/")
 						if !strings.HasSuffix(u.Path,"/") && lenCount1<2{
 							lenCount2 := strings.Count(u.Path, ".")
@@ -641,7 +684,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 						
 								if getTmpStatusCode1==getTmpStatusCode2 && statusCode==getTmpStatusCode3{
 									if checkStatusCode(getTmpStatusCode2)==true {
-										//if (getTmpStatusCode3!=403 && getTmpStatusCode3!=503 && getTmpStatusCode3!=404 && getTmpStatusCode3!=406 && getTmpStatusCode3!=400 && getTmpStatusCode3!=500 && getTmpStatusCode3!=204 && getTmpStatusCode3!=302) {
 										if enableDebug==true {
 											fmt.Println("[predict9]")	
 										}
@@ -670,7 +712,6 @@ func pathPrediction(newUrl string, statusCode int) (string) {
 								getTmpFinalURL2,getTmpTitle2,getTmpStatusCode2,getLenBody2:=getPage(newUrl2)
 								if getTmpStatusCode1==getTmpStatusCode2 {
 									if checkStatusCode(getTmpStatusCode2)==true {						
-										//if (getTmpStatusCode2!=403 && getTmpStatusCode2!=503 && getTmpStatusCode2!=404 && getTmpStatusCode2!=406 && getTmpStatusCode2!=400 && getTmpStatusCode2!=500 && getTmpStatusCode2!=204 && getTmpStatusCode2!=302) {
 										fmt.Println("[predict10]")
 										finalURL=u.Scheme+"://"+u.Host
 									}
@@ -734,249 +775,230 @@ func addToCompleteList(newUrl string) {
 	completedCount+=1
 }
 
-func checkURL(urlChan chan string) {
+func checkURL1(v string) {
 	var tmpResultList3 []string
-    for v := range urlChan {    
-		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
-		client := http.Client{
-			Timeout: timeout,
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},				
+	timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},				
+	}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest("GET", v, nil)
+	req.Header.Add("User-Agent", userAgent)
+	resp, err := client.Do(req)		
+	if resp!=nil{					
+		defer resp.Body.Close()
+	}
+
+	s, err := goscraper.Scrape(v, 5)
+	var lenBody = 0
+	var tmpTitle = ""
+	if err==nil {
+		tmpTitle=strings.TrimSpace(s.Preview.Title)						
+		body, err3 := ioutil.ReadAll(resp.Body)
+		if err3==nil {
+			lenBody = len(body)
 		}
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		req, err := http.NewRequest("GET", v, nil)
-		req.Header.Add("User-Agent", userAgent)
-		resp, err := client.Do(req)		
-
-		s, err := goscraper.Scrape(v, 5)
-		var lenBody = 0
-		var tmpTitle = ""
-		if err==nil {
-			tmpTitle=strings.TrimSpace(s.Preview.Title)						
-			body, err3 := ioutil.ReadAll(resp.Body)
-			if err3==nil {
-				lenBody = len(body)
-			}
-			//////
-			if checkStatusCode(resp.StatusCode)==true {
-				//if (resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=406 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204) {
-				if intelligentMode==false {
-					if resp.StatusCode==401 {
-						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-					} else if (resp.StatusCode==200) {
-						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-					} else {
-						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
-						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
-					}				
+		if checkStatusCode(resp.StatusCode)==true {
+			if intelligentMode==false {
+				if resp.StatusCode==401 {
+					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				} else if (resp.StatusCode==200) {
+					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
 				} else {
-					var initialStatusCode=resp.StatusCode
-					var initialPageSize=lenBody
+					tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+					fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+					log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+				}				
+			} else {
+				var initialStatusCode=resp.StatusCode
+				var initialPageSize=lenBody
 
-					u, err := url.Parse(v)
-					if err != nil {
-						panic(err)
-					}
-					numberOfa := strings.Count(u.Path, "/")				
-					tmpSplit2 :=strings.Split(u.Path,"/")
-					var counter1=numberOfa
-					if numberOfa<3 {	
-						var newURL3=u.Scheme+"://"+u.Host	
-						getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
-						var getTmpFinalURL4=""
-						var getTmpTitle4=""
-						var getTmpStatusCode4=0
-						var getLenBody4=0
-						var newURL4=""
-					
-						if !strings.HasSuffix(v,"/") {
-							if strings.Contains( u.Path,".") {	
-								tmpSplit1 :=strings.Split(u.Path,".")
-								var fileExt = ("."+tmpSplit1[len(tmpSplit1)-1])
+				u, err := url.Parse(v)
+				if err != nil {
+					panic(err)
+				}
+				numberOfa := strings.Count(u.Path, "/")				
+				tmpSplit2 :=strings.Split(u.Path,"/")
+				var counter1=numberOfa
+				if numberOfa<3 {	
+					var newURL3=u.Scheme+"://"+u.Host	
+					getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
+					var getTmpFinalURL4=""
+					var getTmpTitle4=""
+					var getTmpStatusCode4=0
+					var getLenBody4=0
+					var newURL4=""
+				
+					if !strings.HasSuffix(v,"/") {
+						if strings.Contains( u.Path,".") {	
+							tmpSplit1 :=strings.Split(u.Path,".")
+							var fileExt = ("."+tmpSplit1[len(tmpSplit1)-1])
 
-								tmpSplit3 :=strings.Split(u.Path,fileExt)
-								newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+fileExt
-								getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
-								if enableDebug==true {
-									fmt.Println("[debug15] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-								}
-								if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
-									var returnURL=u.Scheme+"://"+u.Host
-									tmpResultList3 = append(tmpResultList3, returnURL)
-								} else {
-									if lenBody!=getLenBody4 {
-										var returnURL=v
-										tmpResultList3 = append(tmpResultList3, returnURL)
-									}
-								}
+							tmpSplit3 :=strings.Split(u.Path,fileExt)
+							newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+fileExt
+							getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+							if enableDebug==true {
+								fmt.Println("[debug15] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
 							}
-						}
-
-						/*					
-						if  strings.HasSuffix(v,"/") {
-							newURL4=newURL3+"/xxx/"
-						} else { 						
-							//newURL4=newURL3+"/xxx"
-							newURL4=v+"xxx"
-						}
-						getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)						
-						if enableDebug==true {
-							fmt.Println("[debug16] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
-						}
-						//fmt.Println("b0: "+newURL4)
-						//fmt.Println("b00: "+strconv.Itoa(initialStatusCode)+" "+strconv.Itoa(getTmpStatusCode4))
-						//fmt.Println("b01  "+strconv.Itoa(initialPageSize)+" "+strconv.Itoa(getLenBody4))
-						if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
-							var returnURL=u.Scheme+"://"+u.Host
-							tmpResultList3 = append(tmpResultList3, returnURL)
-						} 
-						*/
-
-						if (initialStatusCode!=getTmpStatusCode4) {
-							//fmt.Println("b1 "+v+" "+newURL4)
-							//fmt.Println("b2 "+strconv.Itoa(initialStatusCode))
-							//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
-							tmpResultList3 = append(tmpResultList3, v)
-						} else {
-							if (getTmpStatusCode4==200) {
-								//fmt.Println("b1 "+v+" "+strconv.Itoa(initialStatusCode))
-								//fmt.Println("b2 "+newURL3+" "+strconv.Itoa(getTmpStatusCode3))
-								//fmt.Println("b3 "+newURL4+" "+strconv.Itoa(getTmpStatusCode4))
-								if (initialPageSize!=getLenBody4) {
-									tmpResultList3 = append(tmpResultList3, v)
-								}
-							}
-						}
-						_=getTmpFinalURL4
-						_=getTmpTitle4
-						_=getTmpStatusCode4
-						_=getLenBody4
-						_=getTmpFinalURL3
-						_=getTmpTitle3
-						_=getTmpStatusCode3
-						_=getLenBody3
-					} else {
-						for counter1>numberOfa-1 {							
-							var uriPath1=""				
-							if counter1==numberOfa {
-								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/",1)
+							if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
+								var returnURL=u.Scheme+"://"+u.Host
+								tmpResultList3 = append(tmpResultList3, returnURL)
 							} else {
-								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
+								if lenBody!=getLenBody4 {
+									var returnURL=v
+									tmpResultList3 = append(tmpResultList3, returnURL)
+								}
 							}
-							var newURL=u.Scheme+"://"+u.Host+uriPath1
+						}
+					}
 
-							req1, err := http.NewRequest("GET", newURL, nil)
-							if err==nil {
-								req1.Header.Add("User-Agent", userAgent)
-								resp1, err := client.Do(req1)		
-								if err==nil {								
-									body, err := ioutil.ReadAll(resp1.Body)
-									if err==nil {
-										lenBody = len(body)
+					if (initialStatusCode!=getTmpStatusCode4) {
+						tmpResultList3 = append(tmpResultList3, v)
+					} else {
+						if (getTmpStatusCode4==200) {
+							if (initialPageSize!=getLenBody4) {
+								tmpResultList3 = append(tmpResultList3, v)
+							}
+						}
+					}
+					_=getTmpFinalURL4
+					_=getTmpTitle4
+					_=getTmpStatusCode4
+					_=getLenBody4
+					_=getTmpFinalURL3
+					_=getTmpTitle3
+					_=getTmpStatusCode3
+					_=getLenBody3
+				} else {
+					for counter1>numberOfa-1 {							
+						var uriPath1=""				
+						if counter1==numberOfa {
+							uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/",1)
+						} else {
+							uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
+						}
+						var newURL=u.Scheme+"://"+u.Host+uriPath1
 
-										if enableDebug==true {
-											fmt.Println("[debug17] "+newURL+" ["+strconv.Itoa(resp1.StatusCode)+"]")
+						req1, err := http.NewRequest("GET", newURL, nil)
+						if err==nil {
+							req1.Header.Add("User-Agent", userAgent)
+							resp1, err := client.Do(req1)		
+							if resp1!=nil{					
+								defer resp1.Body.Close()
+							}
+							if err==nil {								
+								body, err := ioutil.ReadAll(resp1.Body)
+								if err==nil {
+									lenBody = len(body)
+
+									if enableDebug==true {
+										fmt.Println("[debug17] "+newURL+" ["+strconv.Itoa(resp1.StatusCode)+"]")
+									}
+									if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {
+										u1, err := url.Parse(newURL)
+										if err != nil {
+											panic(err)
 										}
-										if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {
-											u1, err := url.Parse(newURL)
-											if err != nil {
-												panic(err)
-											}
-											tmpSplit3 :=strings.Split(u1.Path,"/")
-											if len(tmpSplit3)>3 {
-												var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
-												var newURL1=u.Scheme+"://"+u.Host+uriPath2
-												req2, err := http.NewRequest("GET", newURL1, nil)
-												req2.Header.Add("User-Agent", userAgent)
-												resp2, err := client.Do(req2)														
-												if err==nil {
-													body2, err2 := ioutil.ReadAll(resp2.Body)
-													if enableDebug==true {
-														fmt.Println("[debug18] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
-													}
-										
-													var lenBody2 = len(body2)
-													//fmt.Println(strconv.Itoa(resp2.StatusCode)+" "+strconv.Itoa(initialStatusCode))
-													//fmt.Println(strconv.Itoa(lenBody2)+" "+strconv.Itoa(initialPageSize))
-													if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
-														if strings.HasSuffix(newURL1, "/") {
-															newURL1=newURL1[0:len(newURL1)-1]
-														}
-														if !stringInSlice(newURL1,tmpResultList3) {
-															tmpResultList3 = append(tmpResultList3, newURL1)
-														} 
-													} else {
-														if !stringInSlice(v,tmpResultList3) {
-															tmpResultList3 = append(tmpResultList3, v)
-														}
-													}												
-													_=err2
-												}
-												_ = resp2
-											} else {			
-												var newURL1 = newURL[0:len(newURL)-1]
-												req2, err := http.NewRequest("GET", newURL1, nil)
-												_=err
-												req2.Header.Add("User-Agent", userAgent)
-												resp2, err := client.Do(req2)	
-												if resp2.StatusCode==resp1.StatusCode {
-													newURL=newURL1
-												}
-												if enableDebug==true {
-													fmt.Println("[debug19] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
-												}
-												if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
-													if !stringInSlice(newURL,tmpResultList3) {
-														//fmt.Println("c1 "+v+" "+newURL)
-														//fmt.Println("b2 "+strconv.Itoa(resp.StatusCode))
-														//fmt.Println("b3 "+strconv.Itoa(getTmpStatusCode3)+" "+strconv.Itoa(getTmpStatusCode4))
-														tmpResultList3 = append(tmpResultList3, newURL)
-													}
-												}
-											}
-										} else {
-											u1, err := url.Parse(v)
-											if err != nil {
-												panic(err)
-											}
-											var newURL2=u1.Scheme+"://"+u1.Host
-											req2, err := http.NewRequest("GET", newURL2, nil)
+										tmpSplit3 :=strings.Split(u1.Path,"/")
+										if len(tmpSplit3)>3 {
+											var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
+											var newURL1=u.Scheme+"://"+u.Host+uriPath2
+											req2, err := http.NewRequest("GET", newURL1, nil)
 											req2.Header.Add("User-Agent", userAgent)
 											resp2, err := client.Do(req2)														
-											if enableDebug==true {
-												fmt.Println("[debug20] "+newURL2+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+											if resp2!=nil{					
+												defer resp2.Body.Close()
+											}
+											if err==nil {
+												body2, err2 := ioutil.ReadAll(resp2.Body)
+												if enableDebug==true {
+													fmt.Println("[debug18] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+												}
+									
+												var lenBody2 = len(body2)
+												if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
+													if strings.HasSuffix(newURL1, "/") {
+														newURL1=newURL1[0:len(newURL1)-1]
+													}
+													if !stringInSlice(newURL1,tmpResultList3) {
+														tmpResultList3 = append(tmpResultList3, newURL1)
+													} 
+												} else {
+													if !stringInSlice(v,tmpResultList3) {
+														tmpResultList3 = append(tmpResultList3, v)
+													}
+												}												
+												_=err2
+											}
+											_ = resp2
+										} else {			
+											var newURL1 = newURL[0:len(newURL)-1]
+											req2, err := http.NewRequest("GET", newURL1, nil)
+											_=err
+											req2.Header.Add("User-Agent", userAgent)
+											resp2, err := client.Do(req2)	
+											if resp2!=nil{					
+												defer resp2.Body.Close()
 											}
 											if resp2.StatusCode==resp1.StatusCode {
-												tmpResultList3 = append(tmpResultList3, newURL2)
-											} else {
-												tmpResultList3 = append(tmpResultList3, v)
+												newURL=newURL1
+											}
+											if enableDebug==true {
+												fmt.Println("[debug19] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+											}
+											if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
+												if !stringInSlice(newURL,tmpResultList3) {
+													tmpResultList3 = append(tmpResultList3, newURL)
+												}
 											}
 										}
+									} else {
+										u1, err := url.Parse(v)
+										if err != nil {
+											panic(err)
+										}
+										var newURL2=u1.Scheme+"://"+u1.Host
+										req2, err := http.NewRequest("GET", newURL2, nil)
+										req2.Header.Add("User-Agent", userAgent)
+										resp2, err := client.Do(req2)														
+										if resp2!=nil{					
+											defer resp2.Body.Close()
+										}
+										if enableDebug==true {
+											fmt.Println("[debug20] "+newURL2+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+										}
+										if resp2.StatusCode==resp1.StatusCode {
+											tmpResultList3 = append(tmpResultList3, newURL2)
+										} else {
+											tmpResultList3 = append(tmpResultList3, v)
+										}
 									}
-								} else {
-									fmt.Println(err)
 								}
-								_=err							
 							} else {
 								fmt.Println(err)
 							}
-							counter1-=1
+							_=err							
+						} else {
+							fmt.Println(err)
 						}
-						_ = initialStatusCode
-						_ = initialPageSize
+						counter1-=1
 					}
+					_ = initialStatusCode
+					_ = initialPageSize
 				}
-			//////
 			}
-		}	
-		currentListCount1+=1
-    }
+		}
+	}	
+	fmt.Println("aaa")
+	fmt.Println(tmpResultList3)
+	fmt.Println("aaa")
 
 	RemoveDuplicates(&tmpResultList3)
 	sort.Strings(tmpResultList3)
@@ -996,9 +1018,11 @@ func checkURL(urlChan chan string) {
 			req2, err := http.NewRequest("GET", v, nil)
 			req2.Header.Add("User-Agent", userAgent)
 			resp2, err := client.Do(req2)														
+			if resp2!=nil{					
+				defer resp2.Body.Close()
+			}
 			if err==nil {
 				if checkStatusCode(resp2.StatusCode)==true {
-					//if (resp2.StatusCode!=403 && resp2.StatusCode!=503 && resp2.StatusCode!=404 && resp2.StatusCode!=406 && resp2.StatusCode!=400 && resp2.StatusCode!=500 && resp2.StatusCode!=204) {
 					body2, err2 := ioutil.ReadAll(resp2.Body)				
 					if err2==nil {
 						s, err3 := goscraper.Scrape(v, 5)
@@ -1019,8 +1043,6 @@ func checkURL(urlChan chan string) {
 											if len(returnURL)>0 {
 												if returnURL!=v {
 													if returnURL!=u.Scheme+"://"+u.Host {
-														//fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)								
-														//log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s] -> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2, returnURL)
 														if !stringInSlice(returnURL,tmpFoundList) {
 															if enableDebug==true {
 																fmt.Println("[cleanup1]")
@@ -1081,8 +1103,389 @@ func checkURL(urlChan chan string) {
 											if len(returnURL)>0 {
 												if returnURL!=v {
 													if returnURL!=u.Scheme+"://"+u.Host {
-														//fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
-														//log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
+														if !stringInSlice(returnURL,tmpFoundList) {
+															fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+															log.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+															tmpFoundList=append(tmpFoundList,returnURL)
+														}
+													}
+												} else {
+													fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+													log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+												}
+											}
+										} else {
+											fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+											log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+										}										
+									} else {
+										fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+										log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+									}
+								}
+							}
+						}
+					} else {
+						if !stringInSlice(v,tmpResultList4) {
+							u, err := url.Parse(v)
+							if err != nil {
+								panic(err)
+							}
+							if len(u.Path)>0 {						
+								var returnURL=""
+								if resp2.StatusCode==401 {
+									returnURL=pathPrediction(v,resp2.StatusCode)
+									if len(returnURL)>0 {
+										if returnURL!=v {
+											if returnURL!=u.Scheme+"://"+u.Host {
+												fmt.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)								
+												log.Printf(color.BlueString("[Found]")+" %s [%s] --> %s\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),returnURL)
+											} else {
+												fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+												log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+											}
+										}
+									}
+								} else {
+									fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
+									log.Printf(color.BlueString("[Found]")+" %s [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)))
+								}								
+								tmpResultList4 = append(tmpResultList4,v)
+							}
+						}
+					}
+				}
+			}
+		}
+	}}
+func checkURL(urlChan chan string) {
+	var tmpResultList3 []string
+    for v := range urlChan {    
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+		client := http.Client{
+			Timeout: timeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},				
+		}
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		req, err := http.NewRequest("GET", v, nil)
+		req.Header.Add("User-Agent", userAgent)
+		resp, err := client.Do(req)		
+		if resp!=nil{					
+			defer resp.Body.Close()
+		}
+
+		s, err := goscraper.Scrape(v, 5)
+		var lenBody = 0
+		var tmpTitle = ""
+		if err==nil {
+			tmpTitle=strings.TrimSpace(s.Preview.Title)						
+			body, err3 := ioutil.ReadAll(resp.Body)
+			if err3==nil {
+				lenBody = len(body)
+			}
+			if checkStatusCode(resp.StatusCode)==true {
+				if intelligentMode==false {
+					if resp.StatusCode==401 {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.GreenString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					} else if (resp.StatusCode==200) {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					} else {
+						tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+						fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)								
+						log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.RedString(strconv.Itoa(resp.StatusCode)),  lenBody, tmpTitle)
+					}				
+				} else {
+					var initialStatusCode=resp.StatusCode
+					var initialPageSize=lenBody
+
+					u, err := url.Parse(v)
+					if err != nil {
+						panic(err)
+					}
+					numberOfa := strings.Count(u.Path, "/")				
+					tmpSplit2 :=strings.Split(u.Path,"/")
+					var counter1=numberOfa
+					if numberOfa<3 {	
+						var newURL3=u.Scheme+"://"+u.Host	
+						getTmpFinalURL3,getTmpTitle3,getTmpStatusCode3,getLenBody3:=getPage(newURL3)
+						var getTmpFinalURL4=""
+						var getTmpTitle4=""
+						var getTmpStatusCode4=0
+						var getLenBody4=0
+						var newURL4=""
+					
+						if !strings.HasSuffix(v,"/") {
+							if strings.Contains( u.Path,".") {	
+								tmpSplit1 :=strings.Split(u.Path,".")
+								var fileExt = ("."+tmpSplit1[len(tmpSplit1)-1])
+
+								tmpSplit3 :=strings.Split(u.Path,fileExt)
+								newURL4=u.Scheme+"://"+u.Host+tmpSplit3[0]+"xxx"+fileExt
+								getTmpFinalURL4,getTmpTitle4,getTmpStatusCode4,getLenBody4=getPage(newURL4)
+								if enableDebug==true {
+									fmt.Println("[debug15] "+newURL4+" ["+strconv.Itoa(getTmpStatusCode4)+"]")
+								}
+								if (resp.StatusCode==getTmpStatusCode4 && (getTmpStatusCode4!=200 && getTmpStatusCode4!=401 && getTmpStatusCode4!=405)) {
+									var returnURL=u.Scheme+"://"+u.Host
+									tmpResultList3 = append(tmpResultList3, returnURL)
+								} else {
+									if lenBody!=getLenBody4 {
+										var returnURL=v
+										tmpResultList3 = append(tmpResultList3, returnURL)
+									}
+								}
+							}
+						}
+
+						if (initialStatusCode!=getTmpStatusCode4) {
+							tmpResultList3 = append(tmpResultList3, v)
+						} else {
+							if (getTmpStatusCode4==200) {
+								if (initialPageSize!=getLenBody4) {
+									tmpResultList3 = append(tmpResultList3, v)
+								}
+							}
+						}
+						_=getTmpFinalURL4
+						_=getTmpTitle4
+						_=getTmpStatusCode4
+						_=getLenBody4
+						_=getTmpFinalURL3
+						_=getTmpTitle3
+						_=getTmpStatusCode3
+						_=getLenBody3
+					} else {
+						for counter1>numberOfa-1 {							
+							var uriPath1=""				
+							if counter1==numberOfa {
+								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/",1)
+							} else {
+								uriPath1=strings.Replace(u.Path,"/"+tmpSplit2[counter1],"/xxx",1)
+							}
+							var newURL=u.Scheme+"://"+u.Host+uriPath1
+
+							req1, err := http.NewRequest("GET", newURL, nil)
+							if err==nil {
+								req1.Header.Add("User-Agent", userAgent)
+								resp1, err := client.Do(req1)		
+								if resp1!=nil{					
+									defer resp1.Body.Close()
+								}
+								if err==nil {								
+									body, err := ioutil.ReadAll(resp1.Body)
+									if err==nil {
+										lenBody = len(body)
+
+										if enableDebug==true {
+											fmt.Println("[debug17] "+newURL+" ["+strconv.Itoa(resp1.StatusCode)+"]")
+										}
+										if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {
+											u1, err := url.Parse(newURL)
+											if err != nil {
+												panic(err)
+											}
+											tmpSplit3 :=strings.Split(u1.Path,"/")
+											if len(tmpSplit3)>3 {
+												var uriPath2=strings.Replace(u1.Path,"/"+tmpSplit3[2]+"/","",1)
+												var newURL1=u.Scheme+"://"+u.Host+uriPath2
+												req2, err := http.NewRequest("GET", newURL1, nil)
+												req2.Header.Add("User-Agent", userAgent)
+												resp2, err := client.Do(req2)														
+												if resp2!=nil{					
+													defer resp2.Body.Close()
+												}
+												if err==nil {
+													body2, err2 := ioutil.ReadAll(resp2.Body)
+													if enableDebug==true {
+														fmt.Println("[debug18] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+													}
+										
+													var lenBody2 = len(body2)
+													if resp2.StatusCode==initialStatusCode && initialPageSize==lenBody2 {
+														if strings.HasSuffix(newURL1, "/") {
+															newURL1=newURL1[0:len(newURL1)-1]
+														}
+														if !stringInSlice(newURL1,tmpResultList3) {
+															tmpResultList3 = append(tmpResultList3, newURL1)
+														} 
+													} else {
+														if !stringInSlice(v,tmpResultList3) {
+															tmpResultList3 = append(tmpResultList3, v)
+														}
+													}												
+													_=err2
+												}
+												_ = resp2
+											} else {			
+												var newURL1 = newURL[0:len(newURL)-1]
+												req2, err := http.NewRequest("GET", newURL1, nil)
+												_=err
+												req2.Header.Add("User-Agent", userAgent)
+												resp2, err := client.Do(req2)	
+												if resp2!=nil{					
+													defer resp2.Body.Close()
+												}
+												if resp2.StatusCode==resp1.StatusCode {
+													newURL=newURL1
+												}
+												if enableDebug==true {
+													fmt.Println("[debug19] "+newURL1+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+												}
+												if resp1.StatusCode==initialStatusCode && initialPageSize==lenBody {																												
+													if !stringInSlice(newURL,tmpResultList3) {
+														tmpResultList3 = append(tmpResultList3, newURL)
+													}
+												}
+											}
+										} else {
+											u1, err := url.Parse(v)
+											if err != nil {
+												panic(err)
+											}
+											var newURL2=u1.Scheme+"://"+u1.Host
+											req2, err := http.NewRequest("GET", newURL2, nil)
+											req2.Header.Add("User-Agent", userAgent)
+											resp2, err := client.Do(req2)														
+											if resp2!=nil{					
+												defer resp2.Body.Close()
+											}
+											if enableDebug==true {
+												fmt.Println("[debug20] "+newURL2+" ["+strconv.Itoa(resp2.StatusCode)+"]")
+											}
+											if resp2.StatusCode==resp1.StatusCode {
+												tmpResultList3 = append(tmpResultList3, newURL2)
+											} else {
+												tmpResultList3 = append(tmpResultList3, v)
+											}
+										}
+									}
+								} else {
+									fmt.Println(err)
+								}
+								_=err							
+							} else {
+								fmt.Println(err)
+							}
+							counter1-=1
+						}
+						_ = initialStatusCode
+						_ = initialPageSize
+					}
+				}
+			}
+		}	
+		currentListCount1+=1
+    }
+
+	RemoveDuplicates(&tmpResultList3)
+	sort.Strings(tmpResultList3)
+	for _, v := range tmpResultList3 {
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+		client := http.Client{
+			Timeout: timeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},				
+		}
+		v1, err := url.Parse(v)
+    	if err != nil {
+    	    panic(err)
+    	}		
+    	if v1.Path!="/" {
+			req2, err := http.NewRequest("GET", v, nil)
+			req2.Header.Add("User-Agent", userAgent)
+			resp2, err := client.Do(req2)														
+			if resp2!=nil{					
+				defer resp2.Body.Close()
+			}
+			if err==nil {
+				if checkStatusCode(resp2.StatusCode)==true {
+					body2, err2 := ioutil.ReadAll(resp2.Body)				
+					if err2==nil {
+						s, err3 := goscraper.Scrape(v, 5)
+						if err3==nil {
+							var tmpTitle2 = ""
+							tmpTitle2=strings.TrimSpace(s.Preview.Title)						
+							var lenBody2 = len(body2)
+							if !stringInSlice(v,tmpResultList4) {
+								u, err := url.Parse(v)
+								if err != nil {
+									panic(err)
+								}
+								if len(u.Path)>0 {
+									if intelligentMode==true {
+										var returnURL=""
+										if resp2.StatusCode==401 {
+											returnURL=pathPrediction(v,resp2.StatusCode)
+											if len(returnURL)>0 {
+												if returnURL!=v {
+													if returnURL!=u.Scheme+"://"+u.Host {
+														if !stringInSlice(returnURL,tmpFoundList) {
+															if enableDebug==true {
+																fmt.Println("[cleanup1]")
+															}
+															tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+															fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+															log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)											
+															tmpFoundList=append(tmpFoundList,returnURL)
+														}
+													}
+												} else {
+													if enableDebug==true {
+														fmt.Println("[cleanup2]")
+													}
+													tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+													fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+													log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+												}
+											}
+										} else {
+											returnURL=pathPrediction(v,resp2.StatusCode)
+											if returnURL!=u.Scheme+"://"+u.Host {
+												if len(returnURL)>0 {
+													if !stringInSlice(returnURL,tmpFoundList) {
+														if enableDebug==true {
+															fmt.Println("[cleanup3]")
+														}
+														tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+														fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+														log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+														tmpFoundList=append(tmpFoundList,returnURL)
+													}
+												}
+											}
+										}
+									} else {
+										tmpTitle2=strings.Replace(tmpTitle2,"\n"," ",1)
+										if enableDebug==true {
+											fmt.Println("[cleanup4]")
+										}
+										fmt.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)								
+										log.Printf(color.BlueString("[Found]")+" %s [%s] [%d] [%s]\n",v, color.BlueString(strconv.Itoa(resp2.StatusCode)),  lenBody2, tmpTitle2)
+									}
+									tmpResultList4 = append(tmpResultList4,v)
+								}
+							}
+						} else { 
+							if !stringInSlice(v,tmpResultList4) {
+								u, err := url.Parse(v)
+								if err != nil {
+									panic(err)
+								}
+								if len(u.Path)>0 {
+									if intelligentMode==true {
+										var returnURL=""
+										if resp2.StatusCode==401 {
+											returnURL=pathPrediction(v,resp2.StatusCode)
+											if len(returnURL)>0 {
+												if returnURL!=v {
+													if returnURL!=u.Scheme+"://"+u.Host {
 														if !stringInSlice(returnURL,tmpFoundList) {
 															fmt.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))								
 															log.Printf(color.BlueString("[Found]")+" %s [%s]\n",returnURL, color.BlueString(strconv.Itoa(resp2.StatusCode)))
@@ -1152,162 +1555,126 @@ func getPageTitle(u string) (string) {
 
 }
 
-func getUrlWorker(urlChan chan string) {
-    for newUrl := range urlChan {
+func testURL(newUrl string) {
     	var newUrl1 = strings.Split(newUrl," | ")
     	newUrl = newUrl1[0]
     	var currentListCount, _ = strconv.Atoi(newUrl1[1])
 		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
-		if ContinueNum==0 || ContinueNum<currentListCount {			
-			//for reachedTheEnd==false {
-			client := http.Client{
-				Timeout: timeout,
-				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				},					
+		client := http.Client{
+			Timeout: timeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},					
+		}
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		req, err := http.NewRequest("GET", newUrl, nil)
+		if err==nil {
+			req.Header.Add("User-Agent", userAgent)
+			initialStatusCode := ""
+			var tmpTitle = ""
+			resp, err := client.Do(req)			
+			if resp!=nil{					
+				defer resp.Body.Close()
 			}
-			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			req, err := http.NewRequest("GET", newUrl, nil)
-			if err==nil {
-				req.Header.Add("User-Agent", userAgent)
-				initialStatusCode := ""
-				var tmpTitle = ""
-				resp, err := client.Do(req)			
-				if err!=nil{					
-					if (strings.Contains(err.Error(),"i/o timeout") || strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)						
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)
-					} else if strings.Contains(err.Error(),"connection refused") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)									
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)
-					} else if strings.Contains(err.Error(),"no such host") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)									
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)	
-					} else if strings.Contains(err.Error(),"connection reset by peer") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)									
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)	
-					} else if strings.Contains(err.Error(),"tls: no renegotiation") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
-					} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)							
-					} else if strings.Contains(err.Error()," EOF]") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)													
-					} else if strings.Contains(err.Error(),"server gave HTTP response to HTTPS client") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)																
-					} else if strings.Contains(err.Error(),"network is unreachable") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
-					} else if strings.Contains(err.Error(),"no route to hosts") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
-					} else if strings.Contains(err.Error(),"EOF") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)																
-					} else if strings.Contains(err.Error(),"tls: handshake failure") {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)	
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)																
-					} else {
-						fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
-						log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
-					}
-					currentListCount+=1
+			if err!=nil{									
+				if (strings.Contains(err.Error(),"i/o timeout") || strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)						
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)
+				} else if strings.Contains(err.Error(),"connection refused") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)
+				} else if strings.Contains(err.Error(),"no such host") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"connection reset by peer") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"tls: no renegotiation") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)							
+				} else if strings.Contains(err.Error()," EOF]") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)													
+				} else if strings.Contains(err.Error(),"server gave HTTP response to HTTPS client") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"network is unreachable") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"no route to hosts") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"EOF") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"tls: handshake failure") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)																
 				} else {
-					initialStatusCode = strconv.Itoa(resp.StatusCode)
-					initialTmpTitle := ""
-					s, err := goscraper.Scrape(newUrl, 5)
+					fmt.Printf("1 %s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
+				}
+				currentListCount+=1
+			} else {
+				initialStatusCode = strconv.Itoa(resp.StatusCode)
+				initialTmpTitle := ""
+				s, err := goscraper.Scrape(newUrl, 5)
+				if err==nil {
+					initialTmpTitle = s.Preview.Title
+				}	
+				_ = s
+				if verboseMode==true {
+					var lenBody = 0
+					body, err := ioutil.ReadAll(resp.Body)
 					if err==nil {
-						initialTmpTitle = s.Preview.Title
-					}	
-					_ = s
-					if verboseMode==true {
-						var lenBody = 0
-						body, err := ioutil.ReadAll(resp.Body)
-						if err==nil {
-							//errorFound=true
-							lenBody = len(body)
-						}
-						finalURL := resp.Request.URL.String()
-						var tmpTitle = ""
-						if finalURL==newUrl {
-							tmpTitle=getPageTitle(newUrl)
-						}		
-						if intelligentMode==true && CMSmode==false{
-							tmpStatusCode := strconv.Itoa(resp.StatusCode)
-							var tmpFound=false
-							for _, each := range tmpTitleList { 
-								var originalURL=""
-								if strings.HasSuffix(each[0],"/") {
-									originalURL=each[0]
-								} else {
-									originalURL=each[0]+"/"
-								}
-								if strings.Contains(finalURL,originalURL) {
-									if newUrl==finalURL { 		
-										tmpFound=true			
-										if (strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle) || len(tmpTitle)<1) {
-											if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
-												if checkStatusCode(resp.StatusCode)==true {
-													//if resp.StatusCode!=403 && resp.StatusCode!=503 && resp.StatusCode!=404 && resp.StatusCode!=400 && resp.StatusCode!=500 && resp.StatusCode!=204 {
-													if (each[2]!=strconv.Itoa(lenBody)) {
-														if CMSmode==false {
-															if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
-																var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
-																tmpResultList = append(tmpResultList,a...)
-															}
-														}
-													} 												
-												}
-											}  
-										} else {
-											if (strings.TrimSpace(each[1])==strings.TrimSpace(tmpTitle)) {
-												if initialStatusCode!=each[3] {
-													var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
-													tmpResultList = append(tmpResultList,a...)
-												}
-											}
-										}
-									}
-									if tmpFound==true {
-										tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
-										if tmpStatusCode=="200"{
-											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-										} else if tmpStatusCode=="401"{
-											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-										} else {
-											if initialStatusCode=="0" {
-												fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
-												log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
-											} else {
-												fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-												log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-											}
-										}
-									}
-								}
+						//errorFound=true
+						lenBody = len(body)
+					}
+					finalURL := resp.Request.URL.String()
+					var tmpTitle = ""
+					if finalURL==newUrl {
+						tmpTitle=getPageTitle(newUrl)
+					}		
+					if intelligentMode==true && CMSmode==false{
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)
+						var tmpFound=false
+						for _, each := range tmpTitleList { 
+							var originalURL=""
+							if strings.HasSuffix(each[0],"/") {
+								originalURL=each[0]
+							} else {
+								originalURL=each[0]+"/"
 							}
-							if tmpFound==false {
-								u, err := url.Parse(newUrl)
-								if err != nil {
-									panic(err)
-								}				
-								var newURL2=u.Scheme+"://"+u.Host				
-								if resp.StatusCode==401 && initialStatusCode=="401" {
-									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
-									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
-									var a = [][]string{{newURL2, initialStatusCode, "",""}}
-									tmpResultList = append(tmpResultList,a...)
-								} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
-									fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
-									log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
-									var a = [][]string{{newURL2, initialStatusCode, "",""}}
-									tmpResultList = append(tmpResultList,a...)
-								} else {
+							if strings.Contains(finalURL,originalURL) {
+								if newUrl==finalURL { 		
+									tmpFound=true			
+									if (strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle) || len(tmpTitle)<1) {
+										if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
+											if checkStatusCode(resp.StatusCode)==true {
+												if (each[2]!=strconv.Itoa(lenBody)) {
+													if CMSmode==false {
+														if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
+															var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+															tmpResultList = append(tmpResultList,a...)
+														}
+													}
+												} 												
+											}
+										}  
+									} else {
+										if (strings.TrimSpace(each[1])==strings.TrimSpace(tmpTitle)) {
+											if initialStatusCode!=each[3] {
+												var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+												tmpResultList = append(tmpResultList,a...)
+											}
+										}
+									}
+								}
+								if tmpFound==true {
+									tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
 									if tmpStatusCode=="200"{
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
@@ -1315,96 +1682,375 @@ func getUrlWorker(urlChan chan string) {
 										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
 										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 									} else {
-										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										if initialStatusCode=="0" {
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+										} else {
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
 									}
 								}
 							}
-						} else {
-							tmpStatusCode := strconv.Itoa(resp.StatusCode)
-							if Statuscode!=0 {
-								if resp.StatusCode==Statuscode {
-									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
-									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
-									var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-									tmpResultList = append(tmpResultList,a...)
-								} else {
-									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-								}						
-							} else {				
+						}
+						if tmpFound==false {
+							u, err := url.Parse(newUrl)
+							if err != nil {
+								panic(err)
+							}				
+							var newURL2=u.Scheme+"://"+u.Host				
+							if resp.StatusCode==401 && initialStatusCode=="401" {
+								fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								var a = [][]string{{newURL2, initialStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
+								fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								var a = [][]string{{newURL2, initialStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else {
 								if tmpStatusCode=="200"{
-									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
-									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
-									var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
-									tmpResultList = append(tmpResultList,a...)
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 								} else if tmpStatusCode=="401"{
-									fmt.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
-									log.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
-									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
-									tmpResultList = append(tmpResultList,a...)
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 								} else {
-									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
-									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
 								}
 							}
 						}
 					} else {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)
 						if Statuscode!=0 {
-							tmpStatusCode := strconv.Itoa(resp.StatusCode)	
-							if resp.StatusCode==Statuscode {	
-								fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
-								log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
-								finalURL := resp.Request.URL.String()
-								if strings.HasSuffix(finalURL,"/") {
-									finalURL=finalURL[0:len(finalURL)-1]
-								}
-								if finalURL==newUrl {
-									if resp.StatusCode!=403 {
-										var a = [][]string{{newUrl, tmpStatusCode, "",""}}
-										tmpResultList = append(tmpResultList,a...)
-									}
-								} 
-							}
-						} else {
-							tmpStatusCode := strconv.Itoa(resp.StatusCode)	
-							if resp.StatusCode==200 {		
-								fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
-								log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
-								finalURL := resp.Request.URL.String()
-								if strings.HasSuffix(finalURL,"/") {
-									finalURL=finalURL[0:len(finalURL)-1]
-								}
-								if finalURL==newUrl {
-									if resp.StatusCode!=403 {
-										var a = [][]string{{newUrl, tmpStatusCode, "",""}}
-										tmpResultList = append(tmpResultList,a...)
-									}
-								}
+							if resp.StatusCode==Statuscode {
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+								tmpResultList = append(tmpResultList,a...)
 							} else {
-								fmt.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
-								log.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
-							}				
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+							}						
+						} else {				
+							if tmpStatusCode=="200"{
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+								tmpResultList = append(tmpResultList,a...)
+							} else if tmpStatusCode=="401"{
+								fmt.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								log.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else {
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+							}
 						}
 					}
-					resp.Body.Close()
-					_ = resp
-					_ = tmpTitle 
-				} 			
+				} else {
+					if Statuscode!=0 {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
+						if resp.StatusCode==Statuscode {	
+							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							finalURL := resp.Request.URL.String()
+							if strings.HasSuffix(finalURL,"/") {
+								finalURL=finalURL[0:len(finalURL)-1]
+							}
+							if finalURL==newUrl {
+								if resp.StatusCode!=403 {
+									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
+								}
+							} 
+						}
 
-			}
-			if currentListCount>=totalListCount {
-				addToCompleteList(newUrl)					
-				reachedTheEnd=true
-			} else {
-				addToCompleteList(newUrl)
-			}
+					} else {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
+						if resp.StatusCode==200 {		
+							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							finalURL := resp.Request.URL.String()
+							if strings.HasSuffix(finalURL,"/") {
+								finalURL=finalURL[0:len(finalURL)-1]
+							}
+							if finalURL==newUrl {
+								if resp.StatusCode!=403 {
+									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
+								}
+							}
+						} else {
+							fmt.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
+						}				
+					}
+				}
+				resp.Body.Close()
+				_ = tmpTitle 
+			} 			
 
-			_ = err
+		}
+		if currentListCount>=totalListCount {
+			addToCompleteList(newUrl)					
+			reachedTheEnd=true
 		} else {
 			addToCompleteList(newUrl)
-			currentListCount+=1
 		}
+}
+
+func getUrlWorker(urlChan chan string) {
+    for newUrl := range urlChan {
+    	var newUrl1 = strings.Split(newUrl," | ")
+    	newUrl = newUrl1[0]
+    	var currentListCount, _ = strconv.Atoi(newUrl1[1])
+		timeout := time.Duration(time.Duration(timeoutSec) * time.Second)
+		client := http.Client{
+			Timeout: timeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},					
+		}
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		req, err := http.NewRequest("GET", newUrl, nil)
+		if err==nil {
+			req.Header.Add("User-Agent", userAgent)
+			initialStatusCode := ""
+			var tmpTitle = ""
+			resp, err := client.Do(req)			
+			if resp!=nil{					
+				defer resp.Body.Close()
+			}
+			if err!=nil{									
+				if (strings.Contains(err.Error(),"i/o timeout") || strings.Contains(err.Error(),"Client.Timeout exceeded") || strings.Contains(err.Error(),"TLS handshake timeout")) {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)						
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Timeout"),currentListCount,totalListCount)
+				} else if strings.Contains(err.Error(),"connection refused") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Refused"),currentListCount,totalListCount)
+				} else if strings.Contains(err.Error(),"no such host") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unknown Host"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"connection reset by peer") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)									
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"tls: no renegotiation") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
+				} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Max Redirect"),currentListCount,totalListCount)							
+				} else if strings.Contains(err.Error()," EOF]") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)													
+				} else if strings.Contains(err.Error(),"server gave HTTP response to HTTPS client") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("302"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"network is unreachable") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"no route to hosts") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Unreachable"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"EOF") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("EOF"),currentListCount,totalListCount)																
+				} else if strings.Contains(err.Error(),"tls: handshake failure") {
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)	
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)																
+				} else {
+					fmt.Printf("1 %s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
+					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
+				}
+				currentListCount+=1
+			} else {
+				initialStatusCode = strconv.Itoa(resp.StatusCode)
+				initialTmpTitle := ""
+				s, err := goscraper.Scrape(newUrl, 5)
+				if err==nil {
+					initialTmpTitle = s.Preview.Title
+				}	
+				_ = s
+				if verboseMode==true {
+					var lenBody = 0
+					body, err := ioutil.ReadAll(resp.Body)
+					if err==nil {
+						//errorFound=true
+						lenBody = len(body)
+					}
+					finalURL := resp.Request.URL.String()
+					var tmpTitle = ""
+					if finalURL==newUrl {
+						tmpTitle=getPageTitle(newUrl)
+					}		
+					if intelligentMode==true && CMSmode==false{
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)
+						var tmpFound=false
+						for _, each := range tmpTitleList { 
+							var originalURL=""
+							if strings.HasSuffix(each[0],"/") {
+								originalURL=each[0]
+							} else {
+								originalURL=each[0]+"/"
+							}
+							if strings.Contains(finalURL,originalURL) {
+								if newUrl==finalURL { 		
+									tmpFound=true			
+									if (strings.TrimSpace(each[1])!=strings.TrimSpace(tmpTitle) || len(tmpTitle)<1) {
+										if tmpTitle!="Error" && tmpTitle!="Request Rejected" && tmpTitle!="Runtime Error"{
+											if checkStatusCode(resp.StatusCode)==true {
+												if (each[2]!=strconv.Itoa(lenBody)) {
+													if CMSmode==false {
+														if each[3]!=initialStatusCode && each[2]!=strconv.Itoa(lenBody){
+															var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+															tmpResultList = append(tmpResultList,a...)
+														}
+													}
+												} 												
+											}
+										}  
+									} else {
+										if (strings.TrimSpace(each[1])==strings.TrimSpace(tmpTitle)) {
+											if initialStatusCode!=each[3] {
+												var a = [][]string{{newUrl, initialStatusCode, strconv.Itoa(lenBody),initialTmpTitle}}
+												tmpResultList = append(tmpResultList,a...)
+											}
+										}
+									}
+								}
+								if tmpFound==true {
+									tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
+									if tmpStatusCode=="200"{
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									} else if tmpStatusCode=="401"{
+										fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+										log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									} else {
+										if initialStatusCode=="0" {
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
+										} else {
+											fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
+									}
+								}
+							}
+						}
+						if tmpFound==false {
+							u, err := url.Parse(newUrl)
+							if err != nil {
+								panic(err)
+							}				
+							var newURL2=u.Scheme+"://"+u.Host				
+							if resp.StatusCode==401 && initialStatusCode=="401" {
+								fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								var a = [][]string{{newURL2, initialStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
+								fmt.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								var a = [][]string{{newURL2, initialStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else {
+								if tmpStatusCode=="200"{
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+								} else if tmpStatusCode=="401"{
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+								} else {
+									fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+								}
+							}
+						}
+					} else {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)
+						if Statuscode!=0 {
+							if resp.StatusCode==Statuscode {
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+								tmpResultList = append(tmpResultList,a...)
+							} else {
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+							}						
+						} else {				
+							if tmpStatusCode=="200"{
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
+								tmpResultList = append(tmpResultList,a...)
+							} else if tmpStatusCode=="401"{
+								fmt.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								log.Printf("%s [%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+								tmpResultList = append(tmpResultList,a...)
+							} else {
+								fmt.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
+								log.Printf("%s [%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+							}
+						}
+					}
+				} else {
+					if Statuscode!=0 {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
+						if resp.StatusCode==Statuscode {	
+							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							finalURL := resp.Request.URL.String()
+							if strings.HasSuffix(finalURL,"/") {
+								finalURL=finalURL[0:len(finalURL)-1]
+							}
+							if finalURL==newUrl {
+								if resp.StatusCode!=403 {
+									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
+								}
+							} 
+						}
+
+					} else {
+						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
+						if resp.StatusCode==200 {		
+							fmt.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							finalURL := resp.Request.URL.String()
+							if strings.HasSuffix(finalURL,"/") {
+								finalURL=finalURL[0:len(finalURL)-1]
+							}
+							if finalURL==newUrl {
+								if resp.StatusCode!=403 {
+									var a = [][]string{{newUrl, tmpStatusCode, "",""}}
+									tmpResultList = append(tmpResultList,a...)
+								}
+							}
+						} else {
+							fmt.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
+							log.Printf("%s [%s]\n",newUrl, color.RedString(tmpStatusCode))
+						}				
+					}
+				}
+				resp.Body.Close()
+				_ = tmpTitle 
+			} 			
+
+		}
+		if currentListCount>=totalListCount {
+			addToCompleteList(newUrl)					
+			reachedTheEnd=true
+		} else {
+			addToCompleteList(newUrl)
+		}
+
     }
 }
 
@@ -1492,6 +2138,7 @@ type argT struct {
 	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
 	Updatemode bool `cli:"update" usage:"Update URI path wordlists from Github"`
 	Skipmode bool `cli:"skip" usage:"Skip sites that don't give any useful results (e.g. OWA, VPN, etc)"`
+	Confirmmode bool `cli:"confirm" usage:"Confirm using more than 100 threads"`
 }
 
 func main() {
@@ -1563,7 +2210,13 @@ func main() {
 			uriPath = argv.Path
 		}
 		if argv.Threads>0 {
-			workersCount = argv.Threads
+			if argv.Threads>99 {
+				if !argv.Confirmmode {
+					fmt.Println("[-] Please use the --confirm option if you want to use more than 100 threads.")
+					os.Exit(3)
+				}
+			}
+			workersCount = argv.Threads			
 		}
 		sigs := make(chan os.Signal, 1)
 		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -2325,7 +2978,7 @@ func main() {
 			}
 		}
 
-		var wg sync.WaitGroup
+		/*var wg sync.WaitGroup
 		urlChan = make(chan string)
 		wg.Add(workersCount)
 	
@@ -2334,7 +2987,7 @@ func main() {
 				getUrlWorker(urlChan)
 				wg.Done()
 			}()
-		}
+		}*/
 
 		totalListCount=len(finalList)
 
@@ -2351,11 +3004,17 @@ func main() {
 		//real uripaths
 		completed1 := 0
 		
+		async := nasync.New(workersCount,workersCount)
+		defer async.Close()
+
 		for _, each := range finalList {
-			urlChan <- each+" | "+strconv.Itoa(completed1+1)
+			if ContinueNum==0 || ContinueNum<completed1+1 {	
+				//urlChan <- each+" | "+strconv.Itoa(completed1+1)
+				async.Do(testURL,each+" | "+strconv.Itoa(completed1+1))
+			}
 			completed1++
 		}
-		close(urlChan) 
+		//close(urlChan) 
 		
 		for {			
 			time.Sleep(1 * time.Millisecond)
@@ -2364,7 +3023,6 @@ func main() {
 			} 
 		}
 			
-		//fmt.Println("\n")
 		if CMSmode==true {
 			for _, v := range tmpResultList {
 				var wpVer = ""
@@ -2381,6 +3039,9 @@ func main() {
 					req, err := http.NewRequest("GET", v[0], nil)
 					req.Header.Add("User-Agent", userAgent)
 					resp, err := client.Do(req)		
+					if resp!=nil{					
+						defer resp.Body.Close()
+					}
 					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
@@ -2414,7 +3075,9 @@ func main() {
 					req, err := http.NewRequest("GET", v[0], nil)
 					req.Header.Add("User-Agent", userAgent)
 					resp, err := client.Do(req)		
-
+					if resp!=nil{					
+						defer resp.Body.Close()
+					}
 					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
@@ -2446,6 +3109,9 @@ func main() {
 					req, err := http.NewRequest("GET", v[0], nil)
 					req.Header.Add("User-Agent", userAgent)
 					resp, err := client.Do(req)		
+					if resp!=nil{					
+						defer resp.Body.Close()
+					}
 					//resp, err := client.Get(v[0])
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
@@ -2479,6 +3145,9 @@ func main() {
 					req, err := http.NewRequest("GET", v[0], nil)
 					req.Header.Add("User-Agent", userAgent)
 					resp, err := client.Do(req)		
+					if resp!=nil{					
+						defer resp.Body.Close()
+					}
 					if err==nil {
 						body, err := ioutil.ReadAll(resp.Body)
 						if err==nil {
@@ -2518,7 +3187,6 @@ func main() {
 			}
 
 			var tmpResultList2 []string	
-			//var tmpResultList3 []string	
 
 			sort.Strings(tmpResultList1)
 			for _, v := range tmpResultList1 {
@@ -2529,18 +3197,6 @@ func main() {
 					}
 				}
 			}					
-
-			//Wait until all processes have been completed
-			/*for {
-				//if len(completedPathList)!=len(finalList) {
-				if completedCount!=len(finalList) {
-					//fmt.Println("a "+strconv.Itoa(len(completedPathList))+" "+strconv.Itoa(len(finalList)))
-					//time.Sleep(5 * time.Millisecond)
-					time.Sleep(5 * time.Second)
-				} else {
-					break
-				}
-			}*/
 			
 			if len(tmpResultList2)<1 {
 				fmt.Println("\n[*] No results found")
@@ -2549,6 +3205,9 @@ func main() {
 				//time.Sleep(5 * time.Second)
 				fmt.Println("\n")
 				log.Printf("\n")
+				async := nasync.New(workersCount,workersCount)
+				defer async.Close()
+		
 				var wg sync.WaitGroup
 				urlChan = make(chan string)
 				wg.Add(workersCount)
@@ -2559,6 +3218,7 @@ func main() {
 					}()
 				}		
 				for _, each := range tmpResultList2 {
+					//async.Do(checkURL1,each)
 					urlChan <- each
 				}
 				close(urlChan)  
@@ -2570,7 +3230,7 @@ func main() {
 				}
 				if int(currentListCount1)>=len(tmpResultList2) {
 					reachedTheEnd1=true
-				}	
+				} 
 			}
 		}
 		
