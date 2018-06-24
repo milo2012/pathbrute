@@ -1589,7 +1589,7 @@ func testURL(newUrl string) {
 				} else if strings.Contains(err.Error(),"connection reset by peer") {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)									
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Connection Reset"),currentListCount,totalListCount)	
-				} else if strings.Contains(err.Error(),"tls: no renegotiation") {
+				} else if strings.Contains(err.Error(),"tls: no renegotiation") || strings.Contains(err.Error(),"tls: alert(") {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("TLS Error"),currentListCount,totalListCount)	
 				} else if strings.Contains(err.Error(),"stopped after 10 redirects") {
