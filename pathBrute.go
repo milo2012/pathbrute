@@ -2142,7 +2142,7 @@ type argT struct {
 	Timeoutsec int `cli:"timeout" usage:"Set timeout to x seconds"`
 	Updatemode bool `cli:"update" usage:"Update URI path wordlists from Github"`
 	Skipmode bool `cli:"skip" usage:"Skip sites that don't give any useful results (e.g. OWA, VPN, etc)"`
-	Confirmmode bool `cli:"confirm" usage:"Confirm using more than 100 threads"`
+	Confirmmode bool `cli:"confirm" usage:"Confirm using more than 100 threads (use with -n option)"`
 }
 
 func main() {
@@ -2276,7 +2276,7 @@ func main() {
 				_ = err
 			}
 			_ = err1
-			lines, err2 := readLines("defaultPaths.txt")
+			lines, err2 := readLines(pFilename)
 			if err2==nil {
 				for _, v := range lines {
 						v=strings.TrimSpace(v)
@@ -2298,6 +2298,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2339,6 +2351,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2380,6 +2404,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2421,6 +2457,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2462,6 +2510,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2503,6 +2563,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2544,6 +2616,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2585,6 +2669,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2626,6 +2722,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2667,6 +2775,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2708,6 +2828,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2749,6 +2881,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
@@ -2790,6 +2934,18 @@ func main() {
 				} else {
 					fmt.Println("[+] Latest version of "+extractFilename+" has been downloaded")
 				}
+				lines, err2 := readLines(extractFilename)
+				if err2==nil {
+					for _, v := range lines {
+						v=strings.TrimSpace(v)
+						if len(v)>0 {
+							pathList = append(pathList, v)
+						}
+					}		
+				} else {
+					fmt.Println(err2)
+				}
+				_ = err2
 			} else {
 				_, err1 := os.Stat(extractFilename)
 				if os.IsNotExist(err1) {
