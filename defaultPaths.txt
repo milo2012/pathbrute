@@ -1,4 +1,3 @@
-
 /.gitignore
 /.htaccess
 /.htpasswd
@@ -167,6 +166,8 @@
 /PerformacetraceTraceApplication
 /PlantsByWebSphere
 /PlantsByWebSphere/docs
+/rest/v1/AccountService/Accounts
+/xmldata?item=ALL
 /RE/index.jsp
 /README
 /README.rdoc
