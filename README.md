@@ -52,20 +52,31 @@ Options:
 ```
 ***
  
-#Docker
-```
+## Docker
+
 - Building from Dockerfile
-docker build -t example-scratch -f Dockerfile
-docker run -it 2af3eecdb017 /pathbrute -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+
+```
+docker build -t pathbrute .
+docker run --rm pathbrute -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+```
 
 - Pull latest Docker image
-docker pull milo2012/pathbrute
-docker run -it 589606bdc12a /pathbrute -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
 
 ```
+docker pull milo2012/pathbrute
+docker run --rm pathbrute -u http://testphp.vulnweb.com/ -s default  -v -i -n 20
+```
+
+- To see help menu
+
+```
+docker run --rm pathbrute -h
+```
+
 ***
     
-#Compilation  
+## Compilation  
 ```
 #Manual Compilation  `
 go get github.com/mkideal/cli
@@ -76,7 +87,7 @@ go build pathBrute.go
 ```
 ***
   
-#Example 
+### Example 
 ```
 ./pathBrute -s default -f urls.txt -v -i -n 25 
 [*] Getting Default Page Title for Invalid URI Paths
@@ -101,7 +112,7 @@ http://xxxx.com/ADS-EJB [200] [482] []
 ```
 ***
   
-#Explanation of the output from pathBrute  
+### Explanation of the output from pathBrute  
 ```
 https://208.88.199.241/sap/bc/webdynpro/sap/wdr_test_gantt [401] [458] [File or directory not found] [27736 of 38988]
 ```
@@ -114,7 +125,7 @@ Below is a description of the output from pathBrute
          
 ***
     
-#Example using the --cms option  
+### Example using the --cms option  
 Below is a sample output when using the --cms option to fingerprint the CMS on the target hosts.  It also returns the Metasploit modules based on the version of the CMS software.  
  
 ```
