@@ -157,6 +157,11 @@ func checkWebsite(urlChan chan string) (string,bool) {
 		        	return http.ErrUseLastResponse
 		    	},		
 		}
+		if proxyMode==true {
+			url_i := url.URL{}
+			url_proxy, _ := url_i.Parse(proxy_addr)
+			http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		req, err := http.NewRequest("GET", newURL1, nil)
 		if err==nil {
@@ -384,6 +389,11 @@ func getPage(newURL1 string) (string, string, int, int) {
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
         	return http.ErrUseLastResponse
     	},		
+	}
+	if proxyMode==true {
+		url_i := url.URL{}
+		url_proxy, _ := url_i.Parse(proxy_addr)
+		http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
 	}
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest("GET", newURL1, nil)
@@ -784,6 +794,11 @@ func checkURL1(v string) {
 			return http.ErrUseLastResponse
 		},				
 	}
+	if proxyMode==true {
+		url_i := url.URL{}
+		url_proxy, _ := url_i.Parse(proxy_addr)
+		http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+	}
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest("GET", v, nil)
 	req.Header.Add("User-Agent", userAgent)
@@ -1167,6 +1182,11 @@ func checkURL(urlChan chan string) {
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},				
+		}
+		if proxyMode==true {
+			url_i := url.URL{}
+			url_proxy, _ := url_i.Parse(proxy_addr)
+			http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		req, err := http.NewRequest("GET", v, nil)
@@ -1570,6 +1590,11 @@ func testURL(newUrl string) {
 				return http.ErrUseLastResponse
 			},					
 		}
+		if proxyMode==true {
+			url_i := url.URL{}
+			url_proxy, _ := url_i.Parse(proxy_addr)
+			http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		req, err := http.NewRequest("GET", newUrl, nil)
 		if err==nil {
@@ -1818,6 +1843,11 @@ func getUrlWorker(urlChan chan string) {
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},					
+		}
+		if proxyMode==true {
+			url_i := url.URL{}
+			url_proxy, _ := url_i.Parse(proxy_addr)
+			http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
 		}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		req, err := http.NewRequest("GET", newUrl, nil)
@@ -3193,6 +3223,12 @@ func main() {
 						return http.ErrUseLastResponse
 					},						
 				}
+
+				if proxyMode==true {
+					url_i := url.URL{}
+					url_proxy, _ := url_i.Parse(proxy_addr)
+					http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+				}
 				if strings.HasSuffix(v[0],"/administrator/language/en-GB/en-GB.xml") || strings.HasSuffix(v[0],"/administrator/manifests/files/joomla.xml") {
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
@@ -3231,6 +3267,11 @@ func main() {
 					}
 				}
 				if strings.Contains(v[0],"/CHANGELOG.txt") {
+					if proxyMode==true {
+						url_i := url.URL{}
+						url_proxy, _ := url_i.Parse(proxy_addr)
+						http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+					}
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 					req, err := http.NewRequest("GET", v[0], nil)
 					req.Header.Add("User-Agent", userAgent)
@@ -3264,6 +3305,11 @@ func main() {
 				}				
 
 				if strings.Contains(v[0],"/readme.html") {
+					if proxyMode==true {
+						url_i := url.URL{}
+						url_proxy, _ := url_i.Parse(proxy_addr)
+						http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+					}
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 					req, err := http.NewRequest("GET", v[0], nil)
@@ -3300,6 +3346,11 @@ func main() {
 				}
 				//if strings.HasPrefix(v[3],"Links for ") {			
 				if strings.Contains(v[0],"/wp-links-opml.php") {
+					if proxyMode==true {
+						url_i := url.URL{}
+						url_proxy, _ := url_i.Parse(proxy_addr)
+						http.DefaultTransport.(*http.Transport).Proxy = http.ProxyURL(url_proxy)
+					}
 					http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 					req, err := http.NewRequest("GET", v[0], nil)
