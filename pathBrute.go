@@ -1011,9 +1011,7 @@ func checkURL1(v string) {
 			}
 		}
 	}	
-	fmt.Println("aaa")
-	fmt.Println(tmpResultList3)
-	fmt.Println("aaa")
+	//fmt.Println(tmpResultList3)
 
 	RemoveDuplicates(&tmpResultList3)
 	sort.Strings(tmpResultList3)
@@ -3429,7 +3427,7 @@ func main() {
 					}()
 				}		
 				for _, each := range tmpResultList2 {
-					//async.Do(checkURL1,each)
+					async.Do(checkURL1,each)
 					urlChan <- each
 				}
 				close(urlChan)  
