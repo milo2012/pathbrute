@@ -540,6 +540,17 @@
 /P47H/spotlight_detail.php
 /P47H/video_show.php
 /P47H/videos.php
+<<<<<<< HEAD
+=======
+/PATH/actions.html
+/PATH/admin/agent_edit.asp
+/PATH/ajaxp_backend.php
+/PATH/content/forums/reply.asp
+/PATH/index/HACKU_BANK
+/PATH/location.asp
+/PATH/plugins/calendar/calendar_backend.php
+/PATH/store/productsofcat.asp
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /PBlogEX/admin
 /PBlogEX/admin/admin.password.php
 /PBlogEX/admin/admin.php
@@ -968,7 +979,10 @@
 /actionHandler/ajax_network_diagnostic_tools.php
 /actionHandler/ajax_port_forwarding.php
 /actionHandler/ajax_remote_management.php
+<<<<<<< HEAD
 /actions.html
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /actions/ipn.php
 /activate.asp
 /activate.php
@@ -1134,7 +1148,10 @@
 /admin/adminsettings.php
 /admin/adminstart.php
 /admin/adminuserslist.php
+<<<<<<< HEAD
 /admin/agent_edit.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /admin/ajax.php
 /admin/aktivitet.php
 /admin/aomanage.php
@@ -1558,7 +1575,10 @@
 /admin/themes/<theme>/login.php
 /admin/themes/blue/header.php
 /admin/topics.jsp
+<<<<<<< HEAD
 /admin/track_order/
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /admin/trailer.php
 /admin/tree/iframe_all_files.php
 /admin/tree/iframe_assign_files.php
@@ -2304,7 +2324,10 @@
 /bugzilla/show_bug.cgi
 /bulkupload.php
 /bury.php
+<<<<<<< HEAD
 /busbooking/
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /buscador/buscador.htm
 /business.php
 /buyer/index.php
@@ -3119,7 +3142,10 @@
 /content.php
 /content/cal_index.php
 /content/content.php
+<<<<<<< HEAD
 /content/forums/reply.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /content/general/browse/
 /content/lessons/Students/
 /content/menu/sub-menu-led-01.php
@@ -3358,7 +3384,10 @@
 /datastores/gstbk.mdb
 /datastores/newsletter.mdb
 /dataupload
+<<<<<<< HEAD
 /datesel.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /dating.lan/members/index.php
 /datingscript/index.php
 /datingscript/login.php
@@ -3446,11 +3475,37 @@
 /demo-servlets/snoop.jsp
 /demo.php
 /demo/
+<<<<<<< HEAD
+=======
+/demo/2/10/CMS_Made_Simple
+/demo/2/193/Anantasoft_Gazelle_CMS
+/demo/admin/index.php
+/demo/admin/track_order/
+/demo/busbooking/
+/demo/datesel.php
+/demo/extra/online.php
+/demo/glossary/glossary.asp
+/demo/inc/_login.asp
+/demo/includes/init.php
+/demo/includes/styles.php
+/demo/includes/trailer.php
+/demo/includes/validate.php
+/demo/index.asp
+/demo/shownews.php
+/demo/usersel.php
+/demo/view_d.php
+/demo/view_entry.php
+/demo4/index.php
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /demo_guestbook.php
 /demoactiveauctionh/wishlist.asp
 /demoactivebusinessdirectory/searchadvance.asp
 /demoactivebuyandsell/buyersend.asp
 /demoactivephotogallery/account.asp
+<<<<<<< HEAD
+=======
+/demos/practicos/busqueda/paises.php
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /denied.htm
 /departments.php
 /dept.asp
@@ -3883,7 +3938,10 @@
 /external.php
 /external/magpierss/scripts/magpie_slashbox.php
 /external_vote.php
+<<<<<<< HEAD
 /extra/online.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /extras/postman/postman.php
 /extras/update.php
 /ezContents/include/db.php
@@ -4350,7 +4408,10 @@
 /globals.inc http://[target]/sql.inc
 /globber/admin.php
 /globe
+<<<<<<< HEAD
 /glossary/glossary.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /glossword_path/index.php
 /glpi/front/profile.form.php
 /glpi/front/user.form.php
@@ -4648,7 +4709,10 @@
 /impresscms/plugins/csstidy/css_optimiser.php
 /impressum.php
 /inbox/index.fts
+<<<<<<< HEAD
 /inc/_login.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /inc/ajax.asp
 /inc/attach.php
 /inc/cat-CYM.php
@@ -4828,6 +4892,7 @@
 /includes/shared_scripts/wysiwyg_editor/assetmanager/assetmanager.asp
 /includes/spamping.php
 /includes/startmodules.inc.php
+<<<<<<< HEAD
 /includes/styles.php
 /includes/systemplates/router.php
 /includes/template.php
@@ -4835,6 +4900,12 @@
 /includes/trailer.php
 /includes/user_standard.php
 /includes/validate.php
+=======
+/includes/systemplates/router.php
+/includes/template.php
+/includes/timwrapper.php
+/includes/user_standard.php
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /includes/workspace.php
 /index
 /index-h.php
@@ -5337,7 +5408,10 @@
 /localconf.php
 /localhost/phpeasydata-1.5.4/annuaire.php
 /locat.php
+<<<<<<< HEAD
 /location.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /locked
 /locms/smarty.php
 /log-in.html
@@ -6817,7 +6891,10 @@
 /plugins/aselectextauth/include/ASelectAuthPlugin.class.php
 /plugins/aselectextauth/include/aselectextauth-init.php
 /plugins/bookmarker/bookmarker_backend.php
+<<<<<<< HEAD
 /plugins/calendar/calendar_backend.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /plugins/clientcontrol/create-bookmark.jsp
 /plugins/clientcontrol/spark-form.jsp
 /plugins/content/jw_allvideos/includes/download.php
@@ -7032,7 +7109,10 @@
 /ppim/shell.php
 /ppim/upload.php
 /pr/03xxx.html>
+<<<<<<< HEAD
 /practicos/busqueda/paises.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /prb/www/
 /prebay/siteadmin/
 /presentation.php
@@ -8083,7 +8163,10 @@
 /store/dloads/dloadsmainincs/dl-authcontent.php
 /store/dloads/dloadsmainincs/dl-maincatsearch-dlcontent.php
 /store/dloads/dloadstplates/dloads-payed.php
+<<<<<<< HEAD
 /store/productsofcat.asp
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /store_info.php
 /storefronts.php
 /stores.asp
@@ -8692,7 +8775,10 @@
 /users/remind
 /users_admin.ghp
 /users_xml.php
+<<<<<<< HEAD
 /usersel.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /userview.asp
 /usr/bin/nmap
 /usr/bin/per
@@ -8814,8 +8900,11 @@
 /view_article.asp
 /view_cresume.php
 /view_current_job.php
+<<<<<<< HEAD
 /view_d.php
 /view_entry.php
+=======
+>>>>>>> a666198c62601bd5d2c24ae0fddc0a740822bcb7
 /view_func.php
 /view_gallery.asp
 /view_group.php
