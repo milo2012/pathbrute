@@ -1823,7 +1823,7 @@ func testURL(newUrl string) {
 
 		}
 		if currentListCount>=totalListCount {
-			addToCompleteList(newUrl)					
+			addToCompleteList(newUrl)	
 			reachedTheEnd=true
 		} else {
 			addToCompleteList(newUrl)
@@ -3206,7 +3206,7 @@ func main() {
 		
 		for {			
 			time.Sleep(1 * time.Millisecond)
-			if reachedTheEnd==true {
+			if reachedTheEnd==true && completedCount==len(finalList){
 				break
 			} 
 		}
