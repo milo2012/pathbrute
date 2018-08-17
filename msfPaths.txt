@@ -14,6 +14,7 @@
 /Auxiliumpetratepro
 /ChangePhoto.jsp
 /English/pages_MacUS/lan_set_content.html
+/exportFile
 /ForensicsAnalysisServlet/
 /GetSimpleCMS
 /HNAP1/
@@ -27,6 +28,7 @@
 /LoginAdmin
 /LoginPage.do
 /LoginServlet
+/objects/
 /OvCgi/nnmRptConfig.exe
 /Phoenix/includes/geoip.php
 /ProjectSend
