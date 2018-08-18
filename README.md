@@ -82,7 +82,9 @@ docker run --rm pathbrute -h
 go get github.com/mkideal/cli
 go get github.com/badoux/goscraper
 go get github.com/fatih/color
-go github.com/hashicorp/go-version
+go get github.com/hashicorp/go-version
+go get github.com/xrash/smetrics
+go get github.com/ti/nasync
 go build pathBrute.go  
 ```
 ***
