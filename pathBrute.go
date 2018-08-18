@@ -25,6 +25,7 @@ import (
 	"syscall"
 	"github.com/ti/nasync"
     "database/sql"
+    "path/filepath"
     _ "github.com/mattn/go-sqlite3"
 )
 
@@ -84,24 +85,28 @@ func f(from string) {
 
 func lookupURI(searchTerm string) ([]string) {
 	var results []string	
-	var pFilename="pathbrute.sqlite"
-	_, err1 := os.Stat(pFilename)
-	if os.IsNotExist(err1) {
-		fmt.Printf("[*] Database file: %s not exists\n", pFilename)
-		os.Exit(3)
-	} else {
-		database, _ := sql.Open("sqlite3", pFilename)
-		rows, _ := database.Query("SELECT field1,field2,field3,field4 FROM db WHERE field3=='"+searchTerm+"'")
-		var dataSource string
-		var filename string
-		var uriPath string
-		var category string
-		for rows.Next() {
-			rows.Scan(&dataSource,&filename,&uriPath,&category)
-			fmt.Println(dataSource+"\t"+filename+"\t"+uriPath+"\t"+category)
+	ex, err := os.Executable()
+	if err == nil {
+		exPath := filepath.Dir(ex)
+		var pFilename=exPath+"/pathbrute.sqlite"
+		_, err1 := os.Stat(pFilename)
+		if os.IsNotExist(err1) {
+			fmt.Printf("[*] Database file: %s not exists\n", pFilename)
+			os.Exit(3)
+		} else {
+			database, _ := sql.Open("sqlite3", pFilename)
+			rows, _ := database.Query("SELECT field1,field2,field3,field4 FROM db WHERE field3=='"+searchTerm+"'")
+			var dataSource string
+			var filename string
+			var uriPath string
+			var category string
+			for rows.Next() {
+				rows.Scan(&dataSource,&filename,&uriPath,&category)
+				fmt.Println(dataSource+"\t"+filename+"\t"+uriPath+"\t"+category)
+			}
+			_=dataSource
+			_=filename
 		}
-		_=dataSource
-		_=filename
 	}
 	return results
 }
