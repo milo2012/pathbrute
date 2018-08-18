@@ -1,4 +1,3 @@
-/%
 /+CSCOE+/logon.html
 /+webvpn+/index.html
 /+webvpn+/webvpn_logout.html

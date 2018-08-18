@@ -93,30 +93,30 @@ go build pathBrute.go
 ```
 ./pathBrute -s default -f urls.txt -v -i -n 25 
 [*] Getting Default Page Title for Invalid URI Paths
-http://xxxx.com/xxx [404] [404 Not Found]
+http://xxxx.com/xxx [code:404] [404 Not Found]
 
 [*] Testing URI Paths
-http://xxxx.com/AdminRealm [404] [168] [404 Not Found]
-http://xxxx.com/AddressBookJ2WE/services/AddressBook/wsdl/ [404] [168] [404 Not Found]
-http://xxxx.com/AdminJDBC [404] [168] [404 Not Found]
-http://xxxx.com/AdminMain [404] [168] [404 Not Found]
-http://xxxx.com/Admin [404] [168] [404 Not Found]
-http://xxxx.com/AdminProps [404] [168] [404 Not Found]
-http://xxxx.com/AddressBookJ2WB [404] [168] [404 Not Found]
-http://xxxx.com/AE/index.jsp [404] [168] [404 Not Found]
-http://xxxx.com/.web [404] [168] [404 Not Found]
-http://xxxx.com/ADS-EJB [200] [482] []
+http://xxxx.com/AdminRealm [code:404] [168] [404 Not Found]
+http://xxxx.com/AddressBookJ2WE/services/AddressBook/wsdl/ [code:404] [168] [404 Not Found]
+http://xxxx.com/AdminJDBC [code:404] [168] [404 Not Found]
+http://xxxx.com/AdminMain [code:404] [168] [404 Not Found]
+http://xxxx.com/Admin [code:404] [168] [404 Not Found]
+http://xxxx.com/AdminProps [code:404] [168] [404 Not Found]
+http://xxxx.com/AddressBookJ2WB [code:404] [168] [404 Not Found]
+http://xxxx.com/AE/index.jsp [code:404] [168] [404 Not Found]
+http://xxxx.com/.web [code:404] [168] [404 Not Found]
+http://xxxx.com/ADS-EJB [code:200] [482] []
 
-[Found] https://127.0.0.1/.gitignore [200] [28] []
-[Found] https://127.0.0.1/.htaccess [200] [1164] []
-[Found] https://127.0.0.1/PMA/ [200] [8575] [phpMyAdmin]
-[Found] https://127.0.0.1/.htaccess [200] [1164] []
+[Found] https://127.0.0.1/.gitignore [code:200] [28] []
+[Found] https://127.0.0.1/.htaccess [code:200] [1164] []
+[Found] https://127.0.0.1/PMA/ [code:200] [8575] [phpMyAdmin]
+[Found] https://127.0.0.1/.htaccess [code:200] [1164] []
 ```
 ***
   
 ### Explanation of the output from pathBrute  
 ```
-https://208.88.199.241/sap/bc/webdynpro/sap/wdr_test_gantt [401] [458] [File or directory not found] [27736 of 38988]
+https://208.88.199.241/sap/bc/webdynpro/sap/wdr_test_gantt [code:401] [458] [File or directory not found] [27736 of 38988]
 ```
 Below is a description of the output from pathBrute  
   
