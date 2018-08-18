@@ -49,6 +49,7 @@ Options:
       --timeout    Set timeout to x seconds
       --update     Update URI path wordlists from Github
       --skip       Skip sites that don't give any useful results (e.g. OWA, VPN, etc)
+  -q, --query      Lookup URI paths that were found against ExploitDB)
 ```
 ***
  
