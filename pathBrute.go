@@ -40,6 +40,7 @@ var intelligentMode = false
 var CMSmode = false
 var SpreadMode = false
 var Statuscode = 0
+var Excludecode = 0
 var currentCount int = 0 
 var currentCount1 int = 0
 var ContinueNum int = 0 
@@ -315,7 +316,7 @@ func cleanup() {
 		}
 	}
 	if len(tmpResultList3)>0 {
-		fmt.Println("\n")
+		fmt.Printf("\n")
 		log.Printf("\n")
 
 		var wg sync.WaitGroup
@@ -371,7 +372,7 @@ func cleanup() {
 		log.Printf("\n[*] No results found")
 	} else {
 		//time.Sleep(5 * time.Second)
-		fmt.Println("\n")
+		fmt.Printf("\n")
 		log.Printf("\n")
 
 		var wg sync.WaitGroup
@@ -1751,18 +1752,30 @@ func testURL(newUrl string) {
 								if tmpFound==true {
 									tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
 									if tmpStatusCode=="200"{
-										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										i, err :=strconv.Atoi(initialStatusCode) 
+										if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																				
+											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
+										_=err
 									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										i, err :=strconv.Atoi(initialStatusCode) 
+										if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {										
+											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
+										_=err
 									} else {
 										if initialStatusCode=="0" {
 											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
 											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
 										} else {
-											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											i, err :=strconv.Atoi(initialStatusCode) 
+											if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {										
+												fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+												log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											}
+											_=err
 										}
 									}
 								}
@@ -1780,20 +1793,36 @@ func testURL(newUrl string) {
 								var a = [][]string{{newURL2, initialStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
-								fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {								
+									fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newURL2, initialStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
 								if tmpStatusCode=="200"{
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
 								} else if tmpStatusCode=="401"{
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
 								} else {
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {								
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
 								}
 							}
 						}
@@ -1801,28 +1830,48 @@ func testURL(newUrl string) {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)
 						if Statuscode!=0 {
 							if resp.StatusCode==Statuscode {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {									
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								}
+								_=err
 							}						
 						} else {				
 							if tmpStatusCode=="200"{
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else if tmpStatusCode=="401"{
-								fmt.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
-								log.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {							
+									fmt.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+									log.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {			
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+								}
+								_=err
 							}
 						}
 					}
@@ -1943,7 +1992,7 @@ func getUrlWorker(urlChan chan string) {
 					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)	
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString("Handshake Failure"),currentListCount,totalListCount)																
 				} else {
-					fmt.Printf("1 %s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
+					fmt.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 					log.Printf("%s [%s] [%d of %d]\n",newUrl, color.RedString(err.Error()))
 				}
 				currentListCount+=1
@@ -2005,18 +2054,30 @@ func getUrlWorker(urlChan chan string) {
 								if tmpFound==true {
 									tmpTitle=strings.Replace(tmpTitle,"\n"," ",1)
 									if tmpStatusCode=="200"{
-										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										i, err :=strconv.Atoi(initialStatusCode) 
+										if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																				
+											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
+										_=err
 									} else if tmpStatusCode=="401"{
-										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										i, err :=strconv.Atoi(initialStatusCode) 
+										if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																				
+											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										}
+										_=err
 									} else {
 										if initialStatusCode=="0" {
 											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
 											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(""),  lenBody, tmpTitle, currentListCount,totalListCount)
 										} else {
-											fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-											log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											i, err :=strconv.Atoi(initialStatusCode) 
+											if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+												fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+												log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+											}
+											_=err
 										}
 									}
 								}
@@ -2029,25 +2090,45 @@ func getUrlWorker(urlChan chan string) {
 							}				
 							var newURL2=u.Scheme+"://"+u.Host				
 							if resp.StatusCode==401 && initialStatusCode=="401" {
-								fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																		
+									fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newURL2, initialStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else if (resp.StatusCode!=401 && initialStatusCode=="401") {
-								fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {										
+									fmt.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d of %d]\n",newURL2, color.RedString(initialStatusCode), currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newURL2, initialStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
 								if tmpStatusCode=="200"{
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																		
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
 								} else if tmpStatusCode=="401"{
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-								} else {
-									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
-									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {											
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)										
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.GreenString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
+								} else {						
+									i, err :=strconv.Atoi(initialStatusCode) 
+									if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {			
+										fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+										log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(initialStatusCode),  lenBody, tmpTitle, currentListCount,totalListCount)
+									}
+									_=err
 								}
 							}
 						}
@@ -2055,28 +2136,48 @@ func getUrlWorker(urlChan chan string) {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)
 						if Statuscode!=0 {
 							if resp.StatusCode==Statuscode {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																	
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(initialStatusCode),  lenBody, tmpTitle,currentListCount,totalListCount)
+								}
+								_=err
 							}						
 						} else {				
 							if tmpStatusCode=="200"{
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {											
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)					
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.BlueString(tmpStatusCode), lenBody, tmpTitle,currentListCount,totalListCount)
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, strconv.Itoa(lenBody),tmpTitle}}
 								tmpResultList = append(tmpResultList,a...)
 							} else if tmpStatusCode=="401"{
-								fmt.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
-								log.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {											
+									fmt.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+									log.Printf("%s [code:%s]\n",newUrl, color.GreenString(tmpStatusCode))
+								}
+								_=err
 								var a = [][]string{{newUrl, tmpStatusCode, "",""}}
 								tmpResultList = append(tmpResultList,a...)
 							} else {
-								fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
-								log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+								i, err :=strconv.Atoi(initialStatusCode) 
+								if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
+									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
+								}
+								_=err
 							}
 						}
 					}
@@ -2084,8 +2185,12 @@ func getUrlWorker(urlChan chan string) {
 					if Statuscode!=0 {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
 						if resp.StatusCode==Statuscode {	
-							fmt.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
-							log.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							i, err :=strconv.Atoi(initialStatusCode) 
+							if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {																	
+								fmt.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+								log.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							}
+							_=err
 							finalURL := resp.Request.URL.String()
 							if strings.HasSuffix(finalURL,"/") {
 								finalURL=finalURL[0:len(finalURL)-1]
@@ -2101,8 +2206,12 @@ func getUrlWorker(urlChan chan string) {
 					} else {
 						tmpStatusCode := strconv.Itoa(resp.StatusCode)	
 						if resp.StatusCode==200 {		
-							fmt.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
-							log.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							i, err :=strconv.Atoi(initialStatusCode) 
+							if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {											
+								fmt.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+								log.Printf("%s [code:%s]\n",newUrl, color.BlueString(tmpStatusCode))
+							}
+							_=err
 							finalURL := resp.Request.URL.String()
 							if strings.HasSuffix(finalURL,"/") {
 								finalURL=finalURL[0:len(finalURL)-1]
@@ -2114,8 +2223,12 @@ func getUrlWorker(urlChan chan string) {
 								}
 							}
 						} else {
-							fmt.Printf("%s [code:%s]\n",newUrl, color.RedString(tmpStatusCode))
-							log.Printf("%s [code:%s]\n",newUrl, color.RedString(tmpStatusCode))
+							i, err :=strconv.Atoi(initialStatusCode) 
+							if (Excludecode!=0 && Excludecode!=i) || (Statuscode!=0 && Statuscode==i) {		
+								fmt.Printf("%s [code:%s]\n",newUrl, color.RedString(tmpStatusCode))
+								log.Printf("%s [code:%s]\n",newUrl, color.RedString(tmpStatusCode))
+							}
+							_=err
 						}				
 					}
 				}
@@ -2205,7 +2318,8 @@ type argT struct {
 	Path string `cli:"p,path" usage:"URI path"`
 	Pathsource string `cli:"s,source" usage:"Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php | exploitdb-others | RobotsDisallowed | SecLists)"`
 	Threads int  `cli:"n,threads" usage:"No of concurrent threads (default: 2)"`
-	Statuscode int  `cli:"c" usage:"Status code"`
+	Statuscode int  `cli:"c" usage:"Show only certain status code (e.g. -c 200)"`
+	Excludecode int  `cli:"e" usage:"Exclude certain status code (e.g. -e 404)"`	
 	Intellimode bool `cli:"i" usage:"Intelligent mode"`
 	Verbose bool `cli:"v,verbose" usage:"Verbose mode"`
 	CMSmode bool `cli:"cms" usage:"Fingerprint CMS"`
@@ -2233,12 +2347,17 @@ func main() {
 	uriPath := ""
 	
 	whitelistList = append(whitelistList, "Outlook Web App")
-
+	whitelistList = append(whitelistList, "Netscaler Gateway")
+	whitelistList = append(whitelistList, "GlobalProtect Portal")
+		
 	var contentList []string
 	var pathList []string
 	
 	cli.Run(new(argT), func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*argT)
+		if argv.Excludecode>0 {
+			Excludecode=argv.Excludecode
+		}
 		if argv.Lookupmode {
 			lookupMode = true
 		}			
@@ -3459,10 +3578,10 @@ func main() {
 			}					
 			
 			if len(tmpResultList2)<1 {
-				fmt.Println("\n[*] No results found")
+				fmt.Printf("\n[*] No results found")
 				log.Printf("\n[*] No results found")
 			} else {
-				fmt.Println("\n")
+				fmt.Printf("\n")
 				log.Printf("\n")
 				async := nasync.New(workersCount,workersCount)
 				defer async.Close()
@@ -3537,7 +3656,7 @@ func main() {
 			RemoveDuplicates(&tmpResultList1)
 			sort.Strings(tmpResultList1)
 			if len(tmpResultList1)>0 {
-				fmt.Println("\n")
+				fmt.Printf("\n")
 			}
 			for _, v1 := range tmpResultList1 {
 				fmt.Printf("%s\n",v1)

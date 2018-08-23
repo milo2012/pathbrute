@@ -37,7 +37,8 @@ Options:
   -p, --path       URI path
   -s, --source     Path source (default | msf | exploitdb | exploitdb-asp | exploitdb-aspx | exploitdb-cfm | exploitdb-cgi | exploitdb-cfm | exploitdb-jsp | exploitdb-perl | exploitdb-php | exploitdb-others | RobotsDisallowed | SecLists)
   -n, --threads    No of concurrent threads (default: 2)
-  -c               Status code
+  -c               Show only certain status code (e.g. -c 200)
+  -e               Exclude certain status code (e.g. -e 404)
   -i               Intelligent mode
   -v, --verbose    Verbose mode
       --cms        Fingerprint CMS
@@ -50,7 +51,8 @@ Options:
       --timeout    Set timeout to x seconds
       --update     Update URI path wordlists from Github
       --skip       Skip sites that don't give any useful results (e.g. OWA, VPN, etc)
-  -q, --query      Lookup URI paths that were found against ExploitDB
+      --confirm    Confirm using more than 100 threads (use with -n option)
+  -q, --query      Lookup URI paths that were found against ExploitDB)
 ```
 ***
  
