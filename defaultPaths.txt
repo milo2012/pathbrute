@@ -465,6 +465,7 @@
 /apadminred
 /apadminred.html
 /aphtpasswd.html
+/api
 /apidocs/
 /apidocs/allclasses-frame.html
 /apidocs/com/sap/engine/connector/connection/IConnection.html
