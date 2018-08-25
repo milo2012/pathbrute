@@ -6,6 +6,7 @@
 /.meta
 /.web
 /@webadmin
+/admin/queues.jsp?QueueFilter=
 /ADMIN/
 /ADMIN/login.html
 /ADMIN/login.php
