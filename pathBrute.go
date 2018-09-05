@@ -45,7 +45,7 @@ var currentCount int = 0
 var currentCount1 int = 0
 var ContinueNum int = 0 
 var proxyMode = false
-var enableDebug = true
+var enableDebug = false
 var lookupMode = false
 
 var totalListCount int = 0
