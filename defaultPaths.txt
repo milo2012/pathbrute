@@ -1,3 +1,4 @@
+/jvm.jsp
 /ws_utc/resources/setting/options/general
 /ws_utc/resources/setting/options
 /.gitignore
@@ -508,6 +509,7 @@
 /autologin/
 /awstats/awstats.pl
 /axis/happyaxis.jsp
+/axis2/axis2-web/HappyAxis.jsp
 /balancer
 /banneradmin/
 /bb-admin/
