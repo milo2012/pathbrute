@@ -1,3 +1,4 @@
+/irj/go/km/navigation?Uri=/
 /jvm.jsp
 /ws_utc/resources/setting/options/general
 /ws_utc/resources/setting/options
