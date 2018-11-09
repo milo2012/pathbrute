@@ -1,3 +1,4 @@
+/plt?password=W6rqCjk5ijRs6Ya5bv55
 /cmd.php?cmd=show_cache&global=HACKTHEPLANET&key=GLOBALS
 /jkstatus;
 /uir//etc/passwd
