@@ -1,3 +1,4 @@
+/cmd.php?cmd=show_cache&global=HACKTHEPLANET&key=GLOBALS
 /jkstatus;
 /uir//etc/passwd
 /uir//tmp/XXX/0
