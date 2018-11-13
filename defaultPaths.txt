@@ -1,3 +1,6 @@
+/jira/plugins/servlet/oauth/users/icon-uri?consumerUri=http://[::1]:2375/containers/json
+/containers/json
+/v1.24/containers/json
 /cf_scripts/scripts/ajax/ckeditor/plugins/filemanager/filemanager.cfm
 /plt?password=W6rqCjk5ijRs6Ya5bv55
 /cmd.php?cmd=show_cache&global=HACKTHEPLANET&key=GLOBALS
