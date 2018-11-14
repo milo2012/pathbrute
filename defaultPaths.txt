@@ -1,3 +1,4 @@
+/a4j/s/3_3_3.Finalorg.ajax4jsf.resource.UserResource
 /jira/plugins/servlet/oauth/users/icon-uri?consumerUri=http://[::1]:2375/containers/json
 /containers/json
 /v1.24/containers/json
