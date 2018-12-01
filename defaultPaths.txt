@@ -1,3 +1,4 @@
+/_wpeprivate/config.json
 /_cat/api
 /_cat/indices
 /phpmyadmin/js/canvg/flashcanvas.swf?id=12345678\%22));}catch(e){alert(document.domain)}//
