@@ -1,3 +1,4 @@
+/superset/import_dashboards
 /crontab/task/edit?addr=localhost%3a20001
 /wp-content/plugins/ninja-forms/lib/StepProcessing/step-processing.php
 /_wpeprivate/config.json
