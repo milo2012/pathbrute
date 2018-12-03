@@ -1,3 +1,4 @@
+/wp-content/plugins/ninja-forms/lib/StepProcessing/step-processing.php
 /_wpeprivate/config.json
 /_cat/api
 /_cat/indices
