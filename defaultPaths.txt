@@ -1,3 +1,4 @@
+/member/member_order.php
 /grouper/grouperExternal/public/UiV2Public.index?operation=UiV2Public.postIndex&function=UiV2Public.error&code=%3Cscript%3Ealert(1)%3C/script%3E
 /superset/import_dashboards
 /crontab/task/edit?addr=localhost%3a20001
