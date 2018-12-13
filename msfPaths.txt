@@ -13,7 +13,6 @@
 /Auxiliumpetratepro
 /ChangePhoto.jsp
 /English/pages_MacUS/lan_set_content.html
-/exportFile
 /ForensicsAnalysisServlet/
 /GetSimpleCMS
 /HNAP1/
@@ -27,7 +26,6 @@
 /LoginAdmin
 /LoginPage.do
 /LoginServlet
-/objects/
 /OvCgi/nnmRptConfig.exe
 /Phoenix/includes/geoip.php
 /ProjectSend
@@ -65,6 +63,7 @@
 /admin/j_security_check
 /admin/libraries/ajaxfilemanager/ajax_create_folder.php
 /admin/libraries/ajaxfilemanager/inc/data.php
+/admin2769gx8k3
 /admin_area/charts/ofc-library/ofc_upload_image.php
 /admin_area/charts/tmp-upload-images
 /admincp/
@@ -77,6 +76,7 @@
 /anyterm.html
 /api/json/admin/SubmitQuery
 /api/storage
+/api/systems/details
 /api/users/login
 /appRain-q
 /appRain-q-0.1.5
@@ -95,6 +95,7 @@
 /bf102
 /bitweaver
 /blank-struts2/login.action
+/boardDataWW.php
 /bvsmweb
 /caidao.php
 /cbmui/images
@@ -115,6 +116,7 @@
 /cgi-bin/vmtadmin.cgi
 /cgi-bin/webcm
 /cgi-mod/view_help.cgi
+/cgit
 /chat
 /chat.ghp
 /clansphere
@@ -166,6 +168,7 @@
 /events/reports/view.cgi
 /examples/save.lsp
 /exchange/servlet/GetProductVersion
+/exportFile
 /fileUpload.do
 /files/php_pagename
 /forum
@@ -197,6 +200,7 @@
 /hybridauth
 /iControl/iControlPortal.cgi
 /images
+/images/..
 /images/../jsp/ProcessFileUpload.jsp
 /imc
 /img/favicon.png?v=6.0.1-1213
@@ -206,11 +210,13 @@
 /includes/settings.php
 /index.php
 /index.php/component/users/
+/index.php?age=50[NoSQLi]
 /index.php?loggedout
 /infusionsoft/Infusionsoft/utilities/code_generator.php
 /initCert.imss
 /install.php
 /install2.php
+/installer.php
 /interface
 /interface/index.do
 /interface/login/login.php
@@ -219,10 +225,12 @@
 /interface/super/manage_site_files.php
 /invoker/JMXInvokerServlet
 /ip
+/jQuery-File-Upload
 /j_security_check
 /jenkins
 /jetspeed/login/redirector
 /jetspeed/portal/Administrative/site.psml
+/jira
 /jmx-console
 /joomla
 /jos.php
@@ -275,7 +283,9 @@
 /nagiosxi/includes/components/graphexplorer/visApi.php
 /nagiosxi/index.php
 /narcissus-master
+/navigate
 /new
+/objects/
 /ofc_upload_image.php
 /ohw/help/state
 /olt/Login.do/../../olt/UploadFileUpload.do
@@ -380,6 +390,7 @@
 /struts2-showcase
 /struts2-showcase/integration/saveGangster.action
 /sugarcrm
+/swimtemp
 /sysaid
 /system_groupmanager.php
 /telpho/temp/telpho10.epb
