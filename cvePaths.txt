@@ -1,32 +1,7 @@
 /$moduleFolder/form/registrationformsubmit.php
 /$moduleFolder/form/viewregistrants.php
-/..%2f..%2f..%2f..%2f..%2f..%2fboot.ini
-/..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5cboot.ini
-/..%5c..%5c..%5c..%5c..%5c..%5cboot.ini
-/../../../../../../../../../../../../boot.ini
-/../../../../../../My%20Documents/Downloads/
-/../../../../../../boot.ini
-/../../../http_cgi/security/clientsettings.php
-/../../../wp-load.php
-/../../Inetpub/Reporting/evil.php
-/../../custom/code_types.inc.php
-/../../interface/globals.php
-/../../system/jscore.php
-/../../wp-load.php
-/../C
-/../LICENSE
-/../config/config.php
-/../globals.php
-/../include/app.php
-/../webapp.nim.
-/..\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..\etc\passwd
-/..\..\..\..\..\..\..\boot.ini
-/..\..\..\..\..\..\boot.ini
-/..\..\spark\Spark.class
-/./edit-post/
-/./new-page/
+/http_cgi/security/clientsettings.php
 /.cache_xqujmn.php
-///tmp/my.sock
 //dolibarr/adherents/cartes/carte.php
 /0.20/relocate-upload.php
 /0.34/2-click-socialmedia-buttons.php
@@ -185,7 +160,11 @@
 /360fly/camera/recording
 /360fly/power
 /360fly/sensors/gps
+/4.4/Main.html
 /6/api.php
+/60cycleCMS_path/common/sqlConnect.php
+/60cycleCMS_path/news.php
+/60cycleCMS_path/submitComment.php
 /6bfefc3b-21ef-43c1-861e-95ab3cae1a80.html
 /ADMIN/admin_video.php
 /ADMPTechnicians.do
@@ -373,6 +352,7 @@
 /FiyoCMS/dapur/apps/app_user/controller/status.php
 /Form/classes/class.ilDateDurationInputGUI.php
 /Forms/PortForwarding_Edit_1
+/Forms/status_statistics_1
 /FrogCMS1/admin/
 /Functions/Process_Ajax.php
 /Furigana.php
@@ -441,6 +421,7 @@
 /Injector/RemoveSpansWithoutAttributes.php
 /Injector/SafeObject.php
 /JacksonExtensionXmlDataBinding
+/Joomla
 /LEPTON_1.1.x/upload/account/preferences.php
 /LEPTON_1.1.x/upload/account/signup.php
 /LEPTON_1.1.x/upload/admins/interface/charsets.php
@@ -489,6 +470,7 @@
 /LEPTON_1.1.x/upload/templates/algos/info.php
 /Language.php
 /LanguageFactory.php
+/LebisoftZiyaretciDefteri_v7.5/db/lebisoft.mdb
 /Length.php
 /Less/Parser.php
 /Less/Tree/Call.php
@@ -542,6 +524,11 @@
 /OneFileCMS/123.php
 /OneFileCMS/onefilecms.php
 /OneFileCMS/qqqcmd.php
+/P47H/auto_details.php
+/P47H/external.php
+/P47H/real_estate_details.php
+/P47H/spotlight_detail.php
+/P47H/video_show.php
 /PORT/webadmin/script
 /POST_URL/edit/
 /PbootCMS-V1.2.1/api.php
@@ -580,6 +567,7 @@
 /Share.php
 /SimpleSAML/Utils/Crypto.php
 /Simploo/Config/Writer/Ini.php
+/Smarty.class.php
 /SolutionSearch.do
 /Strategy.php
 /Strategy/Composite.php
@@ -588,6 +576,7 @@
 /Strategy/MakeWellFormed.php
 /Strategy/RemoveForeignElements.php
 /Strategy/ValidateAttributes.php
+/String
 /StringHash.php
 /StringHashParser.php
 /Symfony/Component/HttpFoundation/Request.php
@@ -652,6 +641,7 @@
 /VarParser/Flexible.php
 /VarParser/Native.php
 /VarParserException.php
+/View-document-details/3-Online-News-Paper-Manager.html
 /WSTMart_v2.0.7/index.php
 /WSTMart_v2.0.7/index.php/admin/staffs/add.html
 /WWW//app/admin/controller/admincontroller.php
@@ -776,12 +766,14 @@
 /admin/attachment.php
 /admin/auto-modules/forms/_locked.php
 /admin/auto-modules/forms/edit.php
+/admin/backup.sql
 /admin/banner-delete.php
 /admin/campaign-delete.php
 /admin/category.inc.php
 /admin/channel-delete.php
 /admin/classmanage.php
 /admin/company.php
+/admin/config.php
 /admin/configuration.php
 /admin/controllers/BWGControllerTags_bwg.php
 /admin/customer-edit.php
@@ -841,6 +833,9 @@
 /admin/media-upload-sq_button.php
 /admin/media-upload.php
 /admin/media.php
+/admin/media/update_content.php
+/admin/menu.php
+/admin/menu_xml.php
 /admin/menus/edit.php
 /admin/menus/index.php
 /admin/model/openbay/amazon.php
@@ -850,6 +845,7 @@
 /admin/modules/pages/_locked.php
 /admin/modules/pages/edit.php
 /admin/modules/pages/revisions.php
+/admin/modules/style/templates.php
 /admin/modules/users/create.php
 /admin/modules/users/update.php
 /admin/news.php
@@ -915,6 +911,7 @@
 /admin/webmail/list-data
 /admin/zone-delete.php
 /admin1_list_pages.php
+/adminLogin.php
 /admin_activity.php
 /admin_collect.php
 /admin_conf/index.php
@@ -939,6 +936,8 @@
 /advance-realestate/edit-profile.php
 /advancedsettings.php
 /agenteditor.php
+/agentes/estado_agente.php
+/agentes/networkmap.php
 /airline-edit.php
 /airtame-manage-device/login.php
 /aitpro-blog/wp-admin/admin.php
@@ -965,6 +964,7 @@
 /announcements.php
 /anywhere_uploader.php
 /api.php
+/api/
 /api/$1
 /api/1/enginelist.php
 /api/CONFIG/backup
@@ -1021,6 +1021,7 @@
 /apps/app_theme/libs/check_file.php
 /apps/app_user/sys_user.php
 /apps/zxtm/locallog.cgi
+/archery-scores/download
 /archives_do.php
 /arm-image-installer/pull-request/10
 /arphp.This
@@ -1045,6 +1046,7 @@
 /aterm_httpif.cgi/negotiate
 /audioinfo.class.php
 /autenticar/lembrarlogin.asp
+/auth.asp
 /auth/getimage/aHR0cDovLzE3Mi4xNi4wLjMwOjgwMDAvZmxhZw==
 /auth/login
 /auth/swekey/swekey.auth.lib.php
@@ -1097,9 +1099,9 @@
 /billing/sl_eob_search.php
 /bin/get_config.php
 /bin/save_settings.php
-/bizarre
 /bl-content/
 /bl-content/uploads/
+/bl-content/uploads/[![]([MALICIOUS
 /blackcat/backend/addons/ajax_create.php
 /blackcat/media/info.php
 /blame/master/
@@ -1125,6 +1127,7 @@
 /brightmail/output.txt
 /broadweb/exec.asp
 /broadweb/loadurl.asp
+/browse.html
 /bsc_sms_inbox.php
 /btx-form-builder.php
 /bug_change_status_page.php
@@ -1151,8 +1154,10 @@
 /cashdesk/tpl/ticket.tpl.php
 /cashdesk/tpl/validation1.tpl.php
 /cashdesk/tpl/validation2.tpl.php
+/casting_view.php
 /catalog/
 /catcher.php
+/category.php
 /category_edit.php
 /ccda_gateway.php
 /center/regsvc
@@ -1180,6 +1185,7 @@
 /cgi-bin/pl_web.cgi/util_configlogin_act
 /cgi-bin/uploadfile
 /cgi-bin/webcm
+/cgi-bin/webmain.cgi
 /cgi-bin/zbtest.cgi
 /cgi/conf.bin
 /cgi/ping.cgi
@@ -1221,6 +1227,7 @@
 /class/connect.php
 /class/deliver/Deliver_SendMail.class.php
 /class/functions.php
+/class_mailhandler.php
 /class_parser.php
 /classes/CouchDB.class.php
 /classes/Installer.class.php
@@ -1230,6 +1237,7 @@
 /classes/class.usertagoperations.inc.php
 /classes/ticket/class.ticket.php
 /classmanage.php
+/client.php
 /clients/editclient.php
 /clipper/manager/media/browser/kcfinder/browse.php
 /clog_webapi.php
@@ -1265,6 +1273,7 @@
 /com_kunena/template/crypsisb3/layouts/message/item/bottom/default.php
 /com_kunena/template/crypsisb3/layouts/message/item/default.php
 /com_kunena/template/crypsisb3/layouts/message/item/top/default.php
+/com_userstatus/userstatus.php
 /comm/multiprix.php
 /command/%s/sql/-/20
 /commande/liste.php
@@ -1286,12 +1295,15 @@
 /common/logViewer/logViewer.jsf
 /common/run_cross_report.php
 /common/run_report.php
+/common/sqlConnect.php
 /common/user/Password/Change/PasswordChangeException.php
 /common/user/Password/Change/PasswordChanger.php
 /common/user/SessionManager.php
 /company.php
 /component/trunk/
+/components/com_archeryscores/archeryscores.php
 /components/com_virtuemart/helpers/vmview.php
+/components/com_wmi/wmi.php
 /components/install/process.php
 /compose.php
 /composer/vendor/james-heinrich/getid3/demos/demo.audioinfo.class.php
@@ -1362,6 +1374,7 @@
 /contacts/ajax/addcard.php
 /contacts/ajax/addproperty.php
 /content.php
+/content/cart.inc.php
 /content/content.blueprintspages.php
 /content/content.blueprintssections.php
 /content/content.publish.php
@@ -1371,6 +1384,7 @@
 /content_timeline_edit.php
 /content_timeline_index.php
 /control/WANIPConnection
+/controller.php
 /controller/Controller_GraphData.class.php
 /controller/Main.php
 /controller/extension/payment/divido.php
@@ -1486,11 +1500,15 @@
 /de_identification_forms/find_immunization_popup.php
 /decoda/Decoda.php
 /default-filters.php
+/default-green/footer.php
+/default-orange/footer.php
+/default.aspx
 /default.html
 /default.php
 /default/admin/modules/install_modules.tmpl.php
 /default/en_US/change_password.csp
 /default/en_US/frame.html
+/default/footer.php
 /default/widget_in.php
 /del.php
 /delete_img.php
@@ -1580,6 +1598,7 @@
 /eco_download.php
 /eco_test.php
 /edihistory/edih_csv_inc.php
+/edit
 /edit-form-advanced.php
 /edit.php
 /editAccount.html
@@ -1596,6 +1615,7 @@
 /engine.php
 /enterprise/mobile-monitor/
 /entry_chooser.php
+/enumeration.html
 /error.php
 /etc/centreon/centreon.conf.php
 /etc/linuxigd/gatedesc.xml
@@ -1605,6 +1625,7 @@
 /event-list/admin/includes/category_table.php
 /event/runQuery.do
 /events
+/events_event_edit.php
 /evl8
 /example_form.ajax.php
 /example_form.php
@@ -1623,6 +1644,7 @@
 /fax/fax_dispatch.php
 /fax/fax_view.php
 /fax/faxq.php
+/fd/page.html
 /file
 /file..php
 /file.php
@@ -1669,6 +1691,7 @@
 /fiyo/dapur/apps/app_comment/controller/comment_status.php
 /fiyo/dapur/index.php
 /flag
+/flashauktion2010/item.php
 /flexo1.source-master/admin/user/add
 /flink.php
 /floorplan_editor.html
@@ -1717,15 +1740,19 @@
 /ftptest.cgi
 /fuel/core/vendor/htmlawed/htmlawed.php
 /fuel/my_profile/edit
+/fuelcms/fuel/preview
 /function.php
 /function/c_system_admin.php
 /functions.class.php
+/functions.inc.php
 /functions.php
 /functions/fn.common.php
 /functions/global.php
 /functions/system/function.randomStr.php
 /functions2.php
 /functions_comments.inc.php
+/functions_config.inc.php
+/functions_online.php
 /functions_trackbacks.inc.php
 /g2_import/controllers/g2.php
 /gadgets/definitions/uptime.CapacityWhatIfGadget/getmetrics.php
@@ -1895,6 +1922,7 @@
 /helpers.php
 /helpers/echo_helper.php
 /helpers/upload.helper.php
+/hg/trunk/file/3be6ff1eebac/Lib/cgi.py
 /holiday.php
 /holiday_add.php
 /holiday_book.php
@@ -1907,6 +1935,7 @@
 /home/angry/public_html/xavier-demo/admin/includes/Functions.php
 /home/hackyzh/Desktop/poc.php
 /home/hackyzh/Downloads/php-7.0.1/sapi/cli/php
+/home/isengard/public_html/impressCMS/impresscms/content.php
 /home/paioread/public_html/admin/userview.php
 /home/site3582/web/www/plugins-dist/compresseur/inc/compresseur_concatener.php
 /home/systemsetting.aspx
@@ -1955,6 +1984,7 @@
 /html/nhome.html
 /html/portlet/ext/contentlet/image_tools/index.jsp
 /html5full.php
+/htmlpurifier-4.0.0/HTMLPurifier.standalone.php
 /htmlpurifier/HTMLPurifier.auto.php
 /htmlpurifier/HTMLPurifier.autoload.php
 /htmlpurifier/HTMLPurifier.composer.php
@@ -1985,9 +2015,11 @@
 /inc.ClassDbAuthentication.php
 /inc.Settings-sample.php
 /inc.Settings.php
+/inc.php
 /inc/auto-modules.php
 /inc/bigtree/admin.php
 /inc/bigtree/apis/storage.php
+/inc/config.php
 /inc/conn.php
 /inc/core/class.dc.core.php
 /inc/dbschema/upgrade.php
@@ -2004,6 +2036,7 @@
 /inc/lib/phpmailer.php
 /inc/module/
 /inc/module/vod.php
+/inc/mysql.php
 /inc/parser/xhtml.php
 /inc/plugins/changstats.php
 /inc/rdr.php
@@ -2021,10 +2054,13 @@
 /include/common.inc.php
 /include/config.php
 /include/configuration/nconfigObject/contact/DB-Func.php
+/include/custom_php_files/example.php
 /include/functions_comments.inc.php
 /include/functions_images.inc.php
 /include/functions_rate.inc.php
 /include/global.func.php
+/include/help/
+/include/help/en/help_
 /include/main.class.php
 /include/mkhtml.func.php
 /include/pclzip/pclzip.lib.php
@@ -2067,6 +2103,7 @@
 /includes/support-us.inc.php
 /includes/sys.config.php
 /includes/sys.config.sample.php
+/includes/template-loader.php
 /includes/template.php
 /includes/update-core.php
 /includes/update.php
@@ -2102,6 +2139,8 @@
 /info.html
 /info.php
 /info/bf5e1445f3hfi0
+/innerHTMLinspect.html
+/insert/update
 /install
 /install.php
 /install/
@@ -2131,6 +2170,8 @@
 /itop/web/env-production/itop-config/backdoor.php
 /itop/web/env-production/itop-config/config.php
 /javascript/chk.js.php
+/javascript/tinymce/plugins/campsiteattachment/attachments.php
+/javascript/tinymcs/plugins/campsiteattachment/attachments.php
 /jdbc/jdbcConnectionPoolProperty.jsf
 /jeecms/jeeadmin/jeecms/index.do
 /jenkins/
@@ -2139,6 +2180,7 @@
 /jetspeed/ui/_user/andreas/foobar.psml
 /jmx-console/
 /job/uploadfile_save.php
+/joomlaflickr.php
 /joyplus-cms-master/joyplus-cms/manager/index.php
 /joyplus-cms/joyplus-cms/manager/admin_ajax.php
 /joyplus-cms/joyplus-cms/manager/admin_manager.php
@@ -2151,9 +2193,11 @@
 /js/externals/scriptaculous/dragdrop.js
 /js/jqueryfiletree-2.1.5/dist/connectors/jqueryFileTree.php
 /js/tinymce/langs/wp-langs.php
+/json.php
 /jsonp/inbenta.js
 /jtbccms/console/account/manage.php
 /jv/
+/kav/KAV3.py/oHf75d3bc8V0100f0
 /kg_callffmpeg.php
 /knowledgebase/articles/Product_Information/000024984
 /kses.php
@@ -2175,6 +2219,7 @@
 /level/15/exec/show/runn/|/i/http/CR
 /lfdycms3.7.0/admin.php
 /lib.ajax.php
+/lib.media.php
 /lib.php
 /lib/ConfigGenerator.class.php
 /lib/Control/Backend/menus.control.php
@@ -2211,7 +2256,10 @@
 /libraries/fileman/php/download.php
 /libraries/transformations.lib.php
 /library/DBTech/Security/Action/Sessions.php
+/library/class.backup.php
+/library/class.menuPere.php
 /library/globals.php
+/library/lib.menu.php
 /library/think/db/Connection.php
 /library/think/db/Query.php
 /libs/Atmail/SendMsg.php
@@ -2224,6 +2272,7 @@
 /list.php,
 /listDatabases
 /liuyan.php
+/livezilla/server.php
 /load-scripts.php
 /load.php
 /load_balancer_pool_edit.php
@@ -2235,6 +2284,7 @@
 /localize-my-post/ajax/include.php
 /localizedimage.php
 /location_save.html
+/logger/banned.php
 /logging.php
 /login
 /login-script-demo/users.php
@@ -2303,6 +2353,7 @@
 /manager/frames/menu.php
 /manager/frames/tree.php
 /manager/processors/save_settings.processor.php
+/managerlogin.php
 /mantisbt-2.3.0/verify.php
 /manual/en/session.configuration.php
 /mao/
@@ -2312,6 +2363,8 @@
 /max/Dal/Admin/Session.php
 /max/Delivery/adRender.php
 /max/language/en/default.lang.php
+/maxImageUpload/
+/maxImageUpload/original/evil.php
 /mbstring/tests/bug72402.php
 /mc-admin/index.php
 /mc-admin/post.php
@@ -2324,6 +2377,7 @@
 /member/myfriend.php
 /member/post.php
 /member/uploads_select.php
+/memberlogin.php
 /memoryview.cmd
 /menu/guiw
 /menu/src/MenuRole.php
@@ -2370,10 +2424,12 @@
 /modules/Settings/Vtiger/actions/CompanyDetailsSave.php
 /modules/Tasks/vardefs.php
 /modules/attributewizardpro/file_upload.php
+/modules/catalog/upload_photo.php
 /modules/config/admin_utente.php
 /modules/config/languages.php
 /modules/eaas/controllers/eaasController.php
 /modules/feature-upload.php
+/modules/menu/lib/treemenu.inc.php
 /modules/mymodule/modules_mymodule.php
 /modules/orderfiles/ajax/upload.php
 /modules/orderfiles/upload.php
@@ -2430,6 +2486,7 @@
 /network.php
 /network/upgrade.php
 /new_account_form.php
+/news.php
 /newsletter.php
 /nexusphp.v1.5.beta5.20120707/cheaterbox.php
 /nexusphp.v1.5.beta5.20120707/forummanage.php
@@ -2438,6 +2495,7 @@
 /nmi/index.php
 /no5_such3_file7.pl
 /note.php
+/notes/json.php
 /nowosci.php
 /nuuonvr.php
 /nvweb_plugins.php
@@ -2548,6 +2606,7 @@
 /packages/webuser_votes/webuser_vote.class.php
 /packages/webusers/webuser.class.php
 /packages/webusers/webuser_group.class.php
+/page.html
 /page.html.php
 /page.php
 /page1-%bf%bf
@@ -2555,6 +2614,9 @@
 /pages/
 /pages/dash.php
 /pages/notice.php
+/pandora_console/ajax.php
+/pandora_console/ajax.php&quot
+/pandora_console/index.php
 /panel/uploads
 /parental/website-filters.asp
 /parentalcontrols/bind.php
@@ -2562,6 +2624,7 @@
 /password.cgi
 /password.shtml
 /patches/ZP_SecPatch_618_9995.zip
+/patches/fix_var_dump_64bit.php
 /patient/_machine_config.php
 /patient_file/encounter/diagnosis_full.php
 /patient_file/encounter/forms.php
@@ -2589,6 +2652,7 @@
 /phorum-5.2.18/admin/index.php
 /photo-gallery.php
 /photo-gallery/photo-gallery.php
+/photo.php
 /photo/PixlrEditorHandler.php
 /photo/admin/general_setting.php
 /photo/facebook/exploit.php
@@ -2599,6 +2663,7 @@
 /php-7.1.4/sapi/cli/php
 /php-7.1.5/sapi/cli/php
 /php-fusion/files/infusions/teams_structure/team.php
+/php-microcms/index.php
 /php-proxy/index.php
 /php/cm_agent.php
 /php/detection_detail_filter.php
@@ -2731,6 +2796,7 @@
 /post-edit.php
 /post-template.php
 /post.php
+/posting.php
 /postmanssl
 /postnuke/modules.php
 /posts_table.php
@@ -2745,6 +2811,8 @@
 /princy/minicms/minicms_1.10_latest/MiniCMS-1.10/mc-admin/post-edit.php
 /print.php
 /prism
+/private
+/private/
 /prjWebSec/xss/reflectedXSS.js...
 /product/card.php
 /product/class/product.class.php
@@ -2758,6 +2826,7 @@
 /project/axdcms/axdcms/0.1.1/axdcms-0.1.1.zip
 /project/squashfs/squashfs/squashfs4.2/README
 /propal.php
+/property_box.php
 /protected/controllers/SiteController.php
 /proxy.pac
 /prweb/RANDOMTOKEN/ServiceExport/APPNAME_VERSION_DATE_GMT.zip
@@ -2765,12 +2834,14 @@
 /public/
 /public/uploads/[uploaded
 /public/write_file.php
+/publications/metaphish/
 /qa-page.php
 /qoscls.cmd
 /qosqueue.cmd
 /qsr_server/device/getThumbnail
 /query
 /reboot.html
+/recaptchalib.php
 /recommend.php
 /redaxo4-master/redaxo/index.php
 /redir.php
@@ -2797,6 +2868,7 @@
 /reportdetail
 /reports.php
 /reports/custom_report_range.php
+/reportview
 /request.php
 /resetpassword.php
 /resetrouter.cgi
@@ -2864,6 +2936,7 @@
 /seacms/video/index.php
 /seacms6.64/upload/admin/admin_template.php
 /search
+/search.asp
 /search.aspx
 /search.php
 /search/controllers/search.php
@@ -2915,6 +2988,9 @@
 /shell.txt
 /shibboleth/login.php
 /shortcodes.php
+/shoutbox.php
+/show.php
+/showAlllistings.asp
 /showcase-5.1/javax.faces.resource/dynamiccontent.properties.xhtml
 /shwetankd/webm/sunflower.webm
 /signEzUI/playlist/edit/upload/../../../../../../../../../../etc/passwd
@@ -3079,6 +3155,8 @@
 /smf/default/images
 /smileys.php
 /snmp/tests/bug72479.php
+/soapserver.php
+/soapserver.php/1%3CScRiPt%3Eprompt(923395)%3C/ScRiPt%3E
 /soc.php
 /societe/ajax/company.php
 /societe/class/societe.class.php
@@ -3123,6 +3201,7 @@
 /ssdp/data.dtd
 /ssdp/xxe.html
 /sso/api.php
+/stackview
 /standard/tests/strings/bug72433.php
 /standard/tests/strings/bug72434.php
 /standard/tests/strings/crypt_chars.php
@@ -3146,6 +3225,7 @@
 /statswan.cmd
 /status.asp
 /status.php
+/status/status_statistics.htm
 /status_rrd_graph_img.php
 /stconf.nsf/
 /stconf.nsf/WebMessage
@@ -3153,7 +3233,9 @@
 /store/
 /struts2-showcase/skill/edit.action
 /submit.php
+/submitComment.php
 /subpages.php
+/subscribe.php
 /subzs.php
 /sug/waimaicmsn/waimai-master/admin.php
 /suganya/cmsmadesimple/admin/moduleinterface.php
@@ -3204,6 +3286,9 @@
 /sysworkflow/en/neoclassic/login/login
 /sysworkflow/en/neoclassic/login/sysLoginVerify.php
 /sysworkflow/en/neoclassic/tools/translationsAjax.php
+/t/a/Syntax%20analyzer%20demo.htm
+/t/cl/cl.html
+/t/index.htm
 /tabs/src/TabsWrapper.php
 /tag/controllers/tag.php
 /tag/helpers/tag.php
@@ -3223,6 +3308,7 @@
 /teamserver/faces/home.jsp
 /tell.php
 /temp.php
+/template-loader.php
 /template.php
 /templates/
 /templates/basic/_maintenance.php
@@ -3233,9 +3319,12 @@
 /templates/topbar/_menubar.html.php
 /templates/video.php
 /term.php
+/test
+/test-img.html
 /test.hta
 /test.html
 /test.php
+/testing/malware/
 /tests/bug45877.php
 /tests/bug74603.php
 /tests/gc_024.php
@@ -3246,6 +3335,8 @@
 /theme/raw/static/style/tinymceskin.css
 /theme/tracker.php
 /themes.php
+/themes/$style/info.php
+/themes/default/download.php
 /themes/default/items/tag-form.php
 /themes/mobile/views/discussions/helper_functions.php
 /themes/simplified_desktop/social/basic_profile.tmpl.php
@@ -3336,6 +3427,7 @@
 /tt-ajax.php
 /type.php
 /typo3/index.php
+/typo3page/index.php
 /u/jsp/common/download.jsp
 /u/jsp/settings/heapdumps.jsp
 /uClibc-ng/
@@ -3407,6 +3499,7 @@
 /usergroup/usergroup_admin.php
 /usergroup/usergroup_admin_add.php
 /userlevel.php
+/userlogin.php
 /userperspan.php
 /userrighthandling.php
 /users.php
@@ -3414,6 +3507,7 @@
 /users/signup.php
 /users/users.php
 /usersettings.php
+/usr/bin/php
 /usr/extensions/get_infochannel.inc.php
 /usr/extensions/get_tree.inc.php
 /usr/local/nagiosxi/cron/cmdsubsys.php
@@ -3467,6 +3561,7 @@
 /vendor/autoload.php
 /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
 /ver.php
+/verif_identite.php
 /verizonFIOS2.html
 /verizonFIOS3.html
 /version.php
@@ -3483,7 +3578,9 @@
 /views/errorHandler/previousException.php
 /views/view.property.php
 /viewtopic.php
+/viewvc/e107/trunk/e107_0.7/usersettings.php
 /viewvc/e107/trunk/e107_0.8/install_.php
+/viewvc/pligg/trunk/groupadmin.php
 /viewvc/pligg/trunk/search.php
 /viscacha/admin.php
 /viscacha/pm.php
@@ -3505,6 +3602,7 @@
 /wamp/www/BigTree-CMS-4.2.18/shell.php
 /wancfg.cmd
 /watchdog.php
+/waterfall,
 /wb/admin/admintools/tool.php
 /wb/admin/login/index.php
 /wbm/configtools.php
@@ -3589,6 +3687,7 @@
 /wind/views/page.html.php
 /wireless_network_configuration_edit.php
 /wireless_network_configuration_edit.php&quot
+/with/wwhimpl/common/html/document.htm
 /wity/admin/user/edit/1
 /wizards/get2post.php
 /wlmacflt.cmd
@@ -3738,7 +3837,6 @@
 /www/xycms_v1.7/add_do.php
 /www/xycms_v1.7/system/edit_book.php
 /wysiwyg/BlockModule.js
-/x/server.crt:/x/server.key
 /xAdmin/html/Deployment
 /xAdmin/html/cm_datasource_summary.jsp
 /xDashboard/html/jobhistory/
@@ -3752,6 +3850,8 @@
 /xycms_v1.7/add_book.php
 /xycms_v1.7/add_do.php
 /xyhcms/xyhai.php
+/yamamah/index.php
+/yourpage/index.php
 /yourpath/phpinfo.php
 /yubico/u2flib-server/src/u2flib_server/U2F.php
 /yui_combo.php
@@ -3772,8 +3872,10 @@
 /zt/show.php
 /ztconfig.php
 /zurmo/app/index.php
-/messagebroker/amf
-/fuelcms/fuel/preview
+/{context.root}/messagebroker/amf
+/~aarya/no_crawl/index.htm
+/~datingscript/
+/~edit_acct
 /~onlineexamboard/
 /~paioread/admin/userview.php
 /~paioread/admin/viewvisitcamp.php
