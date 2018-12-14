@@ -185,10 +185,8 @@
 /360fly/camera/recording
 /360fly/power
 /360fly/sensors/gps
-/37
 /6/api.php
 /6bfefc3b-21ef-43c1-861e-95ab3cae1a80.html
-/>researchers
 /ADMIN/admin_video.php
 /ADMPTechnicians.do
 /AEF/
@@ -3794,4 +3792,3 @@
 /~projclient/client/muslim-matrimony/view-rofile.php
 /~projclient/olx_clone/index
 /~user_handler
-http://www.vtube.ro],
