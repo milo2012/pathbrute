@@ -26,7 +26,6 @@
 /./edit-post/
 /./new-page/
 /.cache_xqujmn.php
-//*:3001,http://*:3002
 ///tmp/my.sock
 //dolibarr/adherents/cartes/carte.php
 /0.20/relocate-upload.php
@@ -1103,7 +1102,6 @@
 /bizarre
 /bl-content/
 /bl-content/uploads/
-/bl-content/uploads/[![]([MALICIOUS
 /blackcat/backend/addons/ajax_create.php
 /blackcat/media/info.php
 /blame/master/
@@ -2292,12 +2290,8 @@
 /main/search/googlemaps.php
 /main/tabs/main.php
 /mainFrame.htm
-/mainFrame.htm”
-/mainFrame.htm” 
 /mainfile.php
 /maintenance.php
-/malicious.swf.
-/malware.sh
 /man/view_man.cgi
 /manageajax.php
 /managed_sites_add_keyword.php
@@ -2836,7 +2830,6 @@
 /s/b/SEMCMS_Main.php
 /s/b/SEMCMS_SeoAndTag.php
 /s/product.php
-/sUpFmezLW6jS
 /saml/lib/IdP/SAML2.php
 /sample.html
 /samples/permissions.php
@@ -3758,7 +3751,6 @@
 /xda/help/en/default.htm
 /xml.php
 /xmlhttp.php
-/xss.php
 /xycms_v1.7/add_book.php
 /xycms_v1.7/add_do.php
 /xyhcms/xyhai.php
@@ -3782,11 +3774,8 @@
 /zt/show.php
 /ztconfig.php
 /zurmo/app/index.php
-/{context.root}/messagebroker/amf
-/{fuelcms_path}/fuel/preview
-/~daniel.baumann/
-/~datingscript/
-/~edit_acct
+/messagebroker/amf
+/fuelcms/fuel/preview
 /~onlineexamboard/
 /~paioread/admin/userview.php
 /~paioread/admin/viewvisitcamp.php
