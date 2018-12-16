@@ -1,3 +1,7 @@
+/mobile-loja/mensagem.asp?msgid=0&msgstr=Venda%20on-line%20encerrada.%20Adquira%20seu%20ingresso%20nos%20pontos%20oficiais%20ou%20na%20bilheteria%20do%20evento.&eve_cod=
+/apis/
+/api/
+/api/v1/namespaces/default/pods
 /member/member_order.php
 /grouper/grouperExternal/public/UiV2Public.index?operation=UiV2Public.postIndex&function=UiV2Public.error&code=%3Cscript%3Ealert(1)%3C/script%3E
 /superset/import_dashboards
