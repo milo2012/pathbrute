@@ -730,7 +730,6 @@
 /[path]/index.php
 /[webalbum_PATH]/photo_add-c.php
 /[xtblogcms/index.php
-/^.*/([A-Z]{2}).php$/iU
 /__mg_admin
 /_b/contentFiles/gbincluder.php
 /_core/modules/install_modules.php
@@ -4079,10 +4078,7 @@
 /ucenter/cms_user_add.php
 /ucms/admin_config.php
 /ucsso/config.php
-/uir//etc/passwd
-/uir//tmp/XXX/0
-/unattended/provision\
-/unescaped
+/unattended/provision
 /unit/controller/ConfigControllerTest.php
 /unit/controller/FilesControllerTest.php
 /unit/controller/HttpErrorTest.php
@@ -4258,7 +4254,6 @@
 /viewvc/phpscheduleit/1.2.11/check.php
 /viewvc/pligg/trunk/groupadmin.php
 /viewvc/pligg/trunk/search.php
-/viewvc/rpms/mgetty/devel/mgetty-1.1.30-mktemp.patch
 /viscacha/admin.php
 /viscacha/pm.php
 /vlogin/login.php
@@ -4611,7 +4606,6 @@
 /~donley/netldap.html
 /~edit_acct
 /~login
-/~nion/nmu-diff/mgetty-1.1.36-1.2_1.1.36-1.3.patch
 /~onlineexamboard/
 /~paioread/admin/userview.php
 /~paioread/admin/viewvisitcamp.php
