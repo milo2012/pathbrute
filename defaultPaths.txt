@@ -1,3 +1,6 @@
+/config/services.yaml
+/storage/logs/laravel.log
+/DesktopModules/Admin/RadEditorProvider/DialogHandler.aspx
 /mobile-loja/mensagem.asp?msgid=0&msgstr=Venda%20on-line%20encerrada.%20Adquira%20seu%20ingresso%20nos%20pontos%20oficiais%20ou%20na%20bilheteria%20do%20evento.&eve_cod=
 /apis/
 /api/
