@@ -1,3 +1,16 @@
+/app_dev.php/_profiler/open?file=var/cache/dev/appDevDebugProjectContainer.xml
+/broadweb/bwmainleft.asp?pid=1&pname=%22);alert(document.getElementsByTagName(%27script%27)[4].text);//
+/WADashboard/api/dashboard/v1/files/readFile
+/WADashboard/api/dashboard/v1/files/writeFile
+/updownload/t.report
+/webdynpro/resources/sap.com/tc~rtc~coll.appl.rtc~wd_chat/Chat#
+/webdynpro/resources/sap.com/tc~rtc~coll.appl.rtc~wd_chat/Messages#
+/UDDISecurityService/UDDISecurityImplBean
+/jolokia/
+/api/jolokia/read<svg%20onload=alert(document.cookie)>?mimeType=text/html
+/.php_cs.cache
+/secure/ManageFilters.jspa
+/sites/default/files/backup_migrate/manual/test.txt
 /config/services.yaml
 /storage/logs/laravel.log
 /DesktopModules/Admin/RadEditorProvider/DialogHandler.aspx
