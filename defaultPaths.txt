@@ -1,3 +1,6 @@
+/set_ftp.cgi?next_url=ftp.htm
+/ftptest.cgi?next_url=test_ftp.htm
+/aam/gridSummary.action?redirect:https://www.google.com
 /app_dev.php/_profiler/open?file=var/cache/dev/appDevDebugProjectContainer.xml
 /broadweb/bwmainleft.asp?pid=1&pname=%22);alert(document.getElementsByTagName(%27script%27)[4].text);//
 /WADashboard/api/dashboard/v1/files/readFile
