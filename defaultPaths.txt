@@ -954,6 +954,7 @@
 /login.html
 /login.jsp
 /login.php
+/login
 /login/
 /login1/
 /login_db/
