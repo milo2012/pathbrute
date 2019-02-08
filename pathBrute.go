@@ -1868,7 +1868,7 @@ func testURL(newUrl string) {
 							} else {
 								i, err :=strconv.Atoi(initialStatusCode) 
 								if (Excludecode==0 || Excludecode!=i) && (Statuscode==0 || Statuscode==i) {			
-									fmt.Printf("4%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
+									fmt.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)	
 									log.Printf("%s [code:%s] [%d] [%s] [%d of %d]\n",newUrl, color.RedString(tmpStatusCode), lenBody, tmpTitle, currentListCount,totalListCount)				
 								}
 								_=err
