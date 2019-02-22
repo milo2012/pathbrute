@@ -1,3 +1,5 @@
+/securityRealm/user/admin/search/index?q=a
+/securityRealm/user/admin/api/xml 
 /descriptorByName/org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition/checkScriptCompile?value=
 /html/js/dotcms/dijit/image/image_tool.jsp
 /html/js/dotcms/dijit/image/image_tool.jsp?inode=aaaaaaa%22;alert(1);//
