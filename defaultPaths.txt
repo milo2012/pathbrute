@@ -1,3 +1,4 @@
+/solr/techproducts/config/jmx
 /securityRealm/user/admin/search/index?q=a
 /securityRealm/user/admin/api/xml 
 /descriptorByName/org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition/checkScriptCompile?value=
