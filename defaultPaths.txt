@@ -1,3 +1,5 @@
+/www/work/workdone.php
+/webpagetest/www/work/workdone.php
 /solr/techproducts/config/jmx
 /securityRealm/user/admin/search/index?q=a
 /securityRealm/user/admin/api/xml 
