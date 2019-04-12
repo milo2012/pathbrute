@@ -1,3 +1,5 @@
+/rest/tinymce/1/macro/preview
+/wp-admin/admin-post.php?swp_debug=load_options&swp_url=
 /www/work/workdone.php
 /webpagetest/www/work/workdone.php
 /solr/techproducts/config/jmx
