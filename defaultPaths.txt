@@ -1,3 +1,4 @@
+/addsensor5.htm
 /foo/default/master/..%252F..%252F..%252F..%252Fetc%252fpasswd
 /foo/label/master/test.json
 /rest/tinymce/1/macro/preview
