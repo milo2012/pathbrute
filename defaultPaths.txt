@@ -1,3 +1,4 @@
+/invoker/readonly
 /Diebold/AgilisXFS/IX/Diagnostics/DeviceManager.soap
 /securityRealm/user/admin/descriptorByName/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/checkScript
 /descriptorByName/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/checkScript
