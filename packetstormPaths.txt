@@ -58,7 +58,6 @@
 /Admin/Check_Password.asp
 /Admin/ImportExport/Download.aspx
 /Admin/Users/Admin/private
-/Admin/Users/Admin/private%!C
 /Admin/index.cfm
 /Admin/index.php
 /Admin/login_index.php
@@ -433,7 +432,6 @@
 /LightNEasy.php
 /LightNEasy/install1.php
 /Lineage ACM/lineweb_1.0.5/index.php
-/Lineage%!A
 /Linker
 /Lists/Posts/Post.aspx
 /LiveSupport/cpLogin.asp
@@ -3098,7 +3096,6 @@
 /config/dbutil.php
 /config/fonctions.lib.php
 /config/mysql_config.php
-/config/mysqlconnection%!-
 /config/mysqlconnection.inc
 /config/password.txt
 /config/posttest
@@ -4026,11 +4023,8 @@
 /fiche_product.php
 /fichiers/add_url.php
 /file.html
-/file.html:
-/file.html::$DATA
 /file.pdf
 /file.php
-/file.php%!
 /file/file_overview.php
 /fileFunctions.php
 /filebase.php
@@ -4134,8 +4128,7 @@
 /form2userconfig.cgi
 /formedit.php
 /formmail.php
-/forms.asp%!
-/forms.asp.
+/forms.asp
 /forms/admininfo.php
 /forms/announcements.php
 /forms/banform.php
@@ -4938,7 +4931,7 @@
 /index.php/dashboard/files/search
 /index.php/dashboard/system
 /index.php/dashboard/system/files/filetypes
-/index.php/email/%20OR%!i
+/index.php/email/
 /index.php/footer/search
 /index.php/forum/advsearch
 /index.php/helloword
@@ -5467,13 +5460,11 @@
 /lovecms_1.6.2_final/lovecms/
 /lovecms_1.6.2_final/lovecms/system/admin/blocks.php
 /low.php
-/loyalty_enu/start.swe/%!E
+/loyalty_enu/start.swe
 /lpanel/help/view_ticket.php
 /lpanel/help/viewreceipt.php
 /lpro.php
-/lua.lsp%!
-/lua.lsp+
-/lua.lsp.
+/lua.lsp
 /lua/admin/validate_new_user.lua
 /lua/diag-cmd.lua
 /lua/dvr-update.lua
@@ -6870,8 +6861,7 @@
 /pls/owf_mgr/
 /pls/owf_mgr/wf_route.CreateRule
 /pls/portal30/w155.cerca_nel_sito
-/pls/windad/%!F
-/pls/windad/S%!F
+/pls/windad/
 /pluck-4_5_1/data/inc/themes/predefined_variables.php
 /plug.php
 /plugin-admin.jsp
@@ -7126,7 +7116,6 @@
 /print/print.shtml
 /printdetail.asp
 /printers
-/printers/%!s
 /printfeature.php
 /printfriendly.php
 /printview.php
@@ -8552,7 +8541,7 @@
 /tva/index.php
 /tvs/layout/j_security_check
 /tvserver/reports/virtualIQAdminReports.do
-/tvserver/server/%!C
+/tvserver/server/
 /tvserver/server/inventory/inventoryTabs.jsp
 /tvserver/server/user/addDepartment.jsp
 /tvserver/server/user/setPermissions.jsp
@@ -8859,7 +8848,7 @@
 /venues.php
 /veribaze/angelo.mdb
 /verif.php
-/verify_me________________________________%!s
+/verify_me
 /version/wbxversionlist.do
 /version3.3/audio/
 /version3.3/up.php
