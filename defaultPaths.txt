@@ -1,3 +1,5 @@
+/loginServlet
+/secure/Dashboard.jspa
 /spring-mvc-showcase/resources/%255c%255c..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/windows/win.ini
 /invoker/readonly
 /Diebold/AgilisXFS/IX/Diagnostics/DeviceManager.soap
