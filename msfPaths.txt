@@ -342,7 +342,6 @@ cmd.php
 /j_security_check
 /upload
 /services/APIPreferenceImpl
-/cookie => cookies
 /api/soap/mantisconnect.php
 /login_anon.php
 /plugin.php?page=XmlImportExport/import
