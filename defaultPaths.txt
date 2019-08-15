@@ -1,3 +1,7 @@
+/smarthome/usergetinfo
+/smarthome/useradd
+/smarthome/devicegetinfo
+/smarthome/devicecontrol
 /WealthT24/GetImage?docDownloadPath=c:/windows/win.ini
 /loginServlet
 /secure/Dashboard.jspa
