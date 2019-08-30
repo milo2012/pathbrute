@@ -1,3 +1,6 @@
+/app/ui/ClientServlet?apiName=GetUserInfo
+/app/ui/login.jsp
+/app/ui/ClientServlet
 /dana-na/../dana/html5acc/guacamole/../../../../../../etc/passwd?/dana/html5acc/guacamole/
 /smarthome/usergetinfo
 /smarthome/useradd
