@@ -26,7 +26,7 @@
 /imc
 /SiteScope
 /SiteScope/
-%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5cboot.ini
+/%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5cboot.ini
 /VPortal/mgtconsole/CheckPassword.jsp
 /status
 /jenkins
@@ -109,7 +109,7 @@
 /qdPM
 /missing404
 /sflog
-cmd.php
+/cmd.php
 /struts2-showcase/integration/saveGangster.action
 /struts2-showcase
 /struts2-rest-showcase/orders/3
@@ -298,7 +298,6 @@ cmd.php
 /config.inc.php
 /Admin/archive/upload.jsp
 /Admin/archive/ArchiveCache
-/Admin/archive/upload.jsp
 /setup/setup-/../../plugin-admin.jsp
 /script
 /upgrade_handle.php
@@ -314,7 +313,6 @@ cmd.php
 /admin/class/bulk-commit
 /rails
 /admin/index.php
-/admin /index.php
 /public/uploads
 /content.php
 /admin/language_import.php
@@ -342,6 +340,7 @@ cmd.php
 /j_security_check
 /upload
 /services/APIPreferenceImpl
+/cookie
 /api/soap/mantisconnect.php
 /login_anon.php
 /plugin.php?page=XmlImportExport/import
@@ -501,7 +500,6 @@ cmd.php
 /index.php/go_site/go_get_user_info
 /index.php/go_site/cpanel
 /tools_command.php
-//tools_command.php
 /tmUnblock.cgi
 /ossim/dashboard/sections/widgets/data/gauge.php
 /ossim/action/modifyactions.php
@@ -543,7 +541,7 @@ cmd.php
 /mobile/index.php
 /ayefeaturesconvert.js
 /spywall/releasenotes.php?relfile=../../../../../usr/local/apache2/logs/access_log
-/res/images/id.png) # the targeturi is not used in this request
+/res/images/id.png)
 /admin/thumbnail.cfm
 /admin/img.cfm
 /shell
@@ -575,7 +573,7 @@ cmd.php
 /event
 /servlet/ConsoleServlet
 /console/console.portal
-//Silverlight/GetPermissions.asp
+/Silverlight/GetPermissions.asp
 /topology/home
 /voice-servlet/prompt-qa
 /statusUpdate
@@ -630,7 +628,7 @@ cmd.php
 /search
 /CFIDE/adminapi/customtags/l10n.cfm
 /Orion/Login.aspx
-/Orion/Services/AccountManagement.asmx /GetAccounts
+/Orion/Services/AccountManagement.asmx
 /rtc/post
 /ossim/session/login.php
 /ossim/report/BusinessAndComplianceISOPCI/ISO27001Bar1.php
@@ -720,7 +718,7 @@ cmd.php
 /setup/scan_results
 /rfcode_reader/api/whoami.json
 /CGI/mParseCGI
-//config/configindex.ehtml
+/config/configindex.ehtml
 /ui/login/
 /admin/
 /webnews
@@ -734,13 +732,21 @@ cmd.php
 /options-general.php
 /brightmail/setting/ldap/LdapWizardFlow$exec.flo
 /brightmail/setting/ldap/LdapWizardFlow$edit.flo
-/*~1*
-/QYKWO*~1*
 /en-US/app/launcher/home
-c/posts
+/posts
 /demantra/common/loginCheck.jsp/../../ServerDetailsServlet
 /dukapress/lib/dp_image.php
 /English/pages_MacUS/lan_set_content.html
 /setup/eureka_info
 /_snapshot/pwn
 /_snapshot/pwnie
+/password_change.cgi
+/fm/pmreport
+/fm/fileUpload
+/fm/fmrest/about/version
+/fm
+/fm/log/fmlogs.zip
+/app/ui/login
+/app/ui/ClientServlet
+/lang_pack/EN.js
+/fm/downloadServlet
