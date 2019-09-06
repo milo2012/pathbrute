@@ -750,3 +750,7 @@
 /app/ui/ClientServlet
 /lang_pack/EN.js
 /fm/downloadServlet
+/modules/system/assets/js/framework.js
+/backend/backend/auth/signin
+/backend/cms/media
+/storage/app/media
