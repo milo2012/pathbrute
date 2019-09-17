@@ -558,7 +558,6 @@
 /ip
 /jQuery-File-Upload
 /j_security_check
-/j_security_check;
 /j_spring_security_check
 /jenkins
 /jenkins/
