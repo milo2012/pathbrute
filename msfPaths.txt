@@ -22,6 +22,7 @@
 /DetectionPolicy/rules/rulesimport.cgi
 /English/pages_MacUS/cgi_lan.cgi
 /English/pages_MacUS/lan_set_content.html
+/FileDownload.jsp
 /ForensicsAnalysisServlet/
 /GetSimpleCMS
 /HNAP1/
@@ -102,6 +103,7 @@
 /admin/contents/ou/manage_domains_save_data.json.php
 /admin/downloads.php
 /admin/file_manager.php/login.php
+/admin/frameset.jsp
 /admin/get.php
 /admin/img.cfm
 /admin/index.jsp
@@ -121,6 +123,7 @@
 /admin/settings.php
 /admin/sitebanners/upload_banners.php
 /admin/sources/base/core.php
+/admin/test/systemProperties.jsp
 /admin/test_li_connection.php
 /admin/theme-edit.php
 /admin/thumbnail.cfm
@@ -178,6 +181,7 @@
 /autopass
 /awstatstotals/awstatstotals.php
 /axis2-admin/login
+/axis2-web/HappyAxis.jsp
 /axis2/axis2-admin/login
 /axis2/services/listServices
 /ayefeaturesconvert.js
@@ -287,6 +291,7 @@
 /comm.asp
 /command.php
 /comment_delete_cgi.php
+/common/FileAttachment.jsp
 /common/about.php
 /common/appServer/jvmReport.jsf
 /common/applications/applicationEdit.jsf
@@ -347,6 +352,7 @@
 /db/local.php
 /db_restore.php
 /db_sql.php
+/demantra/common/loginCheck.jsp/../../GraphServlet
 /demantra/common/loginCheck.jsp/../../ServerDetailsServlet
 /dev/less.php
 /diag_command.php
@@ -378,6 +384,7 @@
 /en/neoclassic/login/authentication.php
 /end-user/index.php
 /eng
+/error.jsp
 /errorInSignUp.htm
 /etc/apps/phpmyadmin/import.php
 /etc/apps/phpmyadmin/index.php
@@ -500,6 +507,7 @@
 /includes/vars.php
 /index.cgi
 /index.html
+/index.jsp
 /index.php
 /index.php/?module=CorePluginsAdmin&action=activate&pluginName=Marketplace&nonce=
 /index.php/HeIp
@@ -546,6 +554,7 @@
 /interface
 /interface/interface.php?uniqueKey=
 /invoker/JMXInvokerServlet
+/invoker/readonly
 /ip
 /jQuery-File-Upload
 /j_security_check
@@ -558,6 +567,8 @@
 /jhot.php
 /jira
 /jmx-console
+/jmx-console/HtmlAdaptor
+/jmx-console/checkJNDI.jsp
 /joomla
 /jos.php
 /js/messages.php
@@ -604,6 +615,7 @@
 /login.spl
 /login/AjaxResponse.jsp
 /login/index.php
+/login/process.jsp
 /login_anon.php
 /login_cgi.php
 /login_page.php
@@ -811,6 +823,7 @@
 /service/proxy
 /service/soap
 /service/v4/rest.php
+/servicedesk/ServiceDesk.jsp
 /services/APIBSMIntegrationImpl
 /services/APIPreferenceImpl
 /services/APISiteScopeImpl
@@ -867,11 +880,13 @@
 /statusUpdate
 /status_rrd_graph_img.php
 /stmeetings
+/stmeetings/about.jsp
 /storage/app/media
 /struts2-blank/example/HelloWorld.action
 /struts2-rest-showcase/orders/3
 /struts2-showcase
 /struts2-showcase/integration/saveGangster.action
+/stwebclient/i18nStrings.jsp
 /sugarcrm
 /sugarcrm/
 /swimtemp
@@ -978,6 +993,8 @@
 /vtigercrm
 /vtigercrm/
 /vtigerservice.php
+/web-console/Invoker
+/web-console/ServerInfo.jsp
 /web/index.php
 /web/jquery/uploader/multi_uploadify.php
 /web_cgi.cgi
@@ -1006,6 +1023,8 @@
 /wordpress-mobile-pack/export/content.php
 /work-the-flow-file-upload/public/assets
 /work/resultimage.php
+/workorder/Attachment.jsp
+/workorder/FileDownload.jsp
 /wp-admin/admin.php?page=ngg_addgallery
 /wp-admin/admin.php?page=responsive_thumbnail_slider_image_management
 /wp-admin/includes/ajax-actions.php
@@ -1031,6 +1050,8 @@
 /zabbix
 /zabbix/
 /zenworks
+/zenworks/jsp/fw/internal/Login.jsp
+/zenworks/jsp/index.jsp?pageid=newDocumentWizard
 /zimbraAdmin
 /zm
 /zpanel
