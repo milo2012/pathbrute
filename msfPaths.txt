@@ -455,7 +455,7 @@
 /hosts
 /hosts.php
 /hosts.php?form=update&hostid=
-/hqu/gconsole/console/execute.hqu?org.apache.catalina.filters.CSRF_NONCE=)+@nonce
+/hqu/gconsole/console/execute.hqu
 /html/application/addcfg.cgi
 /html/application/del.cgi
 /html/en/confAccessProt.html
@@ -699,7 +699,7 @@
 /parse_xml.cgi
 /password_change.cgi
 /passwordrecovered.cgi
-/pbcontrol.php})
+/pbcontrol.php
 /phonecallfwd.cgi
 /php-charts_v1.0
 /php-charts_v1.0/
@@ -773,7 +773,7 @@
 /remote/logout
 /remoteProxy
 /render/local
-/res/images/id.png)
+/res/images/id.png
 /rest/action
 /rest/plugins/1.0
 /rest/v1/AccountService/Accounts
