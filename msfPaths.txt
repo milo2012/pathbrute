@@ -1032,7 +1032,7 @@
 /wp-content/plugins/wp-mobile-detector/resize.php
 /wp-content/themes/OptimizePress/lib/admin/media-upload.php
 /wp-content/themes/lib/admin/media-upload.php
-/wp-login.php?action=register.
+/wp-login.php?action=register
 /wp-mobile-detector/cache
 /wp-mobile-detector/resize.php
 /wp-symposium/server/file_upload_form.php
