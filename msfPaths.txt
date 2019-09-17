@@ -489,7 +489,7 @@
 /includes/currencies.php
 /includes/database/database.inc
 /includes/form.inc
-/includes/func.php.
+/includes/func.php
 /includes/functions_vbseocp_abstract.php
 /includes/inline_image_upload.php
 /includes/jquery.uploadify
