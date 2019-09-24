@@ -1,3 +1,4 @@
+/ajax/render/widget_php
 /app/ui/ClientServlet?apiName=GetUserInfo
 /app/ui/login.jsp
 /app/ui/ClientServlet
