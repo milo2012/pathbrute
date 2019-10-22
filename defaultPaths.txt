@@ -1,3 +1,5 @@
+/app/kibana
+/api/timelion/run
 /.DS_Store
 /.c99.php
 /.env
@@ -2130,7 +2132,6 @@
 /securityRealm/user/admin/search/index?q=a
 /seedlist
 /server-info
-/server-status
 /server-status 
 /server-status/access.log
 /server-status/access_log
