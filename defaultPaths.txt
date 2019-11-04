@@ -1,3 +1,5 @@
+/install/lib/ajaxHandlers/ajaxServerSettingsChk.php
+/lib/crud/search.crud.php
 /app/kibana
 /api/timelion/run
 /.DS_Store
