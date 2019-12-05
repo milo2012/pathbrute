@@ -1,3 +1,6 @@
+/old-console
+/console.html
+/druid/v2/
 /install/lib/ajaxHandlers/ajaxServerSettingsChk.php
 /lib/crud/search.crud.php
 /app/kibana
