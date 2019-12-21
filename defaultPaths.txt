@@ -1,3 +1,4 @@
+/api/console/api_server
 /old-console
 /console.html
 /druid/v2/
