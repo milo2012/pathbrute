@@ -1,3 +1,6 @@
+/vpn/../vpns/services.html
+/vpn/../vpns/cfg/smb.conf
+/axis/services/freemarkerService
 /api/console/api_server
 /old-console
 /console.html
