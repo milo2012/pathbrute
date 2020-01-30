@@ -1,3 +1,10 @@
+/swagger-ui.html
+/swagger/swagger-ui.html
+/api/swagger-ui.html
+/v1.x/swagger-ui.html
+/swagger/index.html
+/vpn/../vpns/portal/scripts/newbm.pl
+/vpn/../vpns/portal/scripts/rmbm.pl
 /vpn/../vpns/services.html
 /vpn/../vpns/cfg/smb.conf
 /axis/services/freemarkerService
