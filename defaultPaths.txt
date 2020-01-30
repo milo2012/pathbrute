@@ -1,3 +1,4 @@
+/mainui/download
 /swagger-ui.html
 /swagger/swagger-ui.html
 /api/swagger-ui.html
