@@ -1,3 +1,4 @@
+/_layouts/15/Picker.aspx
 /_vti_bin/webpartpages.asmx
 /mainui/download
 /swagger-ui.html
