@@ -1,3 +1,4 @@
+/_vti_bin/webpartpages.asmx
 /mainui/download
 /swagger-ui.html
 /swagger/swagger-ui.html
