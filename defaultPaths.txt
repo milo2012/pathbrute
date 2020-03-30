@@ -1,3 +1,4 @@
+/comment/staticimage
 /api/jsonws/expandocolumn/update-column
 /cgi-bin/mainfunction.cgi
 /ecp/default.aspx
