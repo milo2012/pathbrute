@@ -1,3 +1,4 @@
+/api/jsonws/expandocolumn/update-column
 /cgi-bin/mainfunction.cgi
 /ecp/default.aspx
 /ecp/PersonalSettings/HomePage.aspx
