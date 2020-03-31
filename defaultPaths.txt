@@ -1,3 +1,9 @@
+/api/email_accounts
+/api/tickets
+/api/people
+/api/v2/api_tokens
+/api/apps/packages/deskpro_us_jwt?usersource_type=user
+/portal/api/style/edit-theme-set/template-sources
 /comment/staticimage
 /api/jsonws/expandocolumn/update-column
 /cgi-bin/mainfunction.cgi
