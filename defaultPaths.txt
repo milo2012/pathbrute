@@ -1,3 +1,11 @@
+/webadmin/admin/service_manager_data.php
+/webadmin/systemconfig/grant_db_access.php
+/systemconfig/edit_file.php
+/systemconfig/edit_database_settings.php
+/systemconfig/manage_certs.php
+/webadmin/api/
+/webadmin/tools/unixlogin.php
+/webadmin/shell.php
 /api/email_accounts
 /api/tickets
 /api/people
