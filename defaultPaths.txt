@@ -1,3 +1,4 @@
+/api/jsonws/invoke
 /webadmin/admin/service_manager_data.php
 /webadmin/systemconfig/grant_db_access.php
 /systemconfig/edit_file.php
