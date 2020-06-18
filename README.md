@@ -95,7 +95,7 @@ go build pathBrute.go
   
 ### Example 
 ```
-./pathBrute -s default -f urls.txt -v -i -n 25 
+./pathBrute -s default -U urls.txt -v -i -n 25 
 [*] Getting Default Page Title for Invalid URI Paths
 http://xxxx.com/xxx [code:404] [404 Not Found]
 
