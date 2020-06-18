@@ -1070,6 +1070,7 @@
 /login.html
 /login.jsp
 /login.php
+/login
 /login/
 /login/cpanel
 /login1/
