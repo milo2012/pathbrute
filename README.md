@@ -89,6 +89,7 @@ go get github.com/fatih/color
 go get github.com/hashicorp/go-version
 go get github.com/xrash/smetrics
 go get github.com/ti/nasync
+go get github.com/mattn/go-sqlite3
 go build pathBrute.go  
 ```
 ***
